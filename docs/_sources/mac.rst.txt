@@ -1,0 +1,483 @@
+.. _mac:
+
+Medium Access Control
+=====================
+
+.. highlight:: groovy
+
+Introduction
+------------
+
+Medium access control (MAC) is perhaps one of the most actively researched topics in underwater networks. In this tutorial, we explore the MAC service in UnetStack in detail, and develop two simple MAC agents to illustrate what implementations of the service might look like. The MAC agents are intentionally kept simple and not optimized for performance, as we wish to illustrate the key aspects of MAC agent development without getting lost in the details of optimal protocols.
+
+Basic Functionality
+-------------------
+
+The :ref:`macsvc` service defines the messages, parameters and capabilities supported by MAC agents. MAC agents provide advice to agents wishing to transmit (we shall call them *'clients'* ) on when they may transmit, making channel reservations on behalf of clients as necessary. Some MAC protocols such as Aloha and TDMA may not require explicit handshake for reservation, while others such as MACA and FAMA may involve control packet exchanges between peer MAC agents on various nodes. In either case, a typical client with data to transmit starts by asking the prevailing MAC agent for a channel reservation::
+
+    // client wishes to transmit data to "destination" for specified "duration"
+    def mac = agentForService Services.MAC
+    if (mac) {
+      // send a channel reservation request
+      def req = new ReservationReq(recipient: mac, to: destination, duration: duration)
+      def rsp = request req
+      if (rsp && rsp.performative == Performative.AGREE) {
+        // wait for a channel reservation notification
+        def ntf = receive(ReservationStatusNtf, timeout)
+        if (ntf && ntf.requestID == req.msgID && ntf.status == ReservationStatus.START) {
+          // transmit data for requested duration
+          //  :
+        }
+      }
+    }
+
+In the above sample code, error handling has been omitted for simplicity. In reality, you would want to have ``else`` clauses to handle reservation failures. The MAC agent not only sends a ``ReservationStatus.START`` notification, but also a ``ReservationStatus.END`` notification at the end of the reservation duration. The sample code above ignores this notification, but has to ensure that the transmission does not exceed the requested duration.
+
+Simple MAC without Handshake
+----------------------------
+
+To illustrate how a MAC agent might work, let us start with a simple MAC agent that accedes to every reservation request as soon as it is made::
+
+    import org.arl.fjage.*
+    import org.arl.unet.*
+    import org.arl.unet.mac.*
+
+    class MySimplestMac extends UnetAgent {
+
+      @Override
+      void setup() {
+        register Services.MAC                             // advertise that the agent provides a MAC service
+      }
+
+      @Override
+      Message processRequest(Message msg) {
+        if (msg instanceof ReservationReq) {
+          if (msg.duration <= 0) return new Message(msg, Performative.REFUSE)   // check requested duration
+          ReservationStatusNtf ntf1 = new ReservationStatusNtf(     // prepare START reservation notification
+            recipient: msg.sender,
+            requestID: msg.msgID,
+            to: msg.to,
+            status: ReservationStatus.START)
+          ReservationStatusNtf ntf2 = new ReservationStatusNtf(     // prepare END reservation notification
+            recipient: msg.sender,
+            requestID: msg.msgID,
+            to: msg.to,
+            status: ReservationStatus.END)
+          send ntf1                                                 // send START reservation notification
+          add new WakerBehavior(Math.round(1000*msg.duration), {    // wait for reservation duration
+            send ntf2                                               // send END reservation notification
+          })
+          return new ReservationRsp(msg)                            // defaults to an AGREE performative
+        }
+        return null
+      }
+
+    }
+
+While the above code implements a fully functional MAC agent, it needs to respond to ``ReservationCancelReq``, ``ReservationAcceptReq`` and ``TxAckReq`` messages, and provide ``channelBusy``, ``reservationPayloadSize``, ``ackPayloadSize``, ``maxReservationDuration`` and ``recommendedReservationDuration`` parameters in order to comply to the :ref:`macsvc` service specification. We add this functionality trivially, by responding to the messages with a ``REFUSE`` performative, and returning default values for all the parameters. The resulting complete source code (also available as ``samples/mac/MySimplestMac.groovy``) is shown below:
+
+.. literalinclude:: ../../../public/samples/mac/MySimplestMac.groovy
+
+Now we have a fully-compliant, but very simple, MAC agent.
+
+Simulation and Performance Estimation
+-------------------------------------
+
+Real-time simulation
+^^^^^^^^^^^^^^^^^^^^
+
+.. tip:: Real-time simulations are great for testing your code through manual interaction via the shell.
+
+In order to test our MAC, let us write a real-time simulation (``samples/mac/mac-test-rt.groovy``) with random node locations and link performance based on the :ref:`BasicAcousticChannel <channels>` model :
+
+.. literalinclude:: ../../../public/samples/mac/mac-test-rt.groovy
+   :lines: 1,8-
+
+Now we can run the simulation and interact with it using a console shell:
+
+.. code-block:: text
+
+  > ps
+  node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+  shell: org.arl.fjage.shell.ShellAgent - IDLE
+  simulator: org.arl.unet.sim.SimulationAgent - IDLE
+  phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+  mac: MySimplestMac - IDLE
+  > mac = agentForService Services.MAC
+  mac
+  ---
+  ackPayloadSize = 0
+  channelBusy = false
+  maxReservationDuration = Infinity
+  recommendedReservationDuration = null
+  reservationPayloadSize = 0
+
+  > mac << new ReservationReq(duration: 1.second, to: 2)
+  AGREE: ReservationRsp
+  ReservationStatusNtf:INFORM [requestID:ef74da89-99c8-4068-b747-cf3cc7941c1a to:2 status:START payload:(0 bytes)]
+  ReservationStatusNtf:INFORM [requestID:ef74da89-99c8-4068-b747-cf3cc7941c1a to:2 status:END payload:(0 bytes)]
+  >
+
+We thus confirm that the agent behaves as expected, responding correctly to ``ReservationReq`` with a ``ReservationRsp`` response and a pair of ``START`` and ``END`` ``ReservationStatusNtf`` notifications.
+
+Discrete-event simulation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. tip:: Running a large number of simulations to get statistical results is typically much quicker using the discrete-event simulation mode.
+
+In order to estimate statistical performance of the MAC protocol in a network, we need to load the network with controlled traffic. We write a simple ``LoadGenerator`` agent (``samples/mac/LoadGenerator.groovy``) to create Poisson-distributed random traffic to randomly selected nodes from a destination node list:
+
+.. literalinclude:: ../../../public/samples/mac/LoadGenerator.groovy
+
+Now, we are in a position to write out simulation script (``samples/mac/mac-test-perf.groovy``) to measure normalized network throughput as a function of normalized offered load:
+
+.. literalinclude:: ../../../public/samples/mac/mac-test-perf.groovy
+   :lines: 1,8-
+
+Running this, we should get an output that looks something like:
+
+.. code-block:: text
+
+  MySimplestMac simulation
+  ========================
+
+  TX Count  RX Count  Offered Load  Throughput
+  --------  --------  ------------  ----------
+     604       466      0.110         0.085
+    1118       671      0.203         0.122
+    1707       746      0.310         0.135
+    2231       803      0.407         0.146
+    2755       779      0.502         0.141
+    3258       777      0.594         0.141
+    3757       732      0.685         0.133
+    4457       648      0.815         0.118
+    4976       575      0.910         0.104
+    5474       561      1.001         0.102
+
+  10 simulations completed in 101.009 seconds
+
+.. tip:: If you wish to plot the results, see ``samples/aloha/plot-results.groovy`` or :ref:`matlabplot` for guidance.
+
+Simple MAC with Throttling
+--------------------------
+
+While the above simple MAC works well when the traffic offered to it is random, it will perform poorly if the network is fully loaded. All nodes would constantly try to access the channel, collide and the throughput would plummet. To address this concern, one may add an exponentially distributed random backoff (Poisson arrival to match the assumption of Aloha) for every request to introduce randomness. The backoff could be chosen to offer a normalized network load of approximately 0.5, since this generates the highest throughput for Aloha. While we won't walk though the details of such an implementation, we inlcude it in the ``samples`` folder (:ref:`MySimpleThrottledMac`) for the interested reader.
+
+.. toctree::
+   :hidden:
+
+   my-simple-throttled-mac-src
+
+Simple MAC with Handshake
+-------------------------
+
+While the MAC agents we have developed so far are fully functional, they are simple, and do not involve any packet exchange for channel reservation. Many MAC protocols such as MACA and FAMA involve a handshake using request-to-send (RTS) and clear-to-send (CTS) packets (aka 'protocol data units' or 'PDUs'). To illustrate how more complex protocols are developed using UnetStack, we implement a simple RTS-CTS 2-way handshake-based MAC agent (``MySimpleHandshakeMac.groovy``) next.
+
+Many communication protocols are best described using a finite state machine (FSM). We illustrate the FSM for our simple handshake-based MAC agent below:
+
+.. digraph:: FSM
+
+  INIT [width=0.2 shape=circle color=black style=filled label=""];
+  INIT -> IDLE;
+  IDLE -> RTS [label="ReservationReq\nqueue not empty" fontsize=10];
+  RTS -> TX [label="rx(CTS)" fontsize=10];
+  RTS -> IDLE [label="after(timout)" fontsize=10];
+  TX -> IDLE [label="after(T)" fontsize=10];
+  IDLE -> BACKOFF [label="snoop(RTS/CTS)" fontsize=10];
+  BACKOFF -> IDLE [label="after(backoff)" fontsize=10];
+  BACKOFF -> BACKOFF [label="snoop(RTS/CTS)" fontsize=10];
+  IDLE -> RX [label="rx(RTS)" fontsize=10];
+  RX -> IDLE [label="after(T+2p)" fontsize=10];
+
+When the channel is free, the agent is in an ``IDLE`` state. If the agent receives a ``ReservationReq``, it switches to the ``RTS`` state and sends a RTS PDU to the intended destination node. If it receives a CTS PDU back, then it switches to a ``TX`` state and urges the client to transmit data via a ``ReservationStatusNtf`` with a ``START`` status. After the reservation period is over, the agent switches back to the ``IDLE`` state. If no CTS PDU is received in the ``RTS`` state for a while, the agent times out and returns to the ``IDLE`` state while informing the client of a reservation ``FAILURE``.
+
+If the agent receives a RTS PDU in the ``IDLE`` state, it switches to the ``RX`` state and responds back with a CTS PDU. The node initiating the handshake may then transmit data for the reservation duration. After the duration (plus some allowance for 2-way propagation delay), the agent switches back to the ``IDLE`` state. If the agent overhears (aka *snoops*) RTS or CTS PDUs destined for other nodes, it switches to a ``BACKOFF`` state for a while. During the state, it does not initiate or respond to RTS PDUs. After the backoff period, it switches back to the ``IDLE`` state.
+
+Our RTS and CTS PDUs are identified by a `Protocol`_ number. Since we are implementing a MAC protocol, we choose to tag our PDUs using the protocol number reserved for MAC agents::
+
+  int PROTOCOL = Protocol.MAC
+
+We also define some timeouts and delays that we will need to use::
+
+  float  RTS_BACKOFF     = 2.seconds
+  float  CTS_TIMEOUT     = 5.seconds
+  float  BACKOFF_RANDOM  = 5.seconds
+  float  MAX_PROP_DELAY  = 2.seconds
+
+As we wish to queue reservation requests when the channel is busy, we need a queue to store them::
+
+  Queue<ReservationReq> queue = new ArrayDeque<ReservationReq>()
+
+Communication protocols often use complicated PDU formats. UnetStack provides a `PDU`_ class to help encode/decode PDUs. Although the RTS and CTS PDUs have a pretty simple format, the ``PDU`` is still useful in defining the format clearly::
+
+  int RTS_PDU = 0x01
+  int CTS_PDU = 0x02
+
+  PDU pdu = PDU.withFormat {
+    uint8('type')         // RTS_PDU/CTS_PDU
+    uint16('duration')    // ms
+  }
+
+Here we have defined a PDU with two fields -- ``type`` (8 bit) and ``duration`` (16 bit). The ``type may be either of ``RTS_PDU`` or ``CTS_PDU``, while the ``duration`` will specify the reservation duration in milliseconds. We will later use this ``pdu`` object to ``encode`` and ``decode`` these PDUs.
+
+Now comes the heart of our MAC protocol implementation -- the FSM shown above. First we define the FSM states and the events that the FSM reacts to::
+
+  enum State {
+    IDLE, RTS, TX, RX, BACKOFF
+  }
+
+  enum Event {
+    RX_RTS, RX_CTS, SNOOP_RTS, SNOOP_CTS
+  }
+
+Next we use the `FSMBuilder`_ utility class in UnetStack to construct a `FSMBehavior`_ from a declarative concise representation of the FSM.
+
+The FSM states are defined using the ``state(...)`` declarations. The actions to take when entering/exiting a state are defined in the ``onEnter``/``onExit`` clauses. The behavior of the FSM in response to events are defined using the ``onEvent(...)`` clauses. Timers that operate in a state are defined using the ``after(...)`` clauses. Finally actions to take continuously while in a state are defined using the ``action`` clause.
+
+It should be easy to see the direct mapping between the FSM diagram and the FSM code below::
+
+  int MAX_RETRY = 3
+
+  FSMBehavior fsm = FSMBuilder.build {
+
+    int retryCount = 0
+    float backoff = 0
+    def rxInfo
+
+    state(State.IDLE) {
+      action {
+        if (!queue.isEmpty()) {
+          after(rnd(0, BACKOFF_RANDOM)) {
+            setNextState(State.RTS)
+          }
+        }
+        block()
+      }
+      onEvent(Event.RX_RTS) { info ->
+        rxInfo = info
+        setNextState(State.RX)
+      }
+      onEvent(Event.SNOOP_RTS) {
+        backoff = RTS_BACKOFF
+        setNextState(State.BACKOFF)
+      }
+      onEvent(Event.SNOOP_CTS) { info ->
+        backoff = info.duration + 2*MAX_PROP_DELAY
+        setNextState(State.BACKOFF)
+      }
+    }
+
+    state(State.RTS) {
+      onEnter {
+        Message msg = queue.peek()
+        def bytes = pdu.encode(type: RTS_PDU, duration: Math.ceil(msg.duration*1000))
+        phy << new TxFrameReq(to: msg.to, type: Physical.CONTROL, protocol: PROTOCOL, data: bytes)
+        after(CTS_TIMEOUT) {
+          if (++retryCount >= MAX_RETRY) {
+            sendReservationStatusNtf(queue.poll(), ReservationStatus.FAILURE)
+            retryCount = 0
+          }
+          setNextState(State.IDLE)
+        }
+      }
+      onEvent(Event.RX_CTS) {
+        setNextState(State.TX)
+      }
+    }
+
+    state(State.TX) {
+      onEnter {
+        ReservationReq msg = queue.poll()
+        retryCount = 0
+        sendReservationStatusNtf(msg, ReservationStatus.START)
+        after(msg.duration) {
+          sendReservationStatusNtf(msg, ReservationStatus.END)
+          setNextState(State.IDLE)
+        }
+      }
+    }
+
+    state(State.RX) {
+      onEnter {
+        def bytes = pdu.encode(type: CTS_PDU, duration: Math.round(rxInfo.duration*1000))
+        phy << new TxFrameReq(to: rxInfo.from, type: Physical.CONTROL, protocol: PROTOCOL, data: bytes)
+        after(rxInfo.duration + 2*MAX_PROP_DELAY) {
+          setNextState(State.IDLE)
+        }
+        rxInfo = null
+      }
+    }
+
+    state(State.BACKOFF) {
+      onEnter {
+        after(backoff) {
+          setNextState(State.IDLE)
+        }
+      }
+      onEvent(Event.SNOOP_RTS) {
+        backoff = RTS_BACKOFF
+        reenterState()
+      }
+      onEvent(Event.SNOOP_CTS) { info ->
+        backoff = info.duration + 2*MAX_PROP_DELAY
+        reenterState()
+      }
+    }
+
+  }
+
+Do note that the above FSM includes a couple of details that were missing from the FSM diagram. Firstly, we implement a random backoff before switching to the RTS state to minimize contention. Secondly, we implement a ``retryCount`` counter to check the number of times a single ``ReservationReq`` has been tried. If it exceeds ``MAX_RETRY``, we discard it. Thirdly, we have a ``backoff`` variable that allows different backoff times for different occasions. The variable is set each time, just before the state is changed to ``State.BACKOFF`` or before the backoff state is re-entered.
+
+The FSM uses a simple utility method to send out ``ReservationStatusNtf`` notifications::
+
+  void sendReservationStatusNtf(ReservationReq msg, ReservationStatus status) {
+    send new ReservationStatusNtf(recipient: msg.sender, requestID: msg.msgID, to: msg.to, from: addr, status: status)
+  }
+
+Now the hard work is done. We initialize our agent by registering the ``MAC`` service, looking up and subscribing to the ``PHYSICAL`` service (to transmit and receive PDUs), looking up our own address using the ``NODE_INFO`` service, and starting the ``fsm`` behavior::
+
+  AgentID phy
+  int addr
+
+  void setup() {
+    register Services.MAC
+  }
+
+  void startup() {
+    phy = agentForService Services.PHYSICAL
+    subscribe(phy)
+    subscribe(topic(phy, Physical.SNOOP))
+    add new OneShotBehavior({
+      def nodeInfo = agentForService Services.NODE_INFO
+      addr = get(nodeInfo, NodeInfoParam.address)
+    })
+    add(fsm)
+  }
+
+Note that we subscribe to the ``topic(phy, Physical.SNOOP)`` in addition to ``phy``. This allows us to *snoop* RTS/CTS PDUs destined for other nodes. Also note that the address lookup is performed in a ``OneShotBehavior`` to avoid having the agent to block while the node information agent is starting up.
+
+Just like in the earlier MAC implementation, we have to respond to various requests defined by the :ref:`macsvc` service specifications::
+
+  int MAX_QUEUE_LEN = 16
+
+  Message processRequest(Message msg) {
+    switch (msg) {
+      case ReservationReq:
+        if (msg.to == Address.BROADCAST || msg.to == addr) return new Message(msg, Performative.REFUSE)
+        if (msg.duration <= 0 || msg.duration > maxReservationDuration) return new Message(msg, Performative.REFUSE)
+        if (queue.size() >= MAX_QUEUE_LEN) return new Message(msg, Performative.REFUSE)
+        queue.add(msg)
+        fsm.restart()      // tell fsm to check queue, as it may block if the queue is empty
+        return new ReservationRsp(msg)
+      case ReservationCancelReq:
+      case ReservationAcceptReq:
+      case TxAckReq:
+        return new Message(msg, Performative.REFUSE)
+    }
+    return null
+  }
+
+If we get a ``ReservationReq``, we validate the attributes, add the request to our ``queue`` and return a ``ReservationRsp``. For other requests that we do not support, we simply ``REFUSE`` them.
+
+If we receive PDUs from the physical agent, they come as ``RxFrameNtf`` messages via the ``processMessage()`` method. For all PDUs with a protocol number that we use, we decode them. We ``trigger`` appropriate FSM events in response to RTS and CTS PDUs -- ``RX_RTS`` and ``RX_CTS`` events for PDUs destined to us, and ``SNOOP_RTS`` and ``SNOOP_CTS`` events for PDUs that we overhear::
+
+  void processMessage(Message msg) {
+    if (msg instanceof RxFrameNtf && msg.protocol == PROTOCOL) {
+      def rx = pdu.decode(msg.data)
+      def info = [from: msg.from, to: msg.to, duration: rx.duration/1000.0]
+      if (rx.type == RTS_PDU) fsm.trigger(info.to == addr ? Event.RX_RTS : Event.SNOOP_RTS, info)
+      else if (rx.type == CTS_PDU) fsm.trigger(info.to == addr ? Event.RX_CTS : Event.SNOOP_CTS, info)
+    }
+  }
+
+Finally, we expose the parameters required by the :ref:`macsvc` service specification::
+
+  List<Parameter> getParameterList() {          // publish list of all exposed parameters
+    return allOf(MacParam)
+  }
+
+  final int reservationPayloadSize = 0          // read-only
+  final int ackPayloadSize = 0                  // read-only
+  final float maxReservationDuration = 65.535   // read-only
+
+  boolean getChannelBusy() {                    // channel is considered busy if fsm is not IDLE
+    return fsm.currentState.name != State.IDLE
+  }
+
+  float getRecommendedReservationDuration() {   // recommended reservation duration is one DATA packet
+    return get(phy, Physical.DATA, PhysicalChannelParam.frameDuration)
+  }
+
+We are done! You can find the full listing of the ``MySimpleHandshakeMac`` agent in the ``samples`` folder (:ref:`MySimpleHandshakeMac`).
+
+.. toctree::
+   :hidden:
+
+   my-simple-handshake-mac-src
+
+Advanced Functionality
+----------------------
+
+The :ref:`macsvc` service specification allows for many advanced use cases. We explore a few of them below.
+
+Reservation duration
+^^^^^^^^^^^^^^^^^^^^
+
+MAC reservations are often sought for single packet transmission. However, this is not efficient for handshake-based protocols in underwater networks where the round-trip time for handshake may be large. Hence the reservation duration may be adjusted by the client to include packet trains or batches. Furthermore, clients may also reserve the channel for activities such as ranging or simply to get the channel to be quiet during a noise measurement.
+
+The maximum reservation duration supported by a MAC agent is specified using the ``maxReservationDuration`` parameter. If a MAC agent knows the optimal reservation duration for good performance, it may choose to advertise it using the ``recommendedReservationDuration`` parameter.
+
+Priority and TTL
+^^^^^^^^^^^^^^^^
+
+``ReservationReq`` requests allow for a ``Priority`` and ``ttl`` (time-to-live) attributes to be specified. If a MAC agent is able to honor these, it should advertise this using the ``MacCapability.Priority`` and ``MacCapability.TTL`` capabilities. If the MAC agent does not advertise these capabilities, it is free to ignore the values of these attributes.
+
+Timed reservations
+^^^^^^^^^^^^^^^^^^
+
+``ReservationReq`` requests also allow for a ``startTime`` to be specified. This is meant to enable a client to ask for a reservation starting as a specified time (by the physical agent's clock). If the MAC agent can support scheduling of reservations in the future, it should advertise this using the ``MacCapability.TIMED_RESERVATION`` capability. If the ``startTime`` is invalid, or the MAC agent is unable to schedule the reservation as requested, it should respond with a ``REFUSE`` performative.
+
+Cancellation of pending requests
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If a ``ReservationReq`` has been ``AGREE``d to, but not yet granted, it may be cancelled using the ``ReservationCancelReq`` request. The reservation to cancel is identified using the message id of the original ``ReservationReq`` message. If a MAC agent does not support cancellation, or is unable to cancel the request as it is already partly processed, it should respond with a ``REFUSE`` performative.
+
+Reliability
+^^^^^^^^^^^
+
+Some MAC protocols may provide reliability, usually through the use of ACK PDUs. MAC agents providing reliability should advertise this using the ``MacCapability.RELIABILITY`` capability. Clients wishing to avail reliability turn on the ``reliabile`` flag of the ``ReservationReq``. For these reservation requests, the MAC agent should send ``RxAckNtf`` messages on successful delivery of data during the reservation.
+
+Piggbacking control information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+MAC protocols that exchange PDUs may provide means to piggyback data on those PDUs. For example, a RTS-CTS exchange may provide a MAC client the ability to also exchange power control information: the RTS may be transmitted at full power; the receiving node may measure the SNR and transmit the CTS with piggybacked recommended power level information that the transmitter may use for subsequent data transmission. Another example for adaptive modulation: the RTS-CTS exchange may include negotiation parameters for modulation or error correction.
+
+Payload data to be piggybacked with RTS-like PDUs is passed to the MAC agent in the ``ReservationReq`` message's ``payload`` attribute. Payload data to be piggybacked with CTS-like PDUs is passed to the MAC agent in a ``ReservationAcceptReq`` request (``payload`` attribute) that a client should immediately send after a ``ReservationStatusNtf`` (with status ``REQUEST``) notification by the MAC agent. The maximum number of bytes of payload for RTS/CTS-like PDUs is specified in the ``reservationPayloadSize`` parameter exposed by the MAC agent. Finally payload data to be piggybacked with ACK-like PDUs is passed to the MAC agent in a ``TxAckReq`` message's ``payload`` attribute. This request is also sent after a ``REQUEST`` status notification, but may be presented any time before the expiry of the reservation time. The maximum size of this payload is specified in the ``ackPayloadSize`` parameter.
+
+A sample sequence diagram showing the potential interactions between client agents and MAC agents on 2 nodes is shown below:
+
+.. seqdiag::
+
+  seqdiag mac {
+    activation = none;
+    client1 ->> mac1 [label="ReservationReq(payload1)"];
+    mac1 -->> client1 [label="ReservationRsp(AGREE)"];
+    mac1 ->> mac2 [diagonal,label="RTS(payload1)"];
+    mac2 ->> client2 [label="ReservationStatusNtf(REQUEST,payload1)"];
+    client2 ->> mac2 [label="ReservationAcceptReq(payload2)"];
+    mac2 -->> client2 [label="AGREE"];
+    mac2 ->> mac1 [diagonal,label="CTS(payload2)"];
+    mac1 ->> client1 [label="ReservationStatusNtf(START,payload2)"];
+    client1 ->> client2 [diagonal,label="DATA"];
+    client1 ->> client2 [diagonal,label="DATA"];
+    client2 ->> mac2 [label="TxAckReq(payload3)"];
+    mac2 ->> mac1 [diagonal,label="ACK(payload3)"];
+    mac1 ->> client1 [label="ReservationStatusNtf(END,payload3)"];
+  }
+
+.. .........................................................................................................
+.. _Protocol:         javadoc/org/arl/unet/Protocol.html
+.. _PDU:              javadoc/org/arl/unet/PDU.html
+.. _FSMBuilder:       javadoc/org/arl/unet/FSMBuilder.html
+.. _FSMBehavior:      http://org-arl.github.io/fjage/javadoc/org/arl/fjage/FSMBehavior.html
+.. .........................................................................................................

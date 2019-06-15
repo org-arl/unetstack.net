@@ -1,0 +1,523 @@
+.. _simdsl:
+
+Running Simulations
+===================
+
+.. highlight:: groovy
+
+In the last chapter, we learned how to develop agents for the UnetStack. In this chapter, we will learn how to set up network simulations using standard agents, as well as using your own agents.
+
+Simulation DSL
+--------------
+
+Simulations are set up using simulation scripts that are essentially Groovy scripts, but written in a specially designed domain-specific language (DSL). To understand how the DSL works, let's write a trivial simulation that runs for 1 hour with 2 nodes 1 km apart transmitting nothing! ::
+
+    //! Simulation: A very simple discrete-event simulation
+
+    simulate 1.hour, {
+      node '1', address: 1, location: [0, 0, 0]
+      node '2', address: 2, location: [1.km, 0, 0]
+    }
+
+.. tip:: The first line has a shebang (``//!Simulation``) marks the script as a simulation. This line must be present in every simulation script so that the IDE and the ``unet`` script recognize and run it appropriately.
+
+Save this file as ``trivial-sim.groovy`` and run it:
+
+.. code-block:: text
+
+    1 simulation completed in 0.50 seconds
+
+Notice that although our simulation was for 1 hour, it took only a fraction of a second to complete! The simulator runs by default with the ``DiscreteEventSimulator`` platform, which allows simulations to run potentially much faster than real time. However, if you wish to run a simulation at real-time speed, then you can do so by changing the platform to the ``RealTimePlatform``::
+
+    //! Simulation: A very simple real-time simulation
+
+    platform = org.arl.fjage.RealTimePlatform
+
+    simulate 1.hour, {
+      node '1', address: 1, location: [0, 0, 0]
+      node '2', address: 2, location: [1.km, 0, 0]
+    }
+
+Now, if you run the simulation and have the patience to wait, it will take 1 hour to complete!
+
+Our simulation so far didn't really do anything useful. However, we can set up a shell on each node and interact with the nodes in real-time mode. Let's modify our ``trivial-sim.groovy`` to enable the shell on the first node, and allow remote access (on an arbitrary port 1102) using a slave shell on the second::
+
+    //! Simulation: A real-time simulation with shell access
+
+    platform = org.arl.fjage.RealTimePlatform
+
+    simulate {
+      node '1', address: 1, shell: true, location: [0, 0, 0]
+      node '2', address: 2, remote: 1102, location: [1.km, 0, 0]
+    }
+
+Now start the simulation as above (since we did not specify the lifetime of the simulation, it will run forever, but we can stop it whenever we want). We now have a shell connected to node 1::
+
+    > ps
+    phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+    simulator: SimulationAgent - IDLE
+    node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+    shell: org.arl.fjage.shell.ShellAgent - IDLE
+    >
+
+We find that there are 4 agents running on the node -- physical layer agent, node information agent, shell agent and simulation agent. The physical layer agent simulates an underwater half duplex modem (we will learn to configure it to our liking later). The node information agent provides information about the node (address, location, speed, etc). The shell agent provides a service which is used to interact with the node. The simulation agent is a special agent that allows us to create behaviors for the purposes of simulation (more on this shortly).
+
+.. tip:: The ``shell`` directive can take many values. Setting it to ``false`` provides no shell, while setting it to ``true`` or ``CONSOLE`` provides a console shell. If it is assigned ``TCP(port)`` (e.g. ``shell: TCP(5001)``), or simply a numeric value (e.g. ``shell: 5001``), a TCP/IP shell is enabled on the specified port (accessed using ``telnet hostname 5001``). If it is set to ``GUI``, a GUI shell is opened. Web-based shells may be enabled by setting it to ``WEB(port, context)``. For example, ``shell: WEB(8081, '/1')`` sets up a web shell that is accessed at the URL ``http://hostname:8081/1``.  Multiple values may be combined (e.g. ``shell: [CONSOLE, TCP(5001), WEB(8081, '/1')]``, as required.
+
+Next, let's see if we can communicate between the 2 nodes we have in our simulation. In our previous shell session, subscribe to notifications from the physical layer agent (``phy``) to show all notifications from the agent in the shell::
+
+    > subscribe phy
+
+Then open a slave shell (IDE menu: "Simulation, Open Slave Shell...", hostname: "localhost", port: "1102") to connect to node 2. Send a request to the physical layer agent on node 2 to send a datagram to node 1::
+
+    > phy << new DatagramReq(to: 1, data: [1,2,3])
+    AGREE
+    TxFrameNtf:INFORM[txTime:553940000 type:CONTROL]
+
+We get back an AGREE response from the physical agent, followed by a notification telling us that a control frame was transmitted. If we look back at the shell session that we have open for node 1, we will see that a control frame with our data has been received::
+
+    RxFrameNtf:INFORM[type:CONTROL from:2 to:1 proto:0 rxTime:554606667 (3 bytes)]
+    > ntf.data
+    [1, 2, 3]
+
+The ``ntf`` variable in the shell contains the last notification received. We are therefore able to use it to query the data from the last ``RxFrameNtf``.
+
+We can terminate the simulation by typing ``shutdown`` on either of the telnet shells.
+
+3-node network simulation
+-------------------------
+
+At this point in time, it may be instructive to take a look at the ``samples/rt/3-node-network.groovy`` that we came across in the previous chapter. Recall that this network set up a 3-node network that we could interact with using the telnet shell.
+
+An extract of the ``samples/rt/3-node-network.groovy`` simulation DSL script is shown below::
+
+    //! Simulation: Simple 3-node network
+
+    import org.arl.fjage.*
+
+    platform = RealTimePlatform   // use real-time mode
+
+    simulate {
+      node '1', address: 1, remote: 1101, location: [ 0.km, 0.km, -15.m], shell: true, stack: 'etc/setup'
+      node '2', address: 2, remote: 1102, location: [ 1.km, 0.km, -15.m], shell: 5102, stack: 'etc/setup'
+      node '3', address: 3, remote: 1103, location: [-1.km, 0.km, -15.m], shell: 5103, stack: 'etc/setup'
+    }
+
+Only the comments and a few ``println`` statements have been dropped for conciseness. Most of the script is self-explanatory. However, a couple of points deserve mention:
+
+* The ``remote:`` directive causes each node to use fjåge ``MasterContainer`` rather than the ordinary ``Container`` to run the agents, and to make the container accessible remotely on the specified port. This allows slave containers (e.g. using IDE menu: "Simulation, Open Slave Shell...", or the ``unet sh`` shell script) to connect to the node later.
+* The ``stack:`` directive for each node asks the simulator to use the network stack defined in the ``etc/setup.groovy``. This file sets up the node with a few additional agents -- address resolution, state manager, ranging and remote. You can interact with these agents from the shell. For example, we run the simulation in one terminal window:
+
+.. code-block:: text
+
+    3-node network
+    --------------
+
+    Nodes: 1, 2, 3
+
+    To connect to node 2 or node 3 via telnet:
+      telnet localhost 5102
+      telnet localhost 5103
+
+    To connect to nodes 1, 2 or 3 via unetsh:
+      bin/unet sh localhost 1101
+      bin/unet sh localhost 1102
+      bin/unet sh localhost 1103
+
+    Connected to node 1...
+    Press ^D to exit
+
+    > ps
+    node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+    mac: org.arl.unet.mac.aloha.AlohaACS - IDLE
+    phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+    state: org.arl.unet.state.StateManager - IDLE
+    simulator: SimulationAgent - IDLE
+    arp: org.arl.unet.addr.AddressResolution - IDLE
+    rdp: org.arl.unet.net.RouteDiscoveryProtocol - IDLE
+    remote: org.arl.unet.remote.RemoteControl - IDLE
+    shell: org.arl.fjage.shell.ShellAgent - IDLE
+    link: org.arl.unet.link.ReliableLink - IDLE
+    ranging: org.arl.unet.phy.Ranging - IDLE
+    transport: org.arl.unet.transport.SWTransport - IDLE
+    router: org.arl.unet.net.Router - IDLE
+    > range 2
+    1000.0
+
+We asked for the range to node 2 and got a response saying that the range is 1000 m, as expected. To see the message and datagram exchanges involved, we can subscribe to the physical agent (``phy``) and ranging agent (``ranging``) notifications, and send a request to the ranging agent to measure range to node 2::
+
+    > ranging << new RangeReq(to: 2)
+    AGREE
+    RxFrameNtf:INFORM[type:CONTROL from:2 to:1 protocol:1 rxTime:321784667 txTime:321118000 (7 bytes)]
+    RangeNtf:INFORM[from:2 to:1 Range:1000.0 offset:0 validity:true]
+
+After some physical layer datagram exchanges, we got a ``RangeNtf`` notification back with the range as 1000 m, as expected.
+
+.. tip:: To get to know what commands are available in the telnet shell, type ``help`` at the shell prompt. To get more information about a specific command, type ``help`` followed by the command (e.g. ``help range``).
+
+.. tip:: In the IDE, you can double click on the ``bin/unet sh localhost`` lines to connect a slave shell to the appropriate node.
+
+Ping daemon simulation
+----------------------
+
+In the previous chapter, we developed an agent (ping daemon) and tested it. We used the ``samples/ping/ping-sim.groovy`` simulation DSL script for this. It's time to look at the essential parts of the script and understand how they work::
+
+    //! Simulation: 3-node network with ping daemons
+
+    import org.arl.fjage.*
+
+    platform = RealTimePlatform
+
+    simulate {
+      node '1', address: 1, location: [0, 0, 0], shell: true, stack: { container ->
+        container.add 'ping', new PingDaemon()
+        container.shell.addInitrc "${script.parent}/fshrc.groovy"
+      }
+      node '2', address: 2, location: [1.km, 0, 0], stack: { container ->
+        container.add 'ping', new PingDaemon()
+      }
+      node '3', address: 3, location: [2.km, 0, 0], stack: { container ->
+        container.add 'ping', new PingDaemon()
+      }
+    }
+
+We are already familiar with most of the script directives. The ``node`` directives are used to create 3 nodes with names '1', '2' and '3' and addresses 1, 2 and 3 at 1 km spacing along the *x*-axis. The stack on each node is defined by the closure specified, by adding our ping daemon to the node's container. We also set up a console shell (``shell: true``) on node 1 and customize it by loading an additional initialization script ``fshrc.groovy`` containing the ``ping`` command that we used at the shell prompt in the last chapter.
+
+.. tip:: Fjåge 1.3 and above offers a graphical shell that is quite powerful and easy to use. To use the graphical shell, we simply specify ``shell: GUI`` instead of ``shell: true`` above. Give it a try (simply type "``bin/unet sh 0``" in a terminal to give it a go) ... once you get used to it, you'd probably not want to go back to the console shell!
+
+ALOHA simulation
+----------------
+
+In the :ref:`quickstart` chapter, we have already come across the ALOHA simulation. We next take a look at extracts from the source code of the simulation and understand how they work. The entire source code is available at :ref:`aloha`.
+
+The core ALOHA simulation is implemented by adding a Poisson arrival process behavior (for a specified load) during the startup of each node. When the arrival behavior is triggered on a node, we abort any ongoing transmission/reception at that node and transmit a new physical layer frame to a randomly chosen destination node (excluding itself)::
+
+    //! Simulation: Aloha wireless network
+
+    def nodes = 1..4                      // list of nodes (4 nodes)
+    def T = 2.hours                       // simulate for 2 hours
+
+    simulate T, {
+      // setup each node at origin to ensure no propagation delay between nodes
+      nodes.each { myAddr ->
+        def myNode = node("${myAddr}", address: myAddr, location: [0, 0, 0])
+        myNode.startup = {
+          def phy = agentForService PHYSICAL
+          add new PoissonBehavior(1000*nodes.size()/load, {
+            // drop any ongoing TX/RX and then send frame to random node, except myself
+            phy << new ClearReq()
+            phy << new TxFrameReq(to: rnditem(nodes-myAddr), type: DATA)
+          })
+        }
+      } // each
+    }  // simulate
+
+.. tip:: Either of ``DatagramReq`` or ``TxFrameReq`` could have been used in our simulation. ``DatagramReq`` is a generic transmission request that most agents support.  ``TxFrameReq`` is a special type of ``DatagramReq`` at the physical layer, and provides additional options such as timestamping, etc.
+
+The ``rnditem(list)`` closure allows a random item to be chosen from a list. In the above simulation, the random item is chosen from the set of all ``nodes`` except ``myAddr``. The frame ``type`` used is ``DATA`` since the default throughput statistics computed only considers data frames.
+
+.. tip:: Other convenience closures related to random number generation include ``rnd(min, max)`` which generates a uniformly distributed random number between ``min`` and ``max``, and ``rndint(n)`` which generates a uniformly distributed random number between 0 and ``n-1``.
+
+We wish to simulate this at several different offered loads. To do this, we wrap the ``simulate`` directive in a loop where the load is varied::
+
+    def loadRange = [0.1, 1.5, 0.1]       // min, max, step
+
+    for (def load = loadRange[0]; load <= loadRange[1]; load += loadRange[2]) {
+      simulate T, {
+        :
+        :
+      } // simulate
+    } // for
+
+When we run the simulation, all transmission/reception/drop events are automatically logged (see next section for details), and basic statistics are computed:
+
+.. code-block:: text
+
+    Pure Aloha simulation
+    =====================
+
+    TX Count  RX Count  Loss %    Offered Load  Throughput
+    --------  --------  ------    ------------  ----------
+       628       503     20.1       0.100         0.080
+      1218       814     33.2       0.193         0.129
+      1865      1019     45.4       0.296         0.162
+      2476      1095     55.8       0.393         0.174
+      3098      1145     63.0       0.492         0.182
+      3801      1128     70.3       0.603         0.179
+      4448      1065     76.1       0.706         0.169
+      4956      1016     79.5       0.787         0.161
+      5617       952     83.0       0.892         0.151
+      6499       855     86.9       1.032         0.136
+      6860       799     88.4       1.089         0.127
+      7532       702     90.7       1.196         0.111
+      8191       610     92.5       1.300         0.097
+      8746       536     93.9       1.388         0.085
+      9418       455     95.2       1.495         0.072
+
+    15 simulations completed in 67.510 seconds
+
+The log files are created in the ``logs`` folder. As we have seen previously, we can easily plot the output using the ``samples/aloha/plot-results.groovy`` script.
+
+.. figure:: _static/aloha.png
+   :figclass: align-center
+
+|
+
+Simulation code for other variants of ALOHA (slotted ALOHA and carrier sensing ALOHA) are also available in the ``samples/aloha`` folder.
+
+.. toctree::
+   :hidden:
+
+   aloha-src
+
+
+Logs, traces and statistics
+---------------------------
+
+When a simulation is run, usually two files are produced.
+
+The ``logs/log-0.txt`` file contains detailed text logs from the Java logging framework. The simulation may log additional information to this file using ``log.info()`` or ``log.fine()`` methods. A typical extract of the log file is shown below:
+
+.. code-block:: text
+
+    1405872225089|INFO|org.arl.fjage.shell.GroovyBoot@1:main|fjage Build: fjage-1.3.3/21-07-2014_18:25:33
+    1405872225680|INFO|org.arl.fjage.shell.GroovyBoot@1:main|Running cls://org.arl.unet.sim.initrc
+    1405872225690|INFO|org.arl.fjage.shell.GroovyScriptEngine@9:run|RUN: cls://org.arl.unet.sim.initrc
+    1405872225752|INFO|org.arl.fjage.shell.GroovyBoot@1:main|Running samples/aloha/aloha.groovy
+    1405872225752|INFO|org.arl.fjage.shell.GroovyScriptEngine@9:run|RUN: samples/aloha/aloha.groovy
+    1405872226205|INFO|Script1@9:invoke|Created static node 1 (1) @ [0, 0, 0]
+    1405872226208|INFO|Script1@9:invoke|Created static node 2 (2) @ [0, 0, 0]
+    1405872226210|INFO|Script1@9:invoke|Created static node 3 (3) @ [0, 0, 0]
+    1405872226211|INFO|Script1@9:invoke|Created static node 4 (4) @ [0, 0, 0]
+    1405872226239|INFO|Script1@9:invoke| --- BEGIN SIMULATION #1 ---
+    0|INFO|org.arl.unet.sim.SimulationContainer@9:init|Initializing agents...
+      :
+      :
+    17373|INFO|<3>@19:call|TxFrameNtf:INFORM[txTime:1459471312 type:DATA]
+    36431|INFO|<1>@13:call|TxFrameNtf:INFORM[txTime:3142333581 type:DATA]
+      :
+      :
+    7196508|INFO|<3>@19:call|TxFrameNtf:INFORM[txTime:8638606312 type:DATA]
+    7200000|INFO|Script1@23:call|Stopping simulation...
+      :
+      :
+    1405872230333|INFO|Script1@23:invoke| --- END SIMULATION #1 ---
+
+Note that the timestamp (first column) changes from the clock time to discrete event time (in case of the ``DiscreteEventSimulator`` platform) when the simulation starts, and switches back to clock time when the simulation ends.
+
+A trace file contains information about all packet creation, transmission, reception and drop events. It also contains details of node motion. The default, the trace file format is similar to the `NS2 NAM trace`_, and the trace filename is ``logs/trace.nam``. The tracer also computes basic statistics including queued packet count, transmitted packet count, received packet count, dropped packet count, offered load, actual load, average packet latency and normalized throughput. An extract from the trace file is shown below:
+
+.. code-block:: text
+
+    # BEGIN SIMULATION 1
+    n -t 8.005000 -s 3 -x 0.000000 -y 0.000000 -Z 0.000000 -a 3
+    + -t 8.005000 -s 3 -d 2 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+    - -t 8.005000 -s 3 -d 2 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+    n -t 8.005000 -s 1 -x 0.000000 -y 0.000000 -Z 0.000000 -a 1
+    n -t 8.005000 -s 2 -x 0.000000 -y 0.000000 -Z 0.000000 -a 2
+    n -t 8.005000 -s 4 -x 0.000000 -y 0.000000 -Z 0.000000 -a 4
+    r -t 9.005000 -s 3 -d 2 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+    r -t 9.005000 -s 3 -d 1 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+    r -t 9.005000 -s 3 -d 4 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+    + -t 42.042000 -s 1 -d 2 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+    - -t 42.042000 -s 1 -d 2 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+    r -t 43.042000 -s 1 -d 2 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+    r -t 43.042000 -s 1 -d 4 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+    r -t 43.042000 -s 1 -d 3 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+      :
+      :
+    d -t 584.925000 -s 1 -d 4 -i 259068939 -p 0 -x {1.0 4.0 -1 ------- null} -y CLEAR
+    + -t 584.925000 -s 4 -d 1 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null}
+    - -t 584.925000 -s 4 -d 1 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null}
+    d -t 584.925000 -s 4 -d 1 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null} -y COLLISION
+    d -t 584.925000 -s 4 -d 2 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null} -y COLLISION
+    d -t 584.925000 -s 4 -d 3 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null} -y COLLISION
+    d -t 585.747000 -s 1 -d 2 -i 259068939 -p 0 -x {1.0 4.0 -1 ------- null} -y BAD_FRAME
+    d -t 585.747000 -s 1 -d 3 -i 259068939 -p 0 -x {1.0 4.0 -1 ------- null} -y BAD_FRAME
+      :
+      :
+    # STATS: q=621, t=621, r=506, d=115, O=0.099, L=0.099, D=0.000, T=0.080
+    # END SIMULATION 1
+
+Lines starting with ``n`` log node locations/motion. Lines starting with ``+`` denote packet arrival into the transmit queue. Lines starting with ``-`` log packet removal from the transmit queue, i.e., transmission. Lines starting with ``r`` denote packet reception (or overhearing). Lines starting with ``d`` log packet drops, and specify a reason for the drop. ``CLEAR`` indicates a packet transmission/reception abort due to a ``ClearReq`` request. ``COLLISION`` indicates that the packet was dropped because the node was busy receiving or transmitting another packet. ``BAD_FRAME`` indicates that the packet was corrupted (possibly due to interference from a colliding packet).
+
+The trace can be configured in the simulation script. By default, the trace uses the ``NamTracer`` class to create a ``logs/trace.nam`` file::
+
+    trace = new NamTracer()
+    trace.open('logs/trace.nam')
+
+An alternate class extending the :javadoc:`Tracer <sim/Tracer.html>` abstract class can be specified for custom tracing.
+
+To avoid transient effects, it is common in network simulations to start collecting statistics only after a warmup simulation time. This can be configued in the simulation script::
+
+    trace.warmup = 15.minutes
+
+The tracer can also be queried for statistics during the simulation. For example, the ALOHA sample simulation script prints statistics on the screen at the end of each simulation::
+
+    float loss = trace.txCount ? 100*trace.dropCount/trace.txCount : 0
+    println sprintf('%6d\t\t%6d\t\t%5.1f\t\t%7.3f\t\t%7.3f',
+      [trace.txCount, trace.rxCount, loss, trace.offeredLoad, trace.throughput])
+
+Modem and channel models
+------------------------
+
+In simulation, the physical layer offered by a modem is usually replaced by a simulation model that mimics the behavior of the modem in a given channel. Any agent implementing a PHYSICAL service can be used as a *modem model* in simulation. The model is defined in the simulation script. For example, the default modem model is::
+
+    modem = [ model: org.arl.unet.sim.HalfDuplexModem ]
+
+The ``org.arl.unet.sim.HalfDuplexModem`` class provides a generic implementation of a half-duplex modem that can be used to model many types of underwater modems. The HalfDuplexModem supports two schemes for frames (packets) that it transmits -- CONTROL and DATA. Each scheme is defined by:
+
+* ``dataRate`` -- data rate in bps, after error correction (default: [480, 2048]),
+* ``frameLength`` -- frame length in bytes (default: [18, 36]),
+* ``powerLevel`` -- transmission power level in dB, with respect to a reference source level (default: [0, 0]).
+
+Each of the above parameters are defined as an array of two numbers, the first one for the CONTROL scheme and the second for the DATA scheme. For modems that do not support mutliple frame types, both schemes can be set to have identical parameters. For example::
+
+    modem.dataRate = [800.bps, 2400.bps]
+    modem.frameLength = [16.bytes, 64.bytes]
+    modem.powerLevel = [0.dB, -10.dB]
+
+Apart from the above scheme parameters, the HalfDuplexModem is configured using several other parameters:
+
+* ``preambleDuration`` -- length of frame detection preamble (default: 45.ms),
+* ``headerLength`` -- length of physical layer headers (default: 5.bytes),
+* ``txDelay`` -- delay incurred when a modem switches from receive to transmit mode (default: 50.ms),
+* ``timestampLength`` -- length of timestamp for timestamped packets (default: 2.bytes),
+* ``timestampedTxDelay`` -- delay for scheduling timestamped packet transmission (default: 1500.ms),
+* ``maxPowerLevel`` -- maximum power level supported by modem, in dB re reference level (default: 0)
+* ``minPowerLevel`` -- minimum power level supported by modem, in dB re reference level (default: -48)
+* ``refPowerLevel`` -- reference source level in dB re 1 µPa @ 1m (default: 185)
+
+These parameters are scalars and can be defined in the simulation script, if the defaults are not suitable. For example::
+
+    modem.preambleDuration = 5.ms
+    modem.txDelay = 0
+
+The HalfDuplexModem models the half-duplex nature of the modem, propagation delay, interference, packet detection and packet loss. In order to do this, it uses a *channel model*. Channel models have to implement the :javadoc:`ChannelModel <sim/ChannelModel.html>` interface. The default channel model is the ``org.arl.unet.sim.channels.BasicAcousticChannel``, but can be reconfigured in the simulation script, if desired::
+
+    channel.model = org.arl.unet.sim.channels.ProtocolChannelModel
+
+These parameters of the channel can also be configured in the simulation script::
+
+    channel.communicationRange = 1000.m
+    channel.pDetection = 0.9
+    channel.pDecoding = 0.8
+
+An alternative style to configure the same channel is shown below::
+
+    channel = [
+      model: org.arl.unet.sim.channels.ProtocolChannelModel,
+      communicationRange: 3000.m,
+      pDetection: 0.9,
+      pDecoding: 0.8
+    ]
+
+The next chapter :ref:`channels` describes the available channel models, and also how to create your own simulation channels.
+
+Node mobility
+-------------
+
+Nodes in a simulation may be mobile (e.g. autonomous underwater vehicles). Such nodes are motion models associated with them, to provide appropriate mobility during the simulation. An example of a simple mobile node is shown below::
+
+    def n = node('AUV-1', location: [0, 0, 0], mobility: true)
+    n.motionModel = [speed: 1.mps, heading: 30.deg]
+
+The node defines ``mobility`` to be ``true``. It then sets the motion model for the node such that it moves at 1 m/s at a heading of 30 deg. This would produce linear motion of the node throughout the simulation, starting from the initial location [0, 0, 0] specified when the node is created.
+
+To create a node that goes around in a circle, we could set the turn rate of the node::
+
+    def n = node('AUV-2', location: [0, 0, 0], mobility: true)
+    n.motionModel = [speed: 1.mps, turnRate: 1.dps]
+
+A 1 deg/second turn rate would result in a node that goes around in a circle with a period of 6 minutes. Since the node travels at 1 m/s, the circumference of this circle would be 360 m, or equivalently, the diameter of the circle would be 114.6 m.
+
+More complex motion models can be provided as a list of mission legs with appropriate times/durations and even dive rates. For example::
+
+    def n = node('AUV-3', location: [-50.m, -50.m, 0], mobility: true)
+    n.motionModel = [[time:  0.minutes, heading:  60.deg, speed:       1.mps],
+                     [time:  3.minutes, turnRate:  2.dps, diveRate:  0.1.mps],
+                     [time:  4.minutes, turnRate:  0.dps, diveRate:    0.mps],
+                     [time:  7.minutes, turnRate:  2.dps                    ],
+                     [time:  8.minutes, turnRate:  0.dps                    ],
+                     [time: 11.minutes, turnRate:  2.dps, diveRate: -0.1.mps],
+                     [time: 12.minutes, turnRate:  0.dps, diveRate:    0.mps]]
+
+produces a triangular path. Instead of specifying time, we could have chosen to specify duration::
+
+    def n = node('AUV-3', location: [-50.m, -50.m, 0], mobility: true)
+    n.motionModel = [[duration:  3.minutes, heading:  60.deg, speed:       1.mps],
+                     [duration:  1.minute,  turnRate:  2.dps, diveRate:  0.1.mps],
+                     [duration:  3.minutes, turnRate:  0.dps, diveRate:    0.mps],
+                     [duration:  1.minute,  turnRate:  2.dps                    ],
+                     [duration:  3.minutes, turnRate:  0.dps                    ],
+                     [duration:  1.minute,  turnRate:  2.dps, diveRate: -0.1.mps],
+                     [                      turnRate:  0.dps, diveRate:    0.mps]]
+
+To programatically generate the list of legs, one may provide closures as motion models. Such closures must return a list of legs similar to the above lists. Some standard motion model closures are defined in the ``org.arl.unet.sim.MotionModel`` class. One commonly needed motion model is that of a lawnmower survey path. This can easily be created::
+
+    def n = node('AUV-4', location: [-20.m, -150.m, 0], heading: 0.deg, mobility: true)
+    n.motionModel = MotionModel.lawnmover(speed: 1.mps, leg: 200.m, spacing: 20.m, legs: 10)
+
+Multiple modes of defining motion models can be combined. For example, if we wanted to dive to 30 m before we started the lawnmower survey, and then surface before the end of the mission, we could use a combination of motion models::
+
+    def n = node('AUV-4', location: [-20.m, -150.m, 0], heading: 0.deg, mobility: true)
+
+    // dive to 30m before starting survey
+    n.motionModel = [[duration: 5.minutes, speed: 1.mps, diveRate: 0.1.mps], [diveRate: 0.mps]]
+
+    // then do a lawnmower survey
+    n.motionModel += MotionModel.lawnmover(speed: 1.mps, leg: 200.m, spacing: 20.m, legs: 10)
+
+    // finally, come back to the surface and stop
+    n.motionModel += [[duration: 5.minutes, speed: 1.mps, diveRate: -0.1.mps], [diveRate: 0.mps, speed: 0.mps]]
+
+All of the above motion models are included in the sample simulation script :ref:`mobility`. You can run it to produce a trace file with the motion details logged:
+
+.. code-block:: text
+
+    Motion model simulation
+    =======================
+
+    Simulation AUV-1: Linear motion
+    Simulation AUV-2: Circular motion
+    Simulation AUV-3: Triangular motion (with dive)
+    Simulation AUV-4: Lawnmower survey (with dive)
+
+    You can visualize results by running samples/mobility/plot-tracks.groovy
+
+    4 simulations completed in 2.255 seconds
+
+By default, the node locations are only logged when events such as transmission/reception happen. In our simulation, we have no such events, and so we log the node locations at regular intervals using the following code snippet::
+
+    n.startup = {
+      def nodeinfo = agentForService NODE_INFO
+      trace.moved(nodeinfo.address, nodeinfo.location, null)
+      add new TickerBehavior(10000, {
+        trace.moved(nodeinfo.address, nodeinfo.location, null)
+      })
+    }
+
+The code snippet sets up a behavior that runs every 10 seconds to log the current location of the node in the trace file.
+
+You can easily visualize the AUV tracks using the recommended ``plot-tracks.groovy`` script:
+
+.. figure:: _static/motion.png
+   :figclass: align-center
+
+.. toctree::
+   :hidden:
+
+   mobility-src
+
+Next steps
+----------
+
+Now that you have learned how to set up a simulation, its time to learn about various channel models that can be used to simulate underwater networks. In the next chapter :ref:`channels`, we describe the available channel models, and also outline how one can go about developing new channel models.
+
+.. raw:: html
+
+  <p align="right"><a href="channels.html" class="btn btn-info btn-xs">Channel Models »</a></p>
+
+.. ............................................................................................
+.. _NS2 NAM trace: http://nsnam.isi.edu/nsnam/index.php/NS-2_Trace_Formats#NAM_Trace_Formats
+.. ............................................................................................

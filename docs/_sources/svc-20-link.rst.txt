@@ -1,0 +1,28 @@
+.. _svclink:
+
+Link
+====
+
+Service
+-------
+
+`Link`_ -- Link service
+
+Agents offering the *Link* service provide single-hop communication. Single-hop here refers to a single hop in the Unet sense. For example, a link may be provided over wireless RF network that has multiple physical hops (e.g. using UDP/IP). However, as long as the link does not pass through multiple Unet nodes, it is considered a logically single-hop link.
+
+All agents supporting this service support the :ref:`svcdatagram` service.
+
+Agents offering a reliable link advertise it using the optional datagram service capability `RELIABILITY`_.
+
+Implementations
+---------------
+
+* `UdpLink`_ -- provides a reliable link over a UDP/IP network
+* `ReliableLink`_ -- provides a reliable link using any :ref:`svcphy` service
+
+.. .........................................................................................................
+.. _Link:              javadoc/org/arl/unet/Services.html#LINK
+.. _RELIABILITY:       javadoc/org/arl/unet/DatagramCapability.html#RELIABILITY
+.. _UdpLink:           javadoc/org/arl/unet/link/UdpLink.html
+.. _ReliableLink:      javadoc/org/arl/unet/link/ReliableLink.html
+.. .........................................................................................................

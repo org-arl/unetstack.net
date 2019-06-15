@@ -1,0 +1,22 @@
+.jumbotron {
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0.0) 0%,rgba(255,255,255,0.5) 100%), url('../_static/water.jpg');
+  background-position: 0% 35%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+code {
+  background-color: transparent;
+}
+
+footer {
+  font-size: 70%;
+}
+
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif!important;
+}
+
+h1, .h1 {
+  font-weight: 700;
+}

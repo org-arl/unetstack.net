@@ -1,0 +1,340 @@
+.. _defstack:
+
+The Default Stack
+=================
+
+.. highlight:: text
+
+The default network stack is defined in the ``etc/initrc.groovy`` file. We check the currently running agents in a UnetStack shell session::
+
+    > ps
+    node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+    mac: org.arl.unet.mac.aloha.AlohaACS - IDLE
+    phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+    state: org.arl.unet.state.StateManager - IDLE
+    simulator: SimulationAgent - IDLE
+    arp: org.arl.unet.addr.AddressResolution - IDLE
+    rdp: org.arl.unet.net.RouteDiscoveryProtocol - IDLE
+    remote: org.arl.unet.remote.RemoteControl - IDLE
+    shell: org.arl.fjage.shell.ShellAgent - IDLE
+    link: org.arl.unet.link.ReliableLink - IDLE
+    ranging: org.arl.unet.phy.Ranging - IDLE
+    transport: org.arl.unet.transport.SWTransport - IDLE
+    router: org.arl.unet.net.Router - IDLE
+
+.. topic:: Note
+
+  All examples in this chapter are based on the 3-node sample network simulation (``samples/rt/3-node-network.groovy``). Unless specified, the shell session is that connected to node 1 (on the console, when the simulation is started).
+
+Appropriate closures are loaded in the shell to allow easy interaction with these agents. All the available commands and closures can be listed using the ``help`` command in the UnetStack shell::
+
+    > help
+    help [topic] - provide help on a specified topic
+    ps - list all the agents running on the local container
+    exit - terminate the current shell session
+    who - display list of variables in workspace
+    run - run a Groovy script
+    println - display message on console
+    delay - delay execution by the specified number of milliseconds
+    shutdown - shutdown the local platform
+    logLevel - set loglevel (optionally for a named logger)
+    subscribe - subscribe to notifications from a named topic
+    unsubscribe - unsubscribe from notifications for a named topic
+    shellImport - add specified package/classes to list of imports
+    agent - return an agent id for the named agent
+    agentForService - find an agent id providing the specified service
+    agentsForService - get a list of all agent ids providing the specified service
+    send - send the given message
+    request - send the given request and wait for a response
+    receive - wait for a message
+    mac - access to MAC agent
+    host - resolve hostname to address
+    ver - version information
+    time - current platform time in milliseconds
+    rps - list all the agents running on remote containers with shells
+    rtime - show platform time on all remote containers with shells
+    rtimesync - sync local container time to all remote containers
+    rlog - log message only all local/remote containers with shells
+    save - save a data array to a file
+    load - load an integer data array from a file
+    distance - compute distance between two points
+    logs - list log files
+    clrlogs - clear old log files
+    rlogs - list remote log files
+    rclrlogs - clear old log files on all remote containers
+    link - access to link agent
+    router - access to routing agent
+    routes - print routing table
+    addroute - add a route to the routing table
+    delroute - delete a route from the routing table
+    delroutesto - delete all routes to specified node from the routing table
+    rdp - access to route discovery protocol agent
+    rreq - initiate route discovery
+    trace - trace route
+    node - access to node information agent
+    phy - access to physical layer agent
+    ranging - access to ranging agent
+    range - get ranging information from a node
+    beacon - send a time stamped beacon (broadcast or to a node)
+    remote - access to remote agent
+    rnode - to create proxy of remote node
+    tell - send a text message to another node
+    fput - transfer a file to a remote node
+    fget - transfer a file from a remote node
+    savestate - save state of all or specified agent in Groovy script format
+    transport - access to transport agent
+    abort - abort all transport datagram transfers
+
+.. tip:: Further help on individual topics can be obtained by typing ``help`` followed by the name of the command or topic.
+
+In this chapter, we take a look at commonly used commands and messages for various stack agents.
+
+Address resolution
+------------------
+
+The address resolution agent helps assign an address to a node, and also to resolve an address given the node name. The default implementation uses a simple hashing function to map names to addresses.
+
+The simple hash mechanism has the advantage that it requires no network traffic for name resolution, but has the potential for *hash collisions*, where two names may map to the same address. In the current implementation, the user has to ensure that collisions do not occur in a deployed network by checking the addresses of each named node prior to deployment. More sophisticated address resolution agents may choose to maintain a central or distributed database of name-address mappings, thus avoiding this problem.
+
+To resolve a name to an address, simply use the ``host`` closure::
+
+    > host 'gwbuoy'
+    24
+    > host 'redstar-auv'
+    115
+
+When a node starts, if the node address is not specified, the node information agent obtains an address (based on the specified node name) from the address resolution agent.
+
+Medium access control
+---------------------
+
+The medium access control (MAC) agent helps control access to the channel, thereby managing contention and collision. The default stack uses an ``org.arl.unet.mac.aloha.AlohaACS`` MAC agent that senses the medium for transmissions from other nodes and tries to reduce collision using random backoff. To provide low-latency access to the channel, the agent estimates the traffic in the channel and adapts its backoff strategy accordingly. When the channel is busy, all nodes use longer backoffs. When the channel is not highly contended, nodes are able to transmit without waiting.
+
+The ``org.arl.unet.mac.aloha.AlohaACS`` MAC is default in the ``etc/setup.groovy`` that is included in the download package. As an alterative to ``AlohaACS``, a MACA-based MAC agent (``org.arl.unet.mac.maca.Maca``) is also included in the stack. To enable it, one would edit the ``etc/setup.groovy`` and comment out the ``AlohaACS`` agent and uncomment the ``Maca`` agent. The MACA implementation provides several underwater optimizations such as early-ACK, multi-ACK, etc as described in Shahabudeen et al (2014) [1]_.
+
+Reliable acoustic link
+----------------------
+
+We are already familiar with the physical agent from previous chapters. A link agent typically uses a physical agent to provide a reliable datagram delivery service, with some degree of fragmentation and reassembly. The link agent also honors the current MAC protocol (*AlohaACS* in the default stack), if a MAC service agent is available. To see how this works, let us first check the MTU for the CONTROL and DATA channels for the physical agent::
+
+    > phy[CONTROL].MTU
+    16
+    > phy[DATA].MTU
+    128
+
+Next, let us check the default parameters used by the link agent::
+
+    > link
+    link
+    ----
+    MTU = 2000
+    dataChannel = 1
+    mac = mac
+    maxPropagationDelay = 2.5
+    maxRetries = 3
+    phy = phy
+    reservationGuardTime = 0.5
+
+We see that the DATA channel (channel #1) is used by the link agent for transmitting its PDUs. We also note that the MTU of the link agent is much larger than that of the physical agent's DATA channel. This is because the link agent supports fragmentation-reassembly. To see this, let us open another shell session to node 2 (open a slave shell and connect to ``localhost:1102``) and subscribe to the physical and link agent notifications::
+
+    > subscribe phy
+    > subscribe link
+
+Next, send a datagram from node 1 to node 2 using the link agent. To do this, on node 1::
+
+    > link << new DatagramReq(to: 2, data: new byte[64])
+    AGREE
+
+Since our datagram is 64 bytes (larger than the MTU of the physical agent), we expect a number of physical layer datagrams to be necessary for the data transfer. The shell session to node 2 will confirm this::
+
+    RxFrameNtf:INFORM[type:DATA from:1 to:2 protocol:2 rxTime:1362851667 (32 bytes)]
+    RxFrameNtf:INFORM[type:DATA from:1 to:2 protocol:2 rxTime:1363088667 (32 bytes)]
+    RxFrameNtf:INFORM[type:DATA from:1 to:2 protocol:2 rxTime:1363326667 (9 bytes)]
+    DatagramNtf:INFORM[from:1 to:2 protocol:0 (64 bytes)]
+
+The first three ``RxFrameNtf`` notifications are from the physical agent. The last ``DatagramNtf`` notification is the resulting reassembled datagram notification from the link agent. Next, let us see what happens if we transmit a reliable datagram from node 1::
+
+    > link << new DatagramReq(to: 2, data: new byte[64], reliability: true)
+    AGREE
+    DatagramDeliveryNtf:INFORM[to:2]
+
+We see that we get back a ``DatagramDeliveryNtf`` once the datagram is delivered to node 1. We do not see the underlying physical layer datagrams since we are not subscribed to the physical agent's notification topic in this shell.
+
+.. tip:: Throughout the rest of this chapter, unless otherwise specified, we assume only default subscriptions to avoid clutter from lower layer notifications. However, a reader interested in the message exchange at lower layers may wish to subscribe to those agent's notifications to study the message exchanges.
+
+Routing
+-------
+
+Several closures are available to interact with the routing agents. We will make use of them to demonstrate how routing works. Initially, the routing table on all nodes are empty::
+
+    > routes
+    >
+
+Let us first take a look at the settings of the routing agent::
+
+    > router
+    router
+    ------
+    MTU = 1997
+    auto1hop = true
+    defaultLink = link
+
+The ``auto1hop`` parameter assumes that if a route to a destination is not available in the routing table, the agent should try a direct (1-hop) transmission to the destination. So, if we transmit a datagram using the routing agent when the routing table is empty, a delivery will be attempted directly to the intended destination. The ``defaultLink`` parameter controls which datagram service provider (typically a link agent) to use, if no explicit agent is specified in the routing table. The default setting of ``link`` means that the 'link' agent will be used by default.
+
+Now, let us send a datagram to node 3::
+
+    > router << new DatagramReq(to: 3, data: [1,2,3])
+    AGREE
+
+If we had a shell session on node 3 (slave shell connected to ``localhost:1103``), and we were subscribed to notifications from ``router``, we would see::
+
+    > subscribe router
+    DatagramNtf:INFORM[from:1 to:3 protocol:0 (3 bytes)]
+
+Let us next add a route from node 1 to node 3 via node 2. On node 1::
+
+    > addroute 3,2
+    > routes
+    1: to 3 via link/2 [reliable, hops: 0, metric: 1.0]
+
+This shows that a route to node 3 has been added. To transmit a datagram to node 3, the 'link' agent will be used along with the next hop set to node 2. A reliable link will be used. The total number of hops to node 3 is unknown (for discovered routes, this would automatically be filled in). Now, if we send a datagram to node 3, it would go through a 2-hop route from node 1-2-3. To see this, let's run a trace from node 1::
+
+    > trace 3
+    [1, 2, 3, 1]
+
+The trace shows that the datagram from 1 to 3 passed through node 2, but the reply from 3 to 1 came directly.
+
+Next, we see how the route discovery works. For this, on node 1, let us first delete the routes to node 3 from our routing table, and then initiate a route discovery to node 3::
+
+    > delroutesto 3
+    > rreq 3
+    AGREE
+    RouteDiscoveryNtf:INFORM[to:3 nextHop:3 link:link reliability:true hops:1 route:1-3]
+    RouteDiscoveryNtf:INFORM[to:2 nextHop:2 link:link reliability:true hops:1]
+    RouteDiscoveryNtf:INFORM[to:2 nextHop:2 link:link reliability:true hops:1]
+    RouteDiscoveryNtf:INFORM[to:3 nextHop:2 link:link reliability:true hops:2 route:1-2-3]
+    RouteDiscoveryNtf:INFORM[to:3 nextHop:3 link:link reliability:true hops:1 route:1-3]
+    RouteDiscoveryNtf:INFORM[to:2 nextHop:2 link:link reliability:true hops:1]
+    RouteDiscoveryNtf:INFORM[to:2 nextHop:2 link:link reliability:true hops:1]
+    RouteDiscoveryNtf:INFORM[to:3 nextHop:2 link:link reliability:true hops:2 route:1-2-3]
+    RouteDiscoveryNtf:INFORM[to:2 nextHop:2 link:link reliability:true hops:1]
+    RouteDiscoveryNtf:INFORM[to:3 nextHop:3 link:link reliability:true hops:1 route:1-3]
+    RouteDiscoveryNtf:INFORM[to:2 nextHop:2 link:link reliability:true hops:1]
+    RouteDiscoveryNtf:INFORM[to:3 nextHop:2 link:link reliability:true hops:2 route:1-2-3]
+    > routes
+    1: to 3 via link/3 [reliable, hops: 1, metric: 3.0]
+    2: to 2 via link/2 [reliable, hops: 1, metric: 6.0]
+    3: to 3 via link/2 [reliable, hops: 2, metric: 2.5500002]
+
+The route discovery protocol uses multiple probe packets to test reliability of routes. We see this in repeated routes that are discovered. At the end of the procedure, we have a routing table with routes to nodes 2 and 3. Although we have two possible routes to node 3 (one direct, and another via node 2), we see that the direct route has a higher metric and a lower hop count. When transmitting datagrams to node 3, this route will be used::
+
+    > trace 3
+    [1, 3, 1]
+
+Although node 1 initiated the routing request, other nodes also update their routing tables based on the probes they see. To see this, we can open a shell to node 2 and check its routing table::
+
+    > routes
+    1: to 1 via link/1 [reliable, hops: 1, metric: 6.0]
+    2: to 3 via link/3 [reliable, hops: 1, metric: 3.0]
+
+We see that node 2 has discovered one-hop routes to nodes 1 and 3.
+
+Transport
+---------
+
+The transport agent provides end-to-end reliability and fragmentation-reassembly over a multi-hop route. Just like the lower layer agents, it provides a datagram service, but with a much larger MTU and with support for multi-hop delivery::
+
+    > transport
+    transport
+    ---------
+    MTU = 65535
+    link = router
+    maxRetries = 2
+    reportProgress = false
+    timeout = 60.0
+
+    > transport << new DatagramReq(to: 2, data: new byte[4096], reliability: true)
+    AGREE
+    DatagramDeliveryNtf:INFORM[to:2]
+
+Note that, in the above example, the ``DatagramDeliveryNtf`` may take several minutes.
+
+Remote access
+-------------
+
+The remote access agent provides several application services such as chat, file transfer, etc. It also allows remote agent properties to be accessed/changed and scripts to be run remotely. All of this can be done using messages, or equivalently, using closures provided in the shell for ease of use. Let us start with a simple 'chat' between two nodes. To do this, we open shell sessions to two nodes (node 1 and 2) and subscribe to notifications from the remote agent on both nodes::
+
+    > subscribe remote
+
+To send a text message from node 1 to node 2, at the shell on node 1::
+
+    > tell 2, 'hello'
+    AGREE
+
+And you'll see on node 2::
+
+    RemoteTextNtf:INFORM[from: 1 text: 'hello']
+
+If we wish to transfer a file 'abc.txt' from node 1 to node 2, we can send it from node 1::
+
+    > fput 'abc.txt', 2
+    AGREE
+
+The transfer will continue in the background. Alternatively, we can retreive it using a shell on node 2::
+
+    > fget 1, 'abc.txt'
+    FILE TRANSFERRED
+
+To access remote agent properties or execute scripts on remote nodes, a simple syntax is provided through the use of remote node proxies. To create a proxy for a remote node 2 on node 1::
+
+    > n2 = rnode 2
+    Remote node 2
+
+Now, we can use similar syntax as local agents to access properties::
+
+    > n2.phy.MTU
+    RemoteParamNtf:INFORM[MTU: 16]
+    > n2.link.maxRetries
+    RemoteParamNtf:INFORM[maxRetries: 2]
+    > n2.link.maxRetries = 3;
+    > n2.link.maxRetries
+    RemoteParamNtf:INFORM[maxRetries: 3]
+
+If we have a Groovy script ``abc.groovy`` on node 2, we can invoke it from node 1::
+
+    > n2.abc()
+    OK
+
+We can also directly invoke commands on node 2::
+
+    > n2 << 'log.info "executed a command on node 2"'
+    OK
+    >
+    > subscribe remote
+    > n2 << 'tell 1, "hello"'
+    OK
+    RemoteTextNtf:INFORM[from: 2 text: 'hello']
+
+To access multiple parameters through a single call, the message syntax can be directly used::
+
+    > remote << new RemoteGetParamReq(to: 2, remoteAgentID: phy).get(PhysicalParam.time).get(PhysicalParam.rxEnable)
+    AGREE
+    RemoteParamNtf:INFORM[rxEnable: true time: 1398132000]
+
+Next steps
+----------
+
+You can find more documentation on the available agents, services, capabilities, messages and parameters in the :ref:`agentref` chapter. Recipes for many common tasks are provided in the :ref:`cookbook` chapter. You may also wish to explore the `samples` folder for more examples to give you ideas.
+
+.. raw:: html
+
+  <p align="right"><a href="cookbook.html" class="btn btn-info btn-xs">Cookbook »</a></p>
+
+
+.. References
+.. ----------
+
+.. |nbsp| unicode:: 0xA0
+   :trim:
+
+.. [1] |nbsp| S. Shahabudeen, M. Motani, and M. Chitre, “`Analysis of a high performance MAC protocol for underwater acoustic networks <http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Shiraz2013a.pdf>`_,” IEEE Journal of Oceanic Engineering, vol. 39, no. 1, pp. 74-89, 2014.

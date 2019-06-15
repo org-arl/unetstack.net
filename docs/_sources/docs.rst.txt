@@ -1,0 +1,105 @@
+.. _docs:
+
+UnetStack Documentation
+=======================
+
+Overviews
+---------
+
+.. sidebar:: Video Tutorials
+
+  (slighly outdated, but still useful)
+
+  * `Video tutorial (part I): Getting started <http://www.youtube.com/watch?v=0EVlYz10lao>`_
+  * `Video tutorial (part II): Developing Unet agents <http://www.youtube.com/watch?v=dprJPdrf_m8>`_
+  * `Video tutorial (part III): Simulating underwater networks <http://www.youtube.com/watch?v=ybVWh2Yaw8w>`_
+  * `Video tutorial: The default network stack <http://www.youtube.com/watch?v=OFBXgebl8Nc>`_
+
+If you've just started, a few quick overviews are recommended:
+
+* `Unet Project Overview <overview.html>`_
+* :ref:`UnetStack`
+* :ref:`UnetSim`
+
+For a detailed overview, you may wish to read:
+
+* `UnetStack: an Agent-based Software Stack and Simulator for Underwater Networks <http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Oceans14unetstack.pdf>`_
+
+Getting Started
+---------------
+
+We have some great introductory material to get you going:
+
+* :ref:`quickstart`
+
+Since the UnetStack implementation is based on the fjåge agent framework, it will be useful to understand a little about developing agents. If you are not already familiar with it, we recommend browsing through the :fjage:`Fjåge Developer's Guide <doc/html>`. In particular, we recommend reading the following chapters:
+
+* :fjage:`Introduction <doc/html/introduction.html>`
+* :fjage:`Agents and Behaviors <doc/html/behaviors.html>`
+* :fjage:`Messaging <doc/html/messages.html>`
+
+While the UnetStack agents can be developed in Java or Groovy, we find that the Groovy syntax is simpler and cleaner. Moreover, simulation scripts and shell interaction is in Groovy, and therefore being familiar with Groovy is useful. We will be using the Groovy syntax for code samples throughout the documentation. If you prefer to use pure Java for developing agents, you're of course welcome to do so, but we highly recommend that you be familiar with the `Groovy <http://groovy.codehaus.org/>`_ syntax.
+
+Developer Documentation
+-----------------------
+
+.. sidebar:: Support Forum & Contributions
+
+  If you can't find an answer to your question here, please post questions on `Stack Overflow <https://stackoverflow.com/questions/tagged/unetstack>`_ with the "unetstack" tag to seek help.
+
+  An `archived of the old support forum <http://www.unetstack.net/support>`_ is available for reference. Although this forum is no longer is use (we switched over to Stack Overflow), there are some useful discussions there that may be interest.
+
+  If you have any suggestions, feature requests or bug reports, you can `submit <https://github.com/org-arl/unet-contrib/issues>`_ them. Also, if you have documentation or code to `contribute <http://contrib.unetstack.net/>`_, such contributions are most welcome!
+
+.. toctree::
+   :maxdepth: 2
+
+   devguide
+
+* `Java/Groovy API documentation <javadoc/index.html>`_
+* List of supported :ref:`modems`
+
+APIs
+----
+
+While Java and Groovy are great for developing agents and extending UnetStack, sometimes you want to interface with other languages such as Python and C. We have open source APIs that allow UnetStack to be accessed from these languages:
+
+* `Python API <https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-Python-API>`_ and `Python API tutorial <_static/python-gateway-tutorial.html>`_
+* `C API <https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-C-API>`_
+
+If you need to develop APIs for other languages, the underlying JSON protocol can be directly used with interact with UnetStack.
+
+Tutorials and Howtos
+--------------------
+
+.. toctree::
+   :hidden:
+
+   mac
+
+* A tutorial on :ref:`mac` (MAC)
+
+Release Notes
+-------------
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   relnotes-*
+
+External Documentation
+----------------------
+
+* :fjage:`Fjåge Developer's Guide <doc/html>`
+* :fjage:`Fjåge API documentation <javadoc>`
+* `Groovy home page <http://groovy.codehaus.org/>`_
+
+Useful Publications
+-------------------
+
+* M. Chitre, I. Topor, and T.-B. Koay, “`The UNET-2 modem -- an extensible tool for underwater networking research <http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Chitre2012ys.pdf>`_,” in Proceedings of IEEE OCEANS'12 Yeosu, Korea, May 2012.
+* M. Chitre, R. Bhatnagar, and W.-S. Soh, “`UnetStack: an Agent-based Software Stack and Simulator for Underwater Networks <http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Oceans14unetstack.pdf>`_,” in Proceedings of IEEE OCEANS'14 St. John's, Newfoundland, September 2014.
+* M. Chitre, R. Bhatnagar, M. Ignatius, and S. Suman, “`Baseband Signal Processing with UnetStack <http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/sdmodem.pdf>`_,” in Proceedings of Underwater Communications Networking 2014, Italy, September 2014.
+
+|

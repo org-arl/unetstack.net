@@ -1,0 +1,624 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Running Simulations &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="samples/aloha/aloha.groovy" href="aloha-src.html" />
+    <link rel="prev" title="Developing Agents" href="unet-agents.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="running-simulations">
+<span id="simdsl"></span><h1>Running Simulations<a class="headerlink" href="#running-simulations" title="Permalink to this headline">¶</a></h1>
+<p>In the last chapter, we learned how to develop agents for the UnetStack. In this chapter, we will learn how to set up network simulations using standard agents, as well as using your own agents.</p>
+<div class="section" id="simulation-dsl">
+<h2>Simulation DSL<a class="headerlink" href="#simulation-dsl" title="Permalink to this headline">¶</a></h2>
+<p>Simulations are set up using simulation scripts that are essentially Groovy scripts, but written in a specially designed domain-specific language (DSL). To understand how the DSL works, let’s write a trivial simulation that runs for 1 hour with 2 nodes 1 km apart transmitting nothing!</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: A very simple discrete-event simulation</span>
+
+<span class="n">simulate</span> <span class="mi">1</span><span class="o">.</span><span class="na">hour</span><span class="o">,</span> <span class="o">{</span>
+  <span class="n">node</span> <span class="s1">&#39;1&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+  <span class="n">node</span> <span class="s1">&#39;2&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">The first line has a shebang (<code class="docutils literal"><span class="pre">//!Simulation</span></code>) marks the script as a simulation. This line must be present in every simulation script so that the IDE and the <code class="docutils literal"><span class="pre">unet</span></code> script recognize and run it appropriately.</p>
+</div>
+<p>Save this file as <code class="docutils literal"><span class="pre">trivial-sim.groovy</span></code> and run it:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>1 simulation completed in 0.50 seconds
+</pre></div>
+</div>
+<p>Notice that although our simulation was for 1 hour, it took only a fraction of a second to complete! The simulator runs by default with the <code class="docutils literal"><span class="pre">DiscreteEventSimulator</span></code> platform, which allows simulations to run potentially much faster than real time. However, if you wish to run a simulation at real-time speed, then you can do so by changing the platform to the <code class="docutils literal"><span class="pre">RealTimePlatform</span></code>:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: A very simple real-time simulation</span>
+
+<span class="n">platform</span> <span class="o">=</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">fjage</span><span class="o">.</span><span class="na">RealTimePlatform</span>
+
+<span class="n">simulate</span> <span class="mi">1</span><span class="o">.</span><span class="na">hour</span><span class="o">,</span> <span class="o">{</span>
+  <span class="n">node</span> <span class="s1">&#39;1&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+  <span class="n">node</span> <span class="s1">&#39;2&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now, if you run the simulation and have the patience to wait, it will take 1 hour to complete!</p>
+<p>Our simulation so far didn’t really do anything useful. However, we can set up a shell on each node and interact with the nodes in real-time mode. Let’s modify our <code class="docutils literal"><span class="pre">trivial-sim.groovy</span></code> to enable the shell on the first node, and allow remote access (on an arbitrary port 1102) using a slave shell on the second:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: A real-time simulation with shell access</span>
+
+<span class="n">platform</span> <span class="o">=</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">fjage</span><span class="o">.</span><span class="na">RealTimePlatform</span>
+
+<span class="n">simulate</span> <span class="o">{</span>
+  <span class="n">node</span> <span class="s1">&#39;1&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">shell:</span> <span class="kc">true</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+  <span class="n">node</span> <span class="s1">&#39;2&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">remote:</span> <span class="mi">1102</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now start the simulation as above (since we did not specify the lifetime of the simulation, it will run forever, but we can stop it whenever we want). We now have a shell connected to node 1:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">ps</span>
+<span class="nl">phy:</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">sim</span><span class="o">.</span><span class="na">HalfDuplexModem</span> <span class="o">-</span> <span class="n">IDLE</span>
+<span class="nl">simulator:</span> <span class="n">SimulationAgent</span> <span class="o">-</span> <span class="n">IDLE</span>
+<span class="nl">node:</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">nodeinfo</span><span class="o">.</span><span class="na">NodeInfo</span> <span class="o">-</span> <span class="n">IDLE</span>
+<span class="nl">shell:</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">fjage</span><span class="o">.</span><span class="na">shell</span><span class="o">.</span><span class="na">ShellAgent</span> <span class="o">-</span> <span class="n">IDLE</span>
+<span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>We find that there are 4 agents running on the node – physical layer agent, node information agent, shell agent and simulation agent. The physical layer agent simulates an underwater half duplex modem (we will learn to configure it to our liking later). The node information agent provides information about the node (address, location, speed, etc). The shell agent provides a service which is used to interact with the node. The simulation agent is a special agent that allows us to create behaviors for the purposes of simulation (more on this shortly).</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">The <code class="docutils literal"><span class="pre">shell</span></code> directive can take many values. Setting it to <code class="docutils literal"><span class="pre">false</span></code> provides no shell, while setting it to <code class="docutils literal"><span class="pre">true</span></code> or <code class="docutils literal"><span class="pre">CONSOLE</span></code> provides a console shell. If it is assigned <code class="docutils literal"><span class="pre">TCP(port)</span></code> (e.g. <code class="docutils literal"><span class="pre">shell:</span> <span class="pre">TCP(5001)</span></code>), or simply a numeric value (e.g. <code class="docutils literal"><span class="pre">shell:</span> <span class="pre">5001</span></code>), a TCP/IP shell is enabled on the specified port (accessed using <code class="docutils literal"><span class="pre">telnet</span> <span class="pre">hostname</span> <span class="pre">5001</span></code>). If it is set to <code class="docutils literal"><span class="pre">GUI</span></code>, a GUI shell is opened. Web-based shells may be enabled by setting it to <code class="docutils literal"><span class="pre">WEB(port,</span> <span class="pre">context)</span></code>. For example, <code class="docutils literal"><span class="pre">shell:</span> <span class="pre">WEB(8081,</span> <span class="pre">'/1')</span></code> sets up a web shell that is accessed at the URL <code class="docutils literal"><span class="pre">http://hostname:8081/1</span></code>.  Multiple values may be combined (e.g. <code class="docutils literal"><span class="pre">shell:</span> <span class="pre">[CONSOLE,</span> <span class="pre">TCP(5001),</span> <span class="pre">WEB(8081,</span> <span class="pre">'/1')]</span></code>, as required.</p>
+</div>
+<p>Next, let’s see if we can communicate between the 2 nodes we have in our simulation. In our previous shell session, subscribe to notifications from the physical layer agent (<code class="docutils literal"><span class="pre">phy</span></code>) to show all notifications from the agent in the shell:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">subscribe</span> <span class="n">phy</span>
+</pre></div>
+</div>
+<p>Then open a slave shell (IDE menu: “Simulation, Open Slave Shell…”, hostname: “localhost”, port: “1102”) to connect to node 2. Send a request to the physical layer agent on node 2 to send a datagram to node 1:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">DatagramReq</span><span class="o">(</span><span class="nl">to:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">data:</span> <span class="o">[</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">])</span>
+<span class="n">AGREE</span>
+<span class="nl">TxFrameNtf:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">txTime:</span><span class="mi">553940000</span> <span class="nl">type:</span><span class="n">CONTROL</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>We get back an AGREE response from the physical agent, followed by a notification telling us that a control frame was transmitted. If we look back at the shell session that we have open for node 1, we will see that a control frame with our data has been received:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="nl">RxFrameNtf:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">type:</span><span class="n">CONTROL</span> <span class="nl">from:</span><span class="mi">2</span> <span class="nl">to:</span><span class="mi">1</span> <span class="nl">proto:</span><span class="mi">0</span> <span class="nl">rxTime:</span><span class="mi">554606667</span> <span class="o">(</span><span class="mi">3</span> <span class="n">bytes</span><span class="o">)]</span>
+<span class="o">&gt;</span> <span class="n">ntf</span><span class="o">.</span><span class="na">data</span>
+<span class="o">[</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">ntf</span></code> variable in the shell contains the last notification received. We are therefore able to use it to query the data from the last <code class="docutils literal"><span class="pre">RxFrameNtf</span></code>.</p>
+<p>We can terminate the simulation by typing <code class="docutils literal"><span class="pre">shutdown</span></code> on either of the telnet shells.</p>
+</div>
+<div class="section" id="node-network-simulation">
+<h2>3-node network simulation<a class="headerlink" href="#node-network-simulation" title="Permalink to this headline">¶</a></h2>
+<p>At this point in time, it may be instructive to take a look at the <code class="docutils literal"><span class="pre">samples/rt/3-node-network.groovy</span></code> that we came across in the previous chapter. Recall that this network set up a 3-node network that we could interact with using the telnet shell.</p>
+<p>An extract of the <code class="docutils literal"><span class="pre">samples/rt/3-node-network.groovy</span></code> simulation DSL script is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Simple 3-node network</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+
+<span class="n">platform</span> <span class="o">=</span> <span class="n">RealTimePlatform</span>   <span class="c1">// use real-time mode</span>
+
+<span class="n">simulate</span> <span class="o">{</span>
+  <span class="n">node</span> <span class="s1">&#39;1&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">remote:</span> <span class="mi">1101</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span> <span class="mi">0</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="o">-</span><span class="mi">15</span><span class="o">.</span><span class="na">m</span><span class="o">],</span> <span class="nl">shell:</span> <span class="kc">true</span><span class="o">,</span> <span class="nl">stack:</span> <span class="s1">&#39;etc/setup&#39;</span>
+  <span class="n">node</span> <span class="s1">&#39;2&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">remote:</span> <span class="mi">1102</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span> <span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="o">-</span><span class="mi">15</span><span class="o">.</span><span class="na">m</span><span class="o">],</span> <span class="nl">shell:</span> <span class="mi">5102</span><span class="o">,</span> <span class="nl">stack:</span> <span class="s1">&#39;etc/setup&#39;</span>
+  <span class="n">node</span> <span class="s1">&#39;3&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">3</span><span class="o">,</span> <span class="nl">remote:</span> <span class="mi">1103</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="o">-</span><span class="mi">15</span><span class="o">.</span><span class="na">m</span><span class="o">],</span> <span class="nl">shell:</span> <span class="mi">5103</span><span class="o">,</span> <span class="nl">stack:</span> <span class="s1">&#39;etc/setup&#39;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Only the comments and a few <code class="docutils literal"><span class="pre">println</span></code> statements have been dropped for conciseness. Most of the script is self-explanatory. However, a couple of points deserve mention:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">remote:</span></code> directive causes each node to use fjåge <code class="docutils literal"><span class="pre">MasterContainer</span></code> rather than the ordinary <code class="docutils literal"><span class="pre">Container</span></code> to run the agents, and to make the container accessible remotely on the specified port. This allows slave containers (e.g. using IDE menu: “Simulation, Open Slave Shell…”, or the <code class="docutils literal"><span class="pre">unet</span> <span class="pre">sh</span></code> shell script) to connect to the node later.</li>
+<li>The <code class="docutils literal"><span class="pre">stack:</span></code> directive for each node asks the simulator to use the network stack defined in the <code class="docutils literal"><span class="pre">etc/setup.groovy</span></code>. This file sets up the node with a few additional agents – address resolution, state manager, ranging and remote. You can interact with these agents from the shell. For example, we run the simulation in one terminal window:</li>
+</ul>
+<div class="highlight-text"><div class="highlight"><pre><span></span>3-node network
+--------------
+
+Nodes: 1, 2, 3
+
+To connect to node 2 or node 3 via telnet:
+  telnet localhost 5102
+  telnet localhost 5103
+
+To connect to nodes 1, 2 or 3 via unetsh:
+  bin/unet sh localhost 1101
+  bin/unet sh localhost 1102
+  bin/unet sh localhost 1103
+
+Connected to node 1...
+Press ^D to exit
+
+&gt; ps
+node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+mac: org.arl.unet.mac.aloha.AlohaACS - IDLE
+phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+state: org.arl.unet.state.StateManager - IDLE
+simulator: SimulationAgent - IDLE
+arp: org.arl.unet.addr.AddressResolution - IDLE
+rdp: org.arl.unet.net.RouteDiscoveryProtocol - IDLE
+remote: org.arl.unet.remote.RemoteControl - IDLE
+shell: org.arl.fjage.shell.ShellAgent - IDLE
+link: org.arl.unet.link.ReliableLink - IDLE
+ranging: org.arl.unet.phy.Ranging - IDLE
+transport: org.arl.unet.transport.SWTransport - IDLE
+router: org.arl.unet.net.Router - IDLE
+&gt; range 2
+1000.0
+</pre></div>
+</div>
+<p>We asked for the range to node 2 and got a response saying that the range is 1000 m, as expected. To see the message and datagram exchanges involved, we can subscribe to the physical agent (<code class="docutils literal"><span class="pre">phy</span></code>) and ranging agent (<code class="docutils literal"><span class="pre">ranging</span></code>) notifications, and send a request to the ranging agent to measure range to node 2:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">ranging</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">RangeReq</span><span class="o">(</span><span class="nl">to:</span> <span class="mi">2</span><span class="o">)</span>
+<span class="n">AGREE</span>
+<span class="nl">RxFrameNtf:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">type:</span><span class="n">CONTROL</span> <span class="nl">from:</span><span class="mi">2</span> <span class="nl">to:</span><span class="mi">1</span> <span class="nl">protocol:</span><span class="mi">1</span> <span class="nl">rxTime:</span><span class="mi">321784667</span> <span class="nl">txTime:</span><span class="mi">321118000</span> <span class="o">(</span><span class="mi">7</span> <span class="n">bytes</span><span class="o">)]</span>
+<span class="nl">RangeNtf:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">from:</span><span class="mi">2</span> <span class="nl">to:</span><span class="mi">1</span> <span class="nl">Range:</span><span class="mf">1000.0</span> <span class="nl">offset:</span><span class="mi">0</span> <span class="nl">validity:</span><span class="kc">true</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>After some physical layer datagram exchanges, we got a <code class="docutils literal"><span class="pre">RangeNtf</span></code> notification back with the range as 1000 m, as expected.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">To get to know what commands are available in the telnet shell, type <code class="docutils literal"><span class="pre">help</span></code> at the shell prompt. To get more information about a specific command, type <code class="docutils literal"><span class="pre">help</span></code> followed by the command (e.g. <code class="docutils literal"><span class="pre">help</span> <span class="pre">range</span></code>).</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">In the IDE, you can double click on the <code class="docutils literal"><span class="pre">bin/unet</span> <span class="pre">sh</span> <span class="pre">localhost</span></code> lines to connect a slave shell to the appropriate node.</p>
+</div>
+</div>
+<div class="section" id="ping-daemon-simulation">
+<h2>Ping daemon simulation<a class="headerlink" href="#ping-daemon-simulation" title="Permalink to this headline">¶</a></h2>
+<p>In the previous chapter, we developed an agent (ping daemon) and tested it. We used the <code class="docutils literal"><span class="pre">samples/ping/ping-sim.groovy</span></code> simulation DSL script for this. It’s time to look at the essential parts of the script and understand how they work:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: 3-node network with ping daemons</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+
+<span class="n">platform</span> <span class="o">=</span> <span class="n">RealTimePlatform</span>
+
+<span class="n">simulate</span> <span class="o">{</span>
+  <span class="n">node</span> <span class="s1">&#39;1&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">shell:</span> <span class="kc">true</span><span class="o">,</span> <span class="nl">stack:</span> <span class="o">{</span> <span class="n">container</span> <span class="o">-&gt;</span>
+    <span class="n">container</span><span class="o">.</span><span class="na">add</span> <span class="s1">&#39;ping&#39;</span><span class="o">,</span> <span class="k">new</span> <span class="n">PingDaemon</span><span class="o">()</span>
+    <span class="n">container</span><span class="o">.</span><span class="na">shell</span><span class="o">.</span><span class="na">addInitrc</span> <span class="s2">&quot;${script.parent}/fshrc.groovy&quot;</span>
+  <span class="o">}</span>
+  <span class="n">node</span> <span class="s1">&#39;2&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">stack:</span> <span class="o">{</span> <span class="n">container</span> <span class="o">-&gt;</span>
+    <span class="n">container</span><span class="o">.</span><span class="na">add</span> <span class="s1">&#39;ping&#39;</span><span class="o">,</span> <span class="k">new</span> <span class="n">PingDaemon</span><span class="o">()</span>
+  <span class="o">}</span>
+  <span class="n">node</span> <span class="s1">&#39;3&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">3</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">2</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">stack:</span> <span class="o">{</span> <span class="n">container</span> <span class="o">-&gt;</span>
+    <span class="n">container</span><span class="o">.</span><span class="na">add</span> <span class="s1">&#39;ping&#39;</span><span class="o">,</span> <span class="k">new</span> <span class="n">PingDaemon</span><span class="o">()</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>We are already familiar with most of the script directives. The <code class="docutils literal"><span class="pre">node</span></code> directives are used to create 3 nodes with names ‘1’, ‘2’ and ‘3’ and addresses 1, 2 and 3 at 1 km spacing along the <em>x</em>-axis. The stack on each node is defined by the closure specified, by adding our ping daemon to the node’s container. We also set up a console shell (<code class="docutils literal"><span class="pre">shell:</span> <span class="pre">true</span></code>) on node 1 and customize it by loading an additional initialization script <code class="docutils literal"><span class="pre">fshrc.groovy</span></code> containing the <code class="docutils literal"><span class="pre">ping</span></code> command that we used at the shell prompt in the last chapter.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Fjåge 1.3 and above offers a graphical shell that is quite powerful and easy to use. To use the graphical shell, we simply specify <code class="docutils literal"><span class="pre">shell:</span> <span class="pre">GUI</span></code> instead of <code class="docutils literal"><span class="pre">shell:</span> <span class="pre">true</span></code> above. Give it a try (simply type “<code class="docutils literal"><span class="pre">bin/unet</span> <span class="pre">sh</span> <span class="pre">0</span></code>” in a terminal to give it a go) … once you get used to it, you’d probably not want to go back to the console shell!</p>
+</div>
+</div>
+<div class="section" id="aloha-simulation">
+<h2>ALOHA simulation<a class="headerlink" href="#aloha-simulation" title="Permalink to this headline">¶</a></h2>
+<p>In the <a class="reference internal" href="quickstart.html#quickstart"><span class="std std-ref">Getting Started</span></a> chapter, we have already come across the ALOHA simulation. We next take a look at extracts from the source code of the simulation and understand how they work. The entire source code is available at <a class="reference internal" href="aloha-src.html#aloha"><span class="std std-ref">samples/aloha/aloha.groovy</span></a>.</p>
+<p>The core ALOHA simulation is implemented by adding a Poisson arrival process behavior (for a specified load) during the startup of each node. When the arrival behavior is triggered on a node, we abort any ongoing transmission/reception at that node and transmit a new physical layer frame to a randomly chosen destination node (excluding itself):</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Aloha wireless network</span>
+
+<span class="kt">def</span> <span class="n">nodes</span> <span class="o">=</span> <span class="mi">1</span><span class="o">..</span><span class="mi">4</span>                      <span class="c1">// list of nodes (4 nodes)</span>
+<span class="kt">def</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">hours</span>                       <span class="c1">// simulate for 2 hours</span>
+
+<span class="n">simulate</span> <span class="n">T</span><span class="o">,</span> <span class="o">{</span>
+  <span class="c1">// setup each node at origin to ensure no propagation delay between nodes</span>
+  <span class="n">nodes</span><span class="o">.</span><span class="na">each</span> <span class="o">{</span> <span class="n">myAddr</span> <span class="o">-&gt;</span>
+    <span class="kt">def</span> <span class="n">myNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s2">&quot;${myAddr}&quot;</span><span class="o">,</span> <span class="nl">address:</span> <span class="n">myAddr</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">])</span>
+    <span class="n">myNode</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="o">{</span>
+      <span class="kt">def</span> <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">PHYSICAL</span>
+      <span class="n">add</span> <span class="k">new</span> <span class="nf">PoissonBehavior</span><span class="o">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">nodes</span><span class="o">.</span><span class="na">size</span><span class="o">()</span><span class="s">/load, {</span>
+<span class="s">        // drop any ongoing TX/</span><span class="n">RX</span> <span class="n">and</span> <span class="n">then</span> <span class="n">send</span> <span class="n">frame</span> <span class="n">to</span> <span class="n">random</span> <span class="n">node</span><span class="o">,</span> <span class="n">except</span> <span class="n">myself</span>
+        <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ClearReq</span><span class="o">()</span>
+        <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">rnditem</span><span class="o">(</span><span class="n">nodes</span><span class="o">-</span><span class="n">myAddr</span><span class="o">),</span> <span class="nl">type:</span> <span class="n">DATA</span><span class="o">)</span>
+      <span class="o">})</span>
+    <span class="o">}</span>
+  <span class="o">}</span> <span class="c1">// each</span>
+<span class="o">}</span>  <span class="c1">// simulate</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Either of <code class="docutils literal"><span class="pre">DatagramReq</span></code> or <code class="docutils literal"><span class="pre">TxFrameReq</span></code> could have been used in our simulation. <code class="docutils literal"><span class="pre">DatagramReq</span></code> is a generic transmission request that most agents support.  <code class="docutils literal"><span class="pre">TxFrameReq</span></code> is a special type of <code class="docutils literal"><span class="pre">DatagramReq</span></code> at the physical layer, and provides additional options such as timestamping, etc.</p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">rnditem(list)</span></code> closure allows a random item to be chosen from a list. In the above simulation, the random item is chosen from the set of all <code class="docutils literal"><span class="pre">nodes</span></code> except <code class="docutils literal"><span class="pre">myAddr</span></code>. The frame <code class="docutils literal"><span class="pre">type</span></code> used is <code class="docutils literal"><span class="pre">DATA</span></code> since the default throughput statistics computed only considers data frames.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Other convenience closures related to random number generation include <code class="docutils literal"><span class="pre">rnd(min,</span> <span class="pre">max)</span></code> which generates a uniformly distributed random number between <code class="docutils literal"><span class="pre">min</span></code> and <code class="docutils literal"><span class="pre">max</span></code>, and <code class="docutils literal"><span class="pre">rndint(n)</span></code> which generates a uniformly distributed random number between 0 and <code class="docutils literal"><span class="pre">n-1</span></code>.</p>
+</div>
+<p>We wish to simulate this at several different offered loads. To do this, we wrap the <code class="docutils literal"><span class="pre">simulate</span></code> directive in a loop where the load is varied:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">loadRange</span> <span class="o">=</span> <span class="o">[</span><span class="mf">0.1</span><span class="o">,</span> <span class="mf">1.5</span><span class="o">,</span> <span class="mf">0.1</span><span class="o">]</span>       <span class="c1">// min, max, step</span>
+
+<span class="k">for</span> <span class="o">(</span><span class="kt">def</span> <span class="n">load</span> <span class="o">=</span> <span class="n">loadRange</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span> <span class="n">load</span> <span class="o">&lt;=</span> <span class="n">loadRange</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span> <span class="n">load</span> <span class="o">+=</span> <span class="n">loadRange</span><span class="o">[</span><span class="mi">2</span><span class="o">])</span> <span class="o">{</span>
+  <span class="n">simulate</span> <span class="n">T</span><span class="o">,</span> <span class="o">{</span>
+    <span class="o">:</span>
+    <span class="o">:</span>
+  <span class="o">}</span> <span class="c1">// simulate</span>
+<span class="o">}</span> <span class="c1">// for</span>
+</pre></div>
+</div>
+<p>When we run the simulation, all transmission/reception/drop events are automatically logged (see next section for details), and basic statistics are computed:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Pure Aloha simulation
+=====================
+
+TX Count  RX Count  Loss %    Offered Load  Throughput
+--------  --------  ------    ------------  ----------
+   628       503     20.1       0.100         0.080
+  1218       814     33.2       0.193         0.129
+  1865      1019     45.4       0.296         0.162
+  2476      1095     55.8       0.393         0.174
+  3098      1145     63.0       0.492         0.182
+  3801      1128     70.3       0.603         0.179
+  4448      1065     76.1       0.706         0.169
+  4956      1016     79.5       0.787         0.161
+  5617       952     83.0       0.892         0.151
+  6499       855     86.9       1.032         0.136
+  6860       799     88.4       1.089         0.127
+  7532       702     90.7       1.196         0.111
+  8191       610     92.5       1.300         0.097
+  8746       536     93.9       1.388         0.085
+  9418       455     95.2       1.495         0.072
+
+15 simulations completed in 67.510 seconds
+</pre></div>
+</div>
+<p>The log files are created in the <code class="docutils literal"><span class="pre">logs</span></code> folder. As we have seen previously, we can easily plot the output using the <code class="docutils literal"><span class="pre">samples/aloha/plot-results.groovy</span></code> script.</p>
+<div class="align-center figure">
+<img alt="_images/aloha.png" src="_images/aloha.png" />
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Simulation code for other variants of ALOHA (slotted ALOHA and carrier sensing ALOHA) are also available in the <code class="docutils literal"><span class="pre">samples/aloha</span></code> folder.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="logs-traces-and-statistics">
+<h2>Logs, traces and statistics<a class="headerlink" href="#logs-traces-and-statistics" title="Permalink to this headline">¶</a></h2>
+<p>When a simulation is run, usually two files are produced.</p>
+<p>The <code class="docutils literal"><span class="pre">logs/log-0.txt</span></code> file contains detailed text logs from the Java logging framework. The simulation may log additional information to this file using <code class="docutils literal"><span class="pre">log.info()</span></code> or <code class="docutils literal"><span class="pre">log.fine()</span></code> methods. A typical extract of the log file is shown below:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>1405872225089|INFO|org.arl.fjage.shell.GroovyBoot@1:main|fjage Build: fjage-1.3.3/21-07-2014_18:25:33
+1405872225680|INFO|org.arl.fjage.shell.GroovyBoot@1:main|Running cls://org.arl.unet.sim.initrc
+1405872225690|INFO|org.arl.fjage.shell.GroovyScriptEngine@9:run|RUN: cls://org.arl.unet.sim.initrc
+1405872225752|INFO|org.arl.fjage.shell.GroovyBoot@1:main|Running samples/aloha/aloha.groovy
+1405872225752|INFO|org.arl.fjage.shell.GroovyScriptEngine@9:run|RUN: samples/aloha/aloha.groovy
+1405872226205|INFO|Script1@9:invoke|Created static node 1 (1) @ [0, 0, 0]
+1405872226208|INFO|Script1@9:invoke|Created static node 2 (2) @ [0, 0, 0]
+1405872226210|INFO|Script1@9:invoke|Created static node 3 (3) @ [0, 0, 0]
+1405872226211|INFO|Script1@9:invoke|Created static node 4 (4) @ [0, 0, 0]
+1405872226239|INFO|Script1@9:invoke| --- BEGIN SIMULATION #1 ---
+0|INFO|org.arl.unet.sim.SimulationContainer@9:init|Initializing agents...
+  :
+  :
+17373|INFO|&lt;3&gt;@19:call|TxFrameNtf:INFORM[txTime:1459471312 type:DATA]
+36431|INFO|&lt;1&gt;@13:call|TxFrameNtf:INFORM[txTime:3142333581 type:DATA]
+  :
+  :
+7196508|INFO|&lt;3&gt;@19:call|TxFrameNtf:INFORM[txTime:8638606312 type:DATA]
+7200000|INFO|Script1@23:call|Stopping simulation...
+  :
+  :
+1405872230333|INFO|Script1@23:invoke| --- END SIMULATION #1 ---
+</pre></div>
+</div>
+<p>Note that the timestamp (first column) changes from the clock time to discrete event time (in case of the <code class="docutils literal"><span class="pre">DiscreteEventSimulator</span></code> platform) when the simulation starts, and switches back to clock time when the simulation ends.</p>
+<p>A trace file contains information about all packet creation, transmission, reception and drop events. It also contains details of node motion. The default, the trace file format is similar to the <a class="reference external" href="http://nsnam.isi.edu/nsnam/index.php/NS-2_Trace_Formats#NAM_Trace_Formats">NS2 NAM trace</a>, and the trace filename is <code class="docutils literal"><span class="pre">logs/trace.nam</span></code>. The tracer also computes basic statistics including queued packet count, transmitted packet count, received packet count, dropped packet count, offered load, actual load, average packet latency and normalized throughput. An extract from the trace file is shown below:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span># BEGIN SIMULATION 1
+n -t 8.005000 -s 3 -x 0.000000 -y 0.000000 -Z 0.000000 -a 3
++ -t 8.005000 -s 3 -d 2 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+- -t 8.005000 -s 3 -d 2 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+n -t 8.005000 -s 1 -x 0.000000 -y 0.000000 -Z 0.000000 -a 1
+n -t 8.005000 -s 2 -x 0.000000 -y 0.000000 -Z 0.000000 -a 2
+n -t 8.005000 -s 4 -x 0.000000 -y 0.000000 -Z 0.000000 -a 4
+r -t 9.005000 -s 3 -d 2 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+r -t 9.005000 -s 3 -d 1 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
+r -t 9.005000 -s 3 -d 4 -i 40839989 -p 0 -x {3.0 2.0 -1 ------- null}
++ -t 42.042000 -s 1 -d 2 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+- -t 42.042000 -s 1 -d 2 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+r -t 43.042000 -s 1 -d 2 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+r -t 43.042000 -s 1 -d 4 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+r -t 43.042000 -s 1 -d 3 -i 254433913 -p 0 -x {1.0 2.0 -1 ------- null}
+  :
+  :
+d -t 584.925000 -s 1 -d 4 -i 259068939 -p 0 -x {1.0 4.0 -1 ------- null} -y CLEAR
++ -t 584.925000 -s 4 -d 1 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null}
+- -t 584.925000 -s 4 -d 1 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null}
+d -t 584.925000 -s 4 -d 1 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null} -y COLLISION
+d -t 584.925000 -s 4 -d 2 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null} -y COLLISION
+d -t 584.925000 -s 4 -d 3 -i -2069119004 -p 0 -x {4.0 1.0 -1 ------- null} -y COLLISION
+d -t 585.747000 -s 1 -d 2 -i 259068939 -p 0 -x {1.0 4.0 -1 ------- null} -y BAD_FRAME
+d -t 585.747000 -s 1 -d 3 -i 259068939 -p 0 -x {1.0 4.0 -1 ------- null} -y BAD_FRAME
+  :
+  :
+# STATS: q=621, t=621, r=506, d=115, O=0.099, L=0.099, D=0.000, T=0.080
+# END SIMULATION 1
+</pre></div>
+</div>
+<p>Lines starting with <code class="docutils literal"><span class="pre">n</span></code> log node locations/motion. Lines starting with <code class="docutils literal"><span class="pre">+</span></code> denote packet arrival into the transmit queue. Lines starting with <code class="docutils literal"><span class="pre">-</span></code> log packet removal from the transmit queue, i.e., transmission. Lines starting with <code class="docutils literal"><span class="pre">r</span></code> denote packet reception (or overhearing). Lines starting with <code class="docutils literal"><span class="pre">d</span></code> log packet drops, and specify a reason for the drop. <code class="docutils literal"><span class="pre">CLEAR</span></code> indicates a packet transmission/reception abort due to a <code class="docutils literal"><span class="pre">ClearReq</span></code> request. <code class="docutils literal"><span class="pre">COLLISION</span></code> indicates that the packet was dropped because the node was busy receiving or transmitting another packet. <code class="docutils literal"><span class="pre">BAD_FRAME</span></code> indicates that the packet was corrupted (possibly due to interference from a colliding packet).</p>
+<p>The trace can be configured in the simulation script. By default, the trace uses the <code class="docutils literal"><span class="pre">NamTracer</span></code> class to create a <code class="docutils literal"><span class="pre">logs/trace.nam</span></code> file:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">trace</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NamTracer</span><span class="o">()</span>
+<span class="n">trace</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s1">&#39;logs/trace.nam&#39;</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>An alternate class extending the <a class="reference external" href="javadoc/index.html?org/arl/unet/sim/Tracer.html">Tracer</a> abstract class can be specified for custom tracing.</p>
+<p>To avoid transient effects, it is common in network simulations to start collecting statistics only after a warmup simulation time. This can be configued in the simulation script:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">trace</span><span class="o">.</span><span class="na">warmup</span> <span class="o">=</span> <span class="mi">15</span><span class="o">.</span><span class="na">minutes</span>
+</pre></div>
+</div>
+<p>The tracer can also be queried for statistics during the simulation. For example, the ALOHA sample simulation script prints statistics on the screen at the end of each simulation:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">float</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="na">txCount</span> <span class="o">?</span> <span class="mi">100</span><span class="o">*</span><span class="n">trace</span><span class="o">.</span><span class="na">dropCount</span><span class="o">/</span><span class="n">trace</span><span class="o">.</span><span class="na">txCount</span> <span class="o">:</span> <span class="mi">0</span>
+<span class="n">println</span> <span class="nf">sprintf</span><span class="o">(</span><span class="s1">&#39;%6d\t\t%6d\t\t%5.1f\t\t%7.3f\t\t%7.3f&#39;</span><span class="o">,</span>
+  <span class="o">[</span><span class="n">trace</span><span class="o">.</span><span class="na">txCount</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">rxCount</span><span class="o">,</span> <span class="n">loss</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">offeredLoad</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">throughput</span><span class="o">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modem-and-channel-models">
+<h2>Modem and channel models<a class="headerlink" href="#modem-and-channel-models" title="Permalink to this headline">¶</a></h2>
+<p>In simulation, the physical layer offered by a modem is usually replaced by a simulation model that mimics the behavior of the modem in a given channel. Any agent implementing a PHYSICAL service can be used as a <em>modem model</em> in simulation. The model is defined in the simulation script. For example, the default modem model is:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">modem</span> <span class="o">=</span> <span class="o">[</span> <span class="nl">model:</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">sim</span><span class="o">.</span><span class="na">HalfDuplexModem</span> <span class="o">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">org.arl.unet.sim.HalfDuplexModem</span></code> class provides a generic implementation of a half-duplex modem that can be used to model many types of underwater modems. The HalfDuplexModem supports two schemes for frames (packets) that it transmits – CONTROL and DATA. Each scheme is defined by:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">dataRate</span></code> – data rate in bps, after error correction (default: [480, 2048]),</li>
+<li><code class="docutils literal"><span class="pre">frameLength</span></code> – frame length in bytes (default: [18, 36]),</li>
+<li><code class="docutils literal"><span class="pre">powerLevel</span></code> – transmission power level in dB, with respect to a reference source level (default: [0, 0]).</li>
+</ul>
+<p>Each of the above parameters are defined as an array of two numbers, the first one for the CONTROL scheme and the second for the DATA scheme. For modems that do not support mutliple frame types, both schemes can be set to have identical parameters. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">modem</span><span class="o">.</span><span class="na">dataRate</span> <span class="o">=</span> <span class="o">[</span><span class="mi">800</span><span class="o">.</span><span class="na">bps</span><span class="o">,</span> <span class="mi">2400</span><span class="o">.</span><span class="na">bps</span><span class="o">]</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">frameLength</span> <span class="o">=</span> <span class="o">[</span><span class="mi">16</span><span class="o">.</span><span class="na">bytes</span><span class="o">,</span> <span class="mi">64</span><span class="o">.</span><span class="na">bytes</span><span class="o">]</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">powerLevel</span> <span class="o">=</span> <span class="o">[</span><span class="mi">0</span><span class="o">.</span><span class="na">dB</span><span class="o">,</span> <span class="o">-</span><span class="mi">10</span><span class="o">.</span><span class="na">dB</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Apart from the above scheme parameters, the HalfDuplexModem is configured using several other parameters:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">preambleDuration</span></code> – length of frame detection preamble (default: 45.ms),</li>
+<li><code class="docutils literal"><span class="pre">headerLength</span></code> – length of physical layer headers (default: 5.bytes),</li>
+<li><code class="docutils literal"><span class="pre">txDelay</span></code> – delay incurred when a modem switches from receive to transmit mode (default: 50.ms),</li>
+<li><code class="docutils literal"><span class="pre">timestampLength</span></code> – length of timestamp for timestamped packets (default: 2.bytes),</li>
+<li><code class="docutils literal"><span class="pre">timestampedTxDelay</span></code> – delay for scheduling timestamped packet transmission (default: 1500.ms),</li>
+<li><code class="docutils literal"><span class="pre">maxPowerLevel</span></code> – maximum power level supported by modem, in dB re reference level (default: 0)</li>
+<li><code class="docutils literal"><span class="pre">minPowerLevel</span></code> – minimum power level supported by modem, in dB re reference level (default: -48)</li>
+<li><code class="docutils literal"><span class="pre">refPowerLevel</span></code> – reference source level in dB re 1 µPa &#64; 1m (default: 185)</li>
+</ul>
+<p>These parameters are scalars and can be defined in the simulation script, if the defaults are not suitable. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">modem</span><span class="o">.</span><span class="na">preambleDuration</span> <span class="o">=</span> <span class="mi">5</span><span class="o">.</span><span class="na">ms</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">txDelay</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>The HalfDuplexModem models the half-duplex nature of the modem, propagation delay, interference, packet detection and packet loss. In order to do this, it uses a <em>channel model</em>. Channel models have to implement the <a class="reference external" href="javadoc/index.html?org/arl/unet/sim/ChannelModel.html">ChannelModel</a> interface. The default channel model is the <code class="docutils literal"><span class="pre">org.arl.unet.sim.channels.BasicAcousticChannel</span></code>, but can be reconfigured in the simulation script, if desired:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="o">.</span><span class="na">model</span> <span class="o">=</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">sim</span><span class="o">.</span><span class="na">channels</span><span class="o">.</span><span class="na">ProtocolChannelModel</span>
+</pre></div>
+</div>
+<p>These parameters of the channel can also be configured in the simulation script:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="o">.</span><span class="na">communicationRange</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">.</span><span class="na">m</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">pDetection</span> <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">pDecoding</span> <span class="o">=</span> <span class="mf">0.8</span>
+</pre></div>
+</div>
+<p>An alternative style to configure the same channel is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">channel</span> <span class="o">=</span> <span class="o">[</span>
+  <span class="nl">model:</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">sim</span><span class="o">.</span><span class="na">channels</span><span class="o">.</span><span class="na">ProtocolChannelModel</span><span class="o">,</span>
+  <span class="nl">communicationRange:</span> <span class="mi">3000</span><span class="o">.</span><span class="na">m</span><span class="o">,</span>
+  <span class="nl">pDetection:</span> <span class="mf">0.9</span><span class="o">,</span>
+  <span class="nl">pDecoding:</span> <span class="mf">0.8</span>
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>The next chapter <a class="reference internal" href="channels.html#channels"><span class="std std-ref">Channel Models</span></a> describes the available channel models, and also how to create your own simulation channels.</p>
+</div>
+<div class="section" id="node-mobility">
+<h2>Node mobility<a class="headerlink" href="#node-mobility" title="Permalink to this headline">¶</a></h2>
+<p>Nodes in a simulation may be mobile (e.g. autonomous underwater vehicles). Such nodes are motion models associated with them, to provide appropriate mobility during the simulation. An example of a simple mobile node is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-1&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">heading:</span> <span class="mi">30</span><span class="o">.</span><span class="na">deg</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>The node defines <code class="docutils literal"><span class="pre">mobility</span></code> to be <code class="docutils literal"><span class="pre">true</span></code>. It then sets the motion model for the node such that it moves at 1 m/s at a heading of 30 deg. This would produce linear motion of the node throughout the simulation, starting from the initial location [0, 0, 0] specified when the node is created.</p>
+<p>To create a node that goes around in a circle, we could set the turn rate of the node:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-2&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">turnRate:</span> <span class="mi">1</span><span class="o">.</span><span class="na">dps</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>A 1 deg/second turn rate would result in a node that goes around in a circle with a period of 6 minutes. Since the node travels at 1 m/s, the circumference of this circle would be 360 m, or equivalently, the diameter of the circle would be 114.6 m.</p>
+<p>More complex motion models can be provided as a list of mission legs with appropriate times/durations and even dive rates. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-3&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">50</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="o">-</span><span class="mi">50</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[[</span><span class="nl">time:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">heading:</span>  <span class="mi">60</span><span class="o">.</span><span class="na">deg</span><span class="o">,</span> <span class="nl">speed:</span>       <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">time:</span>  <span class="mi">3</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>  <span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">time:</span>  <span class="mi">4</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>    <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">time:</span>  <span class="mi">7</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span>                    <span class="o">],</span>
+                 <span class="o">[</span><span class="nl">time:</span>  <span class="mi">8</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span>                    <span class="o">],</span>
+                 <span class="o">[</span><span class="nl">time:</span> <span class="mi">11</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="o">-</span><span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">time:</span> <span class="mi">12</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>    <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+</pre></div>
+</div>
+<p>produces a triangular path. Instead of specifying time, we could have chosen to specify duration:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-3&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">50</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="o">-</span><span class="mi">50</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[[</span><span class="nl">duration:</span>  <span class="mi">3</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">heading:</span>  <span class="mi">60</span><span class="o">.</span><span class="na">deg</span><span class="o">,</span> <span class="nl">speed:</span>       <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">duration:</span>  <span class="mi">1</span><span class="o">.</span><span class="na">minute</span><span class="o">,</span>  <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>  <span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">duration:</span>  <span class="mi">3</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>    <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span><span class="nl">duration:</span>  <span class="mi">1</span><span class="o">.</span><span class="na">minute</span><span class="o">,</span>  <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span>                    <span class="o">],</span>
+                 <span class="o">[</span><span class="nl">duration:</span>  <span class="mi">3</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span>                    <span class="o">],</span>
+                 <span class="o">[</span><span class="nl">duration:</span>  <span class="mi">1</span><span class="o">.</span><span class="na">minute</span><span class="o">,</span>  <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="o">-</span><span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                 <span class="o">[</span>                      <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>    <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+</pre></div>
+</div>
+<p>To programatically generate the list of legs, one may provide closures as motion models. Such closures must return a list of legs similar to the above lists. Some standard motion model closures are defined in the <code class="docutils literal"><span class="pre">org.arl.unet.sim.MotionModel</span></code> class. One commonly needed motion model is that of a lawnmower survey path. This can easily be created:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-4&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="o">-</span><span class="mi">150</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">heading:</span> <span class="mi">0</span><span class="o">.</span><span class="na">deg</span><span class="o">,</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="n">MotionModel</span><span class="o">.</span><span class="na">lawnmover</span><span class="o">(</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">leg:</span> <span class="mi">200</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="nl">spacing:</span> <span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="nl">legs:</span> <span class="mi">10</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>Multiple modes of defining motion models can be combined. For example, if we wanted to dive to 30 m before we started the lawnmower survey, and then surface before the end of the mission, we could use a combination of motion models:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-4&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="o">-</span><span class="mi">150</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">heading:</span> <span class="mi">0</span><span class="o">.</span><span class="na">deg</span><span class="o">,</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+
+<span class="c1">// dive to 30m before starting survey</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[[</span><span class="nl">duration:</span> <span class="mi">5</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span> <span class="o">[</span><span class="nl">diveRate:</span> <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+
+<span class="c1">// then do a lawnmower survey</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">+=</span> <span class="n">MotionModel</span><span class="o">.</span><span class="na">lawnmover</span><span class="o">(</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">leg:</span> <span class="mi">200</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="nl">spacing:</span> <span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="nl">legs:</span> <span class="mi">10</span><span class="o">)</span>
+
+<span class="c1">// finally, come back to the surface and stop</span>
+<span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">+=</span> <span class="o">[[</span><span class="nl">duration:</span> <span class="mi">5</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="o">-</span><span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span> <span class="o">[</span><span class="nl">diveRate:</span> <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">speed:</span> <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+</pre></div>
+</div>
+<p>All of the above motion models are included in the sample simulation script <a class="reference internal" href="mobility-src.html#mobility"><span class="std std-ref">samples/mobility/mobility.groovy</span></a>. You can run it to produce a trace file with the motion details logged:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Motion model simulation
+=======================
+
+Simulation AUV-1: Linear motion
+Simulation AUV-2: Circular motion
+Simulation AUV-3: Triangular motion (with dive)
+Simulation AUV-4: Lawnmower survey (with dive)
+
+You can visualize results by running samples/mobility/plot-tracks.groovy
+
+4 simulations completed in 2.255 seconds
+</pre></div>
+</div>
+<p>By default, the node locations are only logged when events such as transmission/reception happen. In our simulation, we have no such events, and so we log the node locations at regular intervals using the following code snippet:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">nodeinfo</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">NODE_INFO</span>
+  <span class="n">trace</span><span class="o">.</span><span class="na">moved</span><span class="o">(</span><span class="n">nodeinfo</span><span class="o">.</span><span class="na">address</span><span class="o">,</span> <span class="n">nodeinfo</span><span class="o">.</span><span class="na">location</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span>
+  <span class="n">add</span> <span class="k">new</span> <span class="nf">TickerBehavior</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="o">{</span>
+    <span class="n">trace</span><span class="o">.</span><span class="na">moved</span><span class="o">(</span><span class="n">nodeinfo</span><span class="o">.</span><span class="na">address</span><span class="o">,</span> <span class="n">nodeinfo</span><span class="o">.</span><span class="na">location</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span>
+  <span class="o">})</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The code snippet sets up a behavior that runs every 10 seconds to log the current location of the node in the trace file.</p>
+<p>You can easily visualize the AUV tracks using the recommended <code class="docutils literal"><span class="pre">plot-tracks.groovy</span></code> script:</p>
+<div class="align-center figure">
+<img alt="_images/motion.png" src="_images/motion.png" />
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>Now that you have learned how to set up a simulation, its time to learn about various channel models that can be used to simulate underwater networks. In the next chapter <a class="reference internal" href="channels.html#channels"><span class="std std-ref">Channel Models</span></a>, we describe the available channel models, and also outline how one can go about developing new channel models.</p>
+<p align="right"><a href="channels.html" class="btn btn-info btn-xs">Channel Models »</a></p></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

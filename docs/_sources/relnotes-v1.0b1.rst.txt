@@ -1,0 +1,6 @@
+UnetStack and simulator v1.0b1 release notes
+============================================
+
+May 29, 2013
+
+* First public release (beta)

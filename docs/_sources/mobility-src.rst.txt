@@ -1,0 +1,7 @@
+.. _mobility:
+
+``samples/mobility/mobility.groovy``
+------------------------------------
+
+.. literalinclude:: ../../../public/samples/mobility/mobility.groovy
+   :language: groovy

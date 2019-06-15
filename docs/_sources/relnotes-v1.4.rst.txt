@@ -1,0 +1,26 @@
+UnetStack and simulator v1.4 release notes
+==========================================
+
+May 26, 2018
+
+New features
+------------
+
+* Moved open source contributions to `unet-contrib <https://github.com/org-arl/unet-contrib>`_.
+* `Python API <https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-Python-API>`_ for UnetStack access (beta).
+* `C API <https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-C-API>`_ for UnetStack access (beta).
+* New `Scheduler <svc-50-scheduler.html>`_ service and agent.
+* New web interface framework.
+
+Changes
+-------
+
+* Improved `documentation <docs.html>`_.
+* Switched to JDK 1.8, Groovy 2.4.15 and fjåge 1.4.2.
+* Extended default address space to 8 bits (255 nodes).
+* Several minor API enhancements.
+
+Bugfixes
+--------
+
+* Several minor bug fixes.

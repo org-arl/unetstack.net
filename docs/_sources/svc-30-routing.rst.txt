@@ -1,0 +1,27 @@
+.. _svcrouting:
+
+Routing
+=======
+
+Service
+-------
+
+`Routing`_ -- Routing service
+
+Agents offering the *Routing* service provide multi-hop communication for datagram messages. These agents accept datagram messages and route them to their destination based on supported underlying routing algorithms. Such algorithms are often based on routing tables, which may be maintained by other agents providing the :ref:`svcrdp` service.
+
+All agents supporting the *Routing* service support the :ref:`svcdatagram` service.
+
+Implementations
+---------------
+
+* `Router`_ -- provides a routing table based multi-hop communication service
+
+.. ConnectionReq         AGREE, FAILURE                   Request establishment of long-term route
+.. DisconnectionReq      AGREE, FAILURE                   Request termination of long-term route
+.. ConnectionStatusNtf   default                          Status update on route maintenance
+
+.. .........................................................................................................
+.. _Routing:           javadoc/org/arl/unet/Services.html#ROUTING
+.. _Router:            javadoc/org/arl/unet/net/Router.html
+.. .........................................................................................................

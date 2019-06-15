@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UnetStack Documentation &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UnetStack Developer’s Guide" href="devguide.html" />
+    <link rel="prev" title="Underwater Modems" href="modems.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="#" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="unetstack-documentation">
+<span id="docs"></span><h1>UnetStack Documentation<a class="headerlink" href="#unetstack-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overviews">
+<h2>Overviews<a class="headerlink" href="#overviews" title="Permalink to this headline">¶</a></h2>
+<div class="sidebar">
+<p class="first sidebar-title">Video Tutorials</p>
+<p>(slighly outdated, but still useful)</p>
+<ul class="last simple">
+<li><a class="reference external" href="http://www.youtube.com/watch?v=0EVlYz10lao">Video tutorial (part I): Getting started</a></li>
+<li><a class="reference external" href="http://www.youtube.com/watch?v=dprJPdrf_m8">Video tutorial (part II): Developing Unet agents</a></li>
+<li><a class="reference external" href="http://www.youtube.com/watch?v=ybVWh2Yaw8w">Video tutorial (part III): Simulating underwater networks</a></li>
+<li><a class="reference external" href="http://www.youtube.com/watch?v=OFBXgebl8Nc">Video tutorial: The default network stack</a></li>
+</ul>
+</div>
+<p>If you’ve just started, a few quick overviews are recommended:</p>
+<ul class="simple">
+<li><a class="reference external" href="overview.html">Unet Project Overview</a></li>
+<li><a class="reference internal" href="unet-stack.html#unetstack"><span class="std std-ref">UnetStack</span></a></li>
+<li><a class="reference internal" href="unet-sim.html#unetsim"><span class="std std-ref">Underwater Network Simulator</span></a></li>
+</ul>
+<p>For a detailed overview, you may wish to read:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Oceans14unetstack.pdf">UnetStack: an Agent-based Software Stack and Simulator for Underwater Networks</a></li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>We have some great introductory material to get you going:</p>
+<ul class="simple">
+<li><a class="reference internal" href="quickstart.html#quickstart"><span class="std std-ref">Getting Started</span></a></li>
+</ul>
+<p>Since the UnetStack implementation is based on the fjåge agent framework, it will be useful to understand a little about developing agents. If you are not already familiar with it, we recommend browsing through the <a class="reference external" href="http://org-arl.github.io/fjage/doc/html">Fjåge Developer’s Guide</a>. In particular, we recommend reading the following chapters:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html/introduction.html">Introduction</a></li>
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html/behaviors.html">Agents and Behaviors</a></li>
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html/messages.html">Messaging</a></li>
+</ul>
+<p>While the UnetStack agents can be developed in Java or Groovy, we find that the Groovy syntax is simpler and cleaner. Moreover, simulation scripts and shell interaction is in Groovy, and therefore being familiar with Groovy is useful. We will be using the Groovy syntax for code samples throughout the documentation. If you prefer to use pure Java for developing agents, you’re of course welcome to do so, but we highly recommend that you be familiar with the <a class="reference external" href="http://groovy.codehaus.org/">Groovy</a> syntax.</p>
+</div>
+<div class="section" id="developer-documentation">
+<h2>Developer Documentation<a class="headerlink" href="#developer-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="sidebar">
+<p class="first sidebar-title">Support Forum &amp; Contributions</p>
+<p>If you can’t find an answer to your question here, please post questions on <a class="reference external" href="https://stackoverflow.com/questions/tagged/unetstack">Stack Overflow</a> with the “unetstack” tag to seek help.</p>
+<p>An <a class="reference external" href="http://www.unetstack.net/support">archived of the old support forum</a> is available for reference. Although this forum is no longer is use (we switched over to Stack Overflow), there are some useful discussions there that may be interest.</p>
+<p class="last">If you have any suggestions, feature requests or bug reports, you can <a class="reference external" href="https://github.com/org-arl/unet-contrib/issues">submit</a> them. Also, if you have documentation or code to <a class="reference external" href="http://contrib.unetstack.net/">contribute</a>, such contributions are most welcome!</p>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide.html">UnetStack Developer’s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html">Developing Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html">Running Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html">Channel Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html">The Default Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agent-ref.html">Service Reference</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul class="simple">
+<li><a class="reference external" href="javadoc/index.html">Java/Groovy API documentation</a></li>
+<li>List of supported <a class="reference internal" href="modems.html#modems"><span class="std std-ref">Underwater Modems</span></a></li>
+</ul>
+</div>
+<div class="section" id="apis">
+<h2>APIs<a class="headerlink" href="#apis" title="Permalink to this headline">¶</a></h2>
+<p>While Java and Groovy are great for developing agents and extending UnetStack, sometimes you want to interface with other languages such as Python and C. We have open source APIs that allow UnetStack to be accessed from these languages:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-Python-API">Python API</a> and <a class="reference external" href="_static/python-gateway-tutorial.html">Python API tutorial</a></li>
+<li><a class="reference external" href="https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-C-API">C API</a></li>
+</ul>
+<p>If you need to develop APIs for other languages, the underlying JSON protocol can be directly used with interact with UnetStack.</p>
+</div>
+<div class="section" id="tutorials-and-howtos">
+<h2>Tutorials and Howtos<a class="headerlink" href="#tutorials-and-howtos" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li>A tutorial on <a class="reference internal" href="mac.html#mac"><span class="std std-ref">Medium Access Control</span></a> (MAC)</li>
+</ul>
+</div>
+<div class="section" id="release-notes">
+<h2>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="relnotes-v1.0b1.html">UnetStack and simulator v1.0b1 release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relnotes-v1.1.html">UnetStack and simulator v1.1 release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relnotes-v1.1.1.html">UnetStack and simulator v1.1.1 release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relnotes-v1.2.html">UnetStack and simulator v1.2 release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relnotes-v1.3.html">UnetStack and simulator v1.3 release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relnotes-v1.4.html">UnetStack and simulator v1.4 release notes</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="external-documentation">
+<h2>External Documentation<a class="headerlink" href="#external-documentation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html">Fjåge Developer’s Guide</a></li>
+<li><a class="reference external" href="http://org-arl.github.io/fjage/javadoc">Fjåge API documentation</a></li>
+<li><a class="reference external" href="http://groovy.codehaus.org/">Groovy home page</a></li>
+</ul>
+</div>
+<div class="section" id="useful-publications">
+<h2>Useful Publications<a class="headerlink" href="#useful-publications" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><ol class="first upperalpha" start="13">
+<li>Chitre, I. Topor, and T.-B. Koay, “<a class="reference external" href="http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Chitre2012ys.pdf">The UNET-2 modem – an extensible tool for underwater networking research</a>,” in Proceedings of IEEE OCEANS‘12 Yeosu, Korea, May 2012.</li>
+</ol>
+</li>
+<li><ol class="first upperalpha" start="13">
+<li>Chitre, R. Bhatnagar, and W.-S. Soh, “<a class="reference external" href="http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/Oceans14unetstack.pdf">UnetStack: an Agent-based Software Stack and Simulator for Underwater Networks</a>,” in Proceedings of IEEE OCEANS‘14 St. John’s, Newfoundland, September 2014.</li>
+</ol>
+</li>
+<li><ol class="first upperalpha" start="13">
+<li>Chitre, R. Bhatnagar, M. Ignatius, and S. Suman, “<a class="reference external" href="http://arl.nus.edu.sg/twiki6/pub/ARL/BibEntries/sdmodem.pdf">Baseband Signal Processing with UnetStack</a>,” in Proceedings of Underwater Communications Networking 2014, Italy, September 2014.</li>
+</ol>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,33 @@
+Address Resolution
+==================
+
+Service
+-------
+
+`ADDRESS_RESOLUTION`_ -- Address resolution service
+
+Agents offering the *Address Resolution* service are used to process address allocation and resolution requests. They support a set of messages that are explained below.
+
+Implementations
+---------------
+
+* `AddressResolution`_ -- provides address resolution based on a simple name hashing mechanism
+
+Requests and Responses
+----------------------
+
+======================= ================================ ==========================================
+Request                 Possible Responses               Description
+======================= ================================ ==========================================
+`AddressAllocReq`_      `AddressAllocRsp`_, FAILURE      Request for address allocation
+`AddressResolutionReq`_ `AddressResolutionRsp`_, FAILURE Request for address resolution for a node
+======================= ================================ ==========================================
+
+.. .........................................................................................................
+.. _ADDRESS_RESOLUTION:     javadoc/org/arl/unet/Services.html#ADDRESS_RESOLUTION
+.. _AddressAllocReq:        javadoc/org/arl/unet/addr/AddressAllocReq.html
+.. _AddressResolutionReq:   javadoc/org/arl/unet/addr/AddressResolutionReq.html
+.. _AddressAllocRsp:        javadoc/org/arl/unet/addr/AddressAllocRsp.html
+.. _AddressResolutionRsp:   javadoc/org/arl/unet/addr/AddressResolutionRsp.html
+.. _AddressResolution:      javadoc/org/arl/unet/addr/AddressResolution.html
+.. .........................................................................................................

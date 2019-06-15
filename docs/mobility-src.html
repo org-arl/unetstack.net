@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>samples/mobility/mobility.groovy &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Channel Models" href="channels.html" />
+    <link rel="prev" title="samples/aloha/aloha.groovy" href="aloha-src.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="samples-mobility-mobility-groovy">
+<span id="mobility"></span><h1><code class="docutils literal"><span class="pre">samples/mobility/mobility.groovy</span></code><a class="headerlink" href="#samples-mobility-mobility-groovy" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: AUV motion patterns</span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">///</span>
+<span class="c1">/// To run simulation:</span>
+<span class="c1">///   bin/unet samples/mobility/mobility</span>
+<span class="c1">///</span>
+<span class="c1">/// Output trace file: logs/trace.nam</span>
+<span class="c1">/// Plot results: bin/unet samples/mobility/plot-tracks</span>
+<span class="c1">///</span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.MotionModel</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">Services</span><span class="o">.*</span>
+
+<span class="n">println</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">Motion model simulation</span>
+<span class="s1">=======================</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="c1">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">////// Utility closure to log AUV locations every 10 seconds</span>
+
+<span class="n">trackAuvLocation</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">nodeinfo</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">NODE_INFO</span>
+  <span class="n">trace</span><span class="o">.</span><span class="na">moved</span><span class="o">(</span><span class="n">nodeinfo</span><span class="o">.</span><span class="na">address</span><span class="o">,</span> <span class="n">nodeinfo</span><span class="o">.</span><span class="na">location</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span>
+  <span class="n">add</span> <span class="k">new</span> <span class="nf">TickerBehavior</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="o">{</span>
+    <span class="n">trace</span><span class="o">.</span><span class="na">moved</span><span class="o">(</span><span class="n">nodeinfo</span><span class="o">.</span><span class="na">address</span><span class="o">,</span> <span class="n">nodeinfo</span><span class="o">.</span><span class="na">location</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span>
+  <span class="o">})</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">////// Linear motion</span>
+
+<span class="n">println</span> <span class="s1">&#39;Simulation AUV-1: Linear motion&#39;</span>
+<span class="n">simulate</span> <span class="mi">10</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-1&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="n">trackAuvLocation</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">heading:</span> <span class="mi">30</span><span class="o">.</span><span class="na">deg</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">////// Circular motion</span>
+
+<span class="n">println</span> <span class="s1">&#39;Simulation AUV-2: Circular motion&#39;</span>
+<span class="n">simulate</span> <span class="mi">10</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-2&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="n">trackAuvLocation</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">turnRate:</span> <span class="mi">1</span><span class="o">.</span><span class="na">dps</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">////// Triangular motion (with diving)</span>
+
+<span class="n">println</span> <span class="s1">&#39;Simulation AUV-3: Triangular motion (with dive)&#39;</span>
+<span class="n">simulate</span> <span class="mi">15</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-3&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">50</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="o">-</span><span class="mi">50</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="n">trackAuvLocation</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[[</span><span class="nl">time:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">heading:</span>  <span class="mi">60</span><span class="o">.</span><span class="na">deg</span><span class="o">,</span> <span class="nl">speed:</span>       <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                   <span class="o">[</span><span class="nl">time:</span>  <span class="mi">3</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>  <span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                   <span class="o">[</span><span class="nl">time:</span>  <span class="mi">4</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>    <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                   <span class="o">[</span><span class="nl">time:</span>  <span class="mi">7</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span>                    <span class="o">],</span>
+                   <span class="o">[</span><span class="nl">time:</span>  <span class="mi">8</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span>                    <span class="o">],</span>
+                   <span class="o">[</span><span class="nl">time:</span> <span class="mi">11</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">2</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="o">-</span><span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span>
+                   <span class="o">[</span><span class="nl">time:</span> <span class="mi">12</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">turnRate:</span>  <span class="mi">0</span><span class="o">.</span><span class="na">dps</span><span class="o">,</span> <span class="nl">diveRate:</span>    <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">////// Lawnmower survey (with diving)</span>
+
+<span class="n">println</span> <span class="s1">&#39;Simulation AUV-4: Lawnmower survey (with dive)&#39;</span>
+<span class="n">simulate</span> <span class="mi">1</span><span class="o">.</span><span class="na">hour</span><span class="o">,</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-4&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="o">-</span><span class="mi">150</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">heading:</span> <span class="mi">0</span><span class="o">.</span><span class="na">deg</span><span class="o">,</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="n">trackAuvLocation</span>
+  <span class="c1">// dive to 30m before starting survey</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[[</span><span class="nl">duration:</span> <span class="mi">5</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span> <span class="o">[</span><span class="nl">diveRate:</span> <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+  <span class="c1">// then do a lawnmower survey</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">+=</span> <span class="n">MotionModel</span><span class="o">.</span><span class="na">lawnmover</span><span class="o">(</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">leg:</span> <span class="mi">200</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="nl">spacing:</span> <span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="nl">legs:</span> <span class="mi">10</span><span class="o">)</span>
+  <span class="c1">// finally, come back to the surface and stop</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">+=</span> <span class="o">[[</span><span class="nl">duration:</span> <span class="mi">5</span><span class="o">.</span><span class="na">minutes</span><span class="o">,</span> <span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">diveRate:</span> <span class="o">-</span><span class="mf">0.1</span><span class="o">.</span><span class="na">mps</span><span class="o">],</span> <span class="o">[</span><span class="nl">diveRate:</span> <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">speed:</span> <span class="mi">0</span><span class="o">.</span><span class="na">mps</span><span class="o">]]</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">////// Done!</span>
+
+<span class="n">println</span> <span class="s2">&quot;\nYou can visualize results by running samples/mobility/plot-tracks.groovy&quot;</span>
+</pre></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

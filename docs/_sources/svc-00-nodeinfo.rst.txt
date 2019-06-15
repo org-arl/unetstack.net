@@ -1,0 +1,83 @@
+Node Information
+================
+
+Service
+-------
+
+`NODE_INFO`_ -- Node information service
+
+Agents offering the *Node Information* service manage and maintain a node's attributes such as address, location, speed etc. They support a set of parameters that are explained below.
+
+Implementations
+---------------
+
+* `NodeInfo`_ -- provides a repository for node information
+
+Requests and Responses
+----------------------
+
+===================== ================================ ==========================================
+Request               Possible Responses               Description
+===================== ================================ ==========================================
+`ParameterReq`_       `ParameterRsp`_                  Get/set/list parameters
+===================== ================================ ==========================================
+
+.. `NetworkTimeSyncReq`_    AGREE, REFUSE, FAILURE           Network time synchronization request
+
+Parameters
+----------
+
+====================== === ========================================================================
+Parameter              r/w Description
+====================== === ========================================================================
+`address`_             rw  Node address (1 byte)
+`nodeName`_            rw  Node name
+`location`_            rw  Node location ([*x*, *y*, *z*] meters)
+`speed`_               rw  Node speed (meters/second)
+`heading`_             rw  Node heading (degrees, 0 is North, clockwise)
+`turnRate`_            rw  Node turn rate (degrees/second, positive clockwise)
+`diveRate`_            rw  Node dive rate (meters/second)
+`mobility`_            rw  true if the node is mobile, false if it is static
+====================== === ========================================================================
+
+Notifications
+-------------
+
+===================== ============== ============================================
+Notification          Topic          Description
+===================== ============== ============================================
+`ParamChangeNtf`_     default        Notification about the modified `address`_
+`ParamChangeNtf`_     `PARAMCHANGE`_ Notification about the modified parameter
+===================== ============== ============================================
+
+.. `origin`_              rw  Origin of local coordinate system (lat,long,depth) (unused)
+.. `locationAccuracy`_    rw  Node location accuracy (x,y,z) meter(unused)
+.. `isSynchronized`_      ro  true if node is synchronised with network
+.. `networkTime`_         ro  Network time in ms (unused)
+.. `networkTimeAccuracy`_ ro  Network time accuracy in ms (unused)
+.. `timeStability`_       rw  Time stability in ppm (unused)
+
+.. todo:: Network time synchronization related functionality of this service is yet to be fully defined.
+
+.. .........................................................................................................
+.. _NODE_INFO:        javadoc/org/arl/unet/Services.html#NODE_INFO
+.. _ParameterReq:     javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:     javadoc/org/arl/unet/ParameterRsp.html
+.. _address:          javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#address
+.. _nodeName:         javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#nodeName
+.. _origin:           javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#origin
+.. _location:         javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#location
+.. _locationAccuracy: javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#locationAccuracy
+.. _speed:            javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#speed
+.. _heading:          javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#heading
+.. _turnRate:         javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#turnRate
+.. _diveRate:         javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#diveRate
+.. _isSynchronized:   javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#isSynchronized
+.. _networkTime:      javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#networkTime
+.. _networkTimeAccuracy: javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#networkTimeAccuracy
+.. _timeStability:    javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#timeStability
+.. _mobility:         javadoc/org/arl/unet/nodeinfo/NodeInfoParam.html#mobility
+.. _ParamChangeNtf:   javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:      javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _NodeInfo:         javadoc/org/arl/unet/nodeinfo/NodeInfo.html
+.. .........................................................................................................

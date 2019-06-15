@@ -1,0 +1,96 @@
+.. _macsvc:
+
+Medium Access Control
+=====================
+
+Service
+-------
+
+`MAC`_ -- Medium access control service
+
+Agents offering the *MAC* service provide some implementation of a medium access control protocol. They support a set of messages and parameters that are explained below. *MAC* service providers may also provide optional capabilities in the form of reliability through acknowledgement messages.
+
+===================== ===========================================================================
+Capability            Description
+===================== ===========================================================================
+`RELIABILITY`_        Reliability supported (usually via acknowledgement messages)
+`PRIORITY`_           Honors priority settings in reservation request
+`TTL`_                Honors time-to-live settings in reservation request
+`TIMED_RESERVATION`_  Scheduling of reservations in the future supported
+===================== ===========================================================================
+
+Implementations
+---------------
+
+* `AlohaACS`_ -- Aloha with adaptive carrier sensing
+* `MACA`_ -- MACA with early-ACK and multi-ACK extensions
+
+Requests and Responses
+----------------------
+
+======================= ========================================== ==========================================
+Request                 Possible Responses                         Description
+======================= ========================================== ==========================================
+`ReservationReq`_       `ReservationRsp`_, REFUSE                  Reserve the channel for a specified duration
+`ReservationCancelReq`_ AGREE, REFUSE                              Cancel a pending reservation request
+`ReservationAcceptReq`_ AGREE, REFUSE                              Piggyback payload in a reservation PDU
+`TxAckReq`_             AGREE, REFUSE                              Transmit acknowledgement payload
+`ParameterReq`_         `ParameterRsp`_                            Get/set/list parameters
+`CapabilityReq`_        CONFIRM, DISCONFIRM, `CapabilityListRsp`_  Check/list capabilities
+======================= ========================================== ==========================================
+
+MAC protocols that use PDUs for channel reservation may support piggybacking of client data in the PDU. If such support is available, it is advertised using a non-zero `reservationPayloadSize`_ parameter. A `ReservationReq`_ should provide the payload data to be sent to a peer node (as part of RTS or equivalent PDU) to whom the reservation is made. If that node wishes to send payload data back (as part of CTS or equivalent PDU), it may send a `ReservationAcceptReq`_ in response to a `ReservationStatusNtf`_ to provide its payload data.
+
+For MAC implementations that support `RELIABILITY`_, the agent must support the `TxAckReq`_ request to provide acknowledgement payload to be transmitted to the peer node at the end of the reservation. On reception, this would generate a `RxAckNtf`_ on the peer node.
+
+Notifications
+-------------
+
+======================== ============== ============================================
+Notification             Topic          Description
+======================== ============== ============================================
+`ReservationStatusNtf`_  default        Current status of reservation request
+`RxAckNtf`_              default        Acknowledgement payload notification
+`ParamChangeNtf`_        `PARAMCHANGE`_ Notification about the modified parameter
+======================== ============== ============================================
+
+Parameters
+----------
+
+================================== === ===============================================================================
+Parameter                          r/w Description
+================================== === ===============================================================================
+`channelBusy`_                     ro  True if channel is busy, false otherwise
+`reservationPayloadSize`_          ro  Maximum size of payload (bytes), which can be piggybacked in a reservation PDU
+`ackPayloadSize`_                  ro  Maximum size of acknowledgement (bytes), which can be included in an ACK PDU
+`maxReservationDuration`_          ro  Maximum duration of reservation in seconds
+`recommendedReservationDuration`_  ro  Recommended duration of reservation in seconds (null, if unspecified)
+================================== === ===============================================================================
+
+.. .........................................................................................................
+.. _MAC:                    javadoc/org/arl/unet/Services.html#MAC
+.. _RELIABILITY:            javadoc/org/arl/unet/mac/MacCapability.html#RELIABILITY
+.. _TIMED_RESERVATION:      javadoc/org/arl/unet/mac/MacCapability.html#TIMED_RESERVATION
+.. _PRIORITY:               javadoc/org/arl/unet/mac/MacCapability.html#PRIORITY
+.. _TTL:                    javadoc/org/arl/unet/mac/MacCapability.html#TTL
+.. _ReservationReq:         javadoc/org/arl/unet/mac/ReservationReq.html
+.. _ReservationRsp:         javadoc/org/arl/unet/mac/ReservationRsp.html
+.. _ReservationCancelReq:   javadoc/org/arl/unet/mac/ReservationCancelReq.html
+.. _ReservationAcceptReq:   javadoc/org/arl/unet/mac/ReservationAcceptReq.html
+.. _TxAckReq:               javadoc/org/arl/unet/mac/TxAckReq.html
+.. _ReservationStatusNtf:   javadoc/org/arl/unet/mac/ReservationStatusNtf.html
+.. _RxAckNtf:               javadoc/org/arl/unet/mac/RxAckNtf.html
+.. _channelBusy:            javadoc/org/arl/unet/mac/MacParam.html#channelBusy
+.. _reservationPayloadSize: javadoc/org/arl/unet/mac/MacParam.html#reservationPayloadSize
+.. _ackPayloadSize:         javadoc/org/arl/unet/mac/MacParam.html#ackPayloadSize
+.. _maxReservationDuration: javadoc/org/arl/unet/mac/MacParam.html#maxReservationDuration
+.. _recommendedReservationDuration: javadoc/org/arl/unet/mac/MacParam.html#recommendedReservationDuration
+.. _ParameterReq:           javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:           javadoc/org/arl/unet/ParameterRsp.html
+.. _CapabilityReq:          javadoc/org/arl/unet/CapabilityReq.html
+.. _CapabilityListRsp:      javadoc/org/arl/unet/CapabilityListRsp.html
+.. _ParamChangeNtf:         javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:            javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _AlohaACS:               javadoc/org/arl/unet/mac/aloha/AlohaACS.html
+.. _MACA:                   javadoc/org/arl/unet/mac/maca/Maca.html
+.. .........................................................................................................

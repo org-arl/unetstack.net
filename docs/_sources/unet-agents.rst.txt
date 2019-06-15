@@ -1,0 +1,372 @@
+.. _agents:
+
+Developing Agents
+=================
+
+.. highlight:: groovy
+
+Unet agents
+-----------
+
+Agents are the basic building blocks of the UnetStack. They exchange messages, provide services and implement network protocols. A UnetStack agent is a fjåge agent with some specific requirements. To make it easy to implement such agents, the UnetStack provides a :javadoc:`UnetAgent <UnetAgent.html>` base class to inherit functionality from.
+
+The structure of a typical Unet agent looks like this::
+
+    import org.arl.fjage.*
+    import org.arl.unet.*
+
+    class MyAgent extends UnetAgent {
+
+      void setup() {
+        // this method is called when the stack is initialized
+        // register services and capabilities that you provide here
+      }
+
+      void startup() {
+        // this method is called just after the stack is running
+        // look up other agents and services here, as needed
+        // subscribe to topics of interest here, to get notifications
+      }
+
+      Message processRequest(Message msg) {
+        // process requests supported by the agent, and return responses
+        // if request is not processed, return null
+        return null
+      }
+
+      void processMessage(Message msg) {
+        // process other messages, such as notifications here
+      }
+
+    }
+
+If you do not need any of these methods, you can skip the definition as the base class provides default implementations. There are a several other methods that you can override to customize your agent, but these are less commonly needed and so we'll skip them for now. You'll come across them later.
+
+.. tip:: Readers familiar with the fjåge agent lifecycle may wish to note that the ``setup()`` method is called from the ``init()`` method of the agent. The ``startup()`` method is called from a one-shot behavior scheduled during initialization. The ``processRequest()`` and ``processMessage()`` methods are called from a message behavior added during initialization.
+
+Ping daemon
+-----------
+
+It's easiest to illustrate with a simple toy example. Let us develop a ping deamon that will respond to incoming physical layer ping datagram with an empty datagram response. We will define a ping datagram as any datagram with protocol USER (12), and a response datagram as an empty datagram with protocol DATA (0). ::
+
+    import org.arl.fjage.*
+    import org.arl.unet.*
+
+    class PingDaemon extends UnetAgent {
+
+      final static int PING_PROTOCOL = Protocol.USER
+
+      void startup() {
+        def phy = agentForService Services.PHYSICAL
+        subscribe topic(phy)
+      }
+
+      void processMessage(Message msg) {
+        if (msg instanceof DatagramNtf && msg.protocol == PING_PROTOCOL)
+          send new DatagramReq(recipient: msg.sender, to: msg.from, protocol: Protocol.DATA)
+      }
+
+    }
+
+For readers who are new to Groovy, we show the equivalent Java code as well:
+
+.. code-block:: java
+
+    import org.arl.fjage.*;
+    import org.arl.unet.*;
+
+    public class PingDaemon extends UnetAgent {
+
+      public final static int PING_PROTOCOL = Protocol.USER;
+
+      public void startup() {
+        AgentID phy = agentForService(Services.PHYSICAL);
+        subscribe(topic(phy));
+      }
+
+      public void processMessage(Message msg) {
+        if (msg instanceof DatagramNtf && msg.getProtocol() == PING_PROTOCOL) {
+          DatagramReq req = new DatagramReq(msg.getSender());
+          req.setTo(msg.getFrom());
+          req.setProtocol(Protocol.DATA);
+          send(req);
+        }
+      }
+
+    }
+
+Let's walk through the above code. Our agent does not provide any named services or capabilities, so we we skip the ``setup()`` and ``processRequest()`` methods. The ``startup()`` method looks up the agent providing the physical layer services, and subscribes to any notifications from this agent. These notifications will inlcude a :javadoc:`DatagramNtf <DatagramNtf.html>` when a datagram is received from another node. The ``processMessage()`` method checks for datagram notifications with protocol USER (12), and responds with a :javadoc:`DatagramReq <DatagramReq.html>` to send an empty message of protocol 0 to the peer node. The recipient for this request is the physical layer agent (sender of the notification message). The 'to' field of the datagram to be sent is set to the 'from' field of the incoming datagram.
+
+The above code is available in the samples folder (``samples/ping/PingDaemon.groovy``). A script to simulate 3 nodes with ping daemons is provided in the same folder. We will take a look at the simulation script in detail in the :ref:`simdsl` chapter, but let's simply run the simulation script (``samples/ping/ping-sim.groovy``) for now:
+
+.. code-block:: text
+
+    3-node network with ping deamons
+    --------------------------------
+
+    You can interact with node 1 in the console shell. For example, try:
+    > ping 2
+    > help ping
+
+    When you are done, exit the shell by pressing ^D or entering:
+    > shutdown
+
+    >
+
+Now, you have the simulation running and a console shell open on node 1. Try::
+
+    > phy << new DatagramReq(to: 2, protocol: Protocol.USER)
+    AGREE
+    TxFrameNtf:INFORM[txTime:12782000 type:CONTROL]
+    RxFrameNtf:INFORM[type:CONTROL from:2 to:1 proto:0 rxTime:14417667 (0 bytes)]
+    >
+
+We sent a ``DatagramReq`` to the ``phy`` agent to send a datagram with protocol USER (12) to node 2. The ``AGREE`` response confirmed that the ``phy`` agreed to send the datagram. Shortly after, the ``TxFrameNtf`` told us that the datagram was transmitted. Once the datagram reached node 2, our ping daemon on that node responded to it by sending us a datagram with protocol 0 back. Once this arrived at node 1, we got a ``RxFrameNtf`` informing us of the arrival.
+
+You could look up the timestamps of the transmitted and received datagrams and compute the response time. It's convenient to define a command to do this for us. We define a ``ping`` command using a closure::
+
+    ping = { addr, count = 3 ->
+      println "PING $addr"
+      count.times {
+        phy << new DatagramReq(to: addr, protocol: Protocol.USER)
+        def txNtf = receive(TxFrameNtf, 1000)
+        def rxNtf = receive({ it instanceof RxFrameNtf && it.from == addr}, 5000)
+        if (txNtf && rxNtf)
+          println "Response from ${rxNtf.from}: time=${(rxNtf.rxTime-txNtf.txTime)/1000} ms"
+        else
+          println 'Request timeout'
+      }
+    }
+
+You could either type this at the fjåge shell prompt in your shell session for node 1, or put it in a file and load the file. We have already included the file in the samples folder (``samples/ping/fshrc.groovy``) and setup the simulator to load it at initialization. So you can simply use it in your fjåge shell session::
+
+    > ping 2
+    PING 2
+    Response from 2: time=1634.667 ms
+    Response from 2: time=1629.667 ms
+    Response from 2: time=1628.667 ms
+    >
+
+Finally, you can issue a ``shutdown`` command to end the simulation::
+
+    > shutdown
+
+Alternatively you could have pressed ^C or ^D to abort the simulation.
+
+Services and capabilities
+-------------------------
+
+Services are logical contracts wherein agents agree on a set of messages or behaviors for interaction. Agents typically advertise offered services during ``setup()``, and look up services either during ``startup()`` or just before the services are needed.
+
+Capabilities are optional components of service contracts that agents providing a service may or may not implement. An agent can be queried to see if it offers a specified capability. Capabilities are usually registered during ``setup()`` and looked up when needed.
+
+A code extract from a sample agent providing a reliable MAC and requiring a physical layer that can support timed transmissions is shown below::
+
+    import org.arl.unet.*
+    import org.arl.unet.phy.PhysicalCapability
+    import org.arl.unet.mac.MacCapability
+
+    class MyWonderfulMac extends UnetAgent {
+
+      def myAddress         // my node address
+      def phy               // agent ID of the physical layer
+
+      void setup() {
+        // specify that we provide a reliable MAC service
+        register Services.MAC
+        addCapability MacCapability.RELIABILITY
+      }
+
+      void startup() {
+        // get my node address from an agent providing the NODE_INFO service
+        def nodeInfo = agentForService Services.NODE_INFO
+        myAddress = nodeInfo.address
+        // find agent providing PHYSICAL service, and check that it is capable of timed transmissions
+        phy = agentForService Services.PHYSICAL
+        def rsp = request new CapabilityReq(phy, PhysicalCapability.TIMED_TX)
+        if (rsp.performative != Performative.CONFIRM)
+          log.warning 'Physical layer does not support TIMED_TX'
+      }
+
+    }
+
+Parameters
+----------
+
+Agents often require parameters that can be set during initialization, or during operation, to control the behavior of the agent. Such parameters are defined as properties of the agent, and can be accessed from other agents (or from the shell) using the :javadoc:`ParameterReq <ParameterReq.html>` message or using the ``get()`` and ``set()`` utility methods in the ``UnetAgent`` base class. With GroovyAgentExtensions enabled (see [#]_), a simpler Groovy syntax is available in the form of '*agentID.parameter*'.
+
+Let's look at some examples. We start with a sample simulation (``samples/rt/3-node-network.groovy``) which deploys 3 nodes in a network and provides us shell access to each node:
+
+.. code-block:: text
+
+    3-node network
+    --------------
+
+    Nodes: 1, 2, 3
+
+    To connect to node 2 or node 3 via telnet:
+      telnet localhost 5102
+      telnet localhost 5103
+
+    To connect to nodes 1, 2 or 3 via unet sh:
+      bin/unet sh localhost 1
+      bin/unet sh localhost 2
+      bin/unet sh localhost 3
+
+    Connected to node 1...
+    Press ^D to exit
+
+    >
+
+Now, we are connected using a console shell to node 1. We access an ``rxEnable`` parameter of the physical layer agent (agent ID ``phy``, already defined in the shell) using both methods described above::
+
+    > phy << new ParameterReq().get(PhysicalParam.rxEnable)
+    ParameterRsp:INFORM[rxEnable:true]
+    > phy.rxEnable
+    true
+
+We can change the value of parameters using either of the methods::
+
+    > phy << new ParameterReq().set(PhysicalParam.rxEnable, false)
+    ParameterRsp:INFORM[rxEnable:false]
+    > phy.rxEnable = false
+    false
+
+We generally prefer the second method, as it has a much simpler syntax and is easier to understand. However, it is useful to keep in mind that the second method involves the same message exchange as the first method, but simply with a cleaner syntax. In certain cases, the first method can be used explicitly for optimization. For example, if we need to get 2 parameters ``rxEnable`` and ``time``, the second method would need two sets of message exchanges (one for each parameter). However, the first method allows both parameters to be requested in a single request::
+
+    > phy << new ParameterReq().get(PhysicalParam.rxEnable).get(PhysicalParam.time)
+    ParameterRsp:INFORM[rxEnable:false time:33780000]
+
+In the shell, we can query a list of all parameters available from an agent::
+
+    > phy
+    phy
+    ---
+    MTU = 16
+    basebandRate = 4096
+    busy = false
+    carrierFrequency = 25000
+    clockOffset = 2270.4014
+    maxPreambleID = 1
+    maxSignalLength = 8192
+    preambleDuration = 0.025
+    propagationSpeed = 1534.4574
+    refPowerLevel = 185
+    rxEnable = true
+    time = 2275896321
+    timestampedTxDelay = 1.5
+
+For an agent to provide such parameters, it defines the parameters as properties. For Java agents, this means implementing getters and setters (no setter for read-only properites) for each property. For Groovy agents, it simply means declaring the properties. Additionally, a list of available parameters should be made available by overriding the ``getParameterList()`` method. The list is usually populated from an enum defining the list of parameters.
+
+A sample agent exposing parameters is shown below::
+
+    import org.arl.unet.*
+
+    class MyAgent extends UnetAgent {
+
+      // parameters
+      int retryCount = 3
+      float retryTimeout = 1.0
+
+      List<Parameter> getParameterList() {
+        allOf(MyAgentParameters)
+      }
+
+    }
+
+where the enum is defined as::
+
+    import org.arl.unet.Parameter
+
+    enum MyAgentParameters implements Parameter {
+      retryCount,
+      retryTimeout
+    }
+
+We have already included both the above code examples in the ``samples/param`` folder, and you can test them by starting the sample simulation (``samples/param/param-demo.groovy``) in that folder:
+
+.. code-block:: text
+
+    Agent parameter demo
+    --------------------
+
+    Agent "myAgent" loaded. You can interact with it in the console shell.
+    When you are done, exit the shell by pressing ^D or entering "shutdown".
+
+    > ps
+    phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+    simulator: SimulationAgent - IDLE
+    node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+    shell: org.arl.fjage.shell.ShellAgent - IDLE
+    myAgent: MyAgent - IDLE
+
+We can see that our agent is running with the agent ID ``myAgent``. To access it, we must define a variable in the shell with the agent ID, and then use the variable to access (list, set or get) the parameters::
+
+    > a = agent('myAgent');
+    > a
+    myAgent
+    -------
+    retryCount = 3
+    retryTimeout = 1.0
+
+    > a.retryCount = 7;
+    > a.retryCount
+    7
+    > shutdown
+
+Indexed parameters
+------------------
+
+In most agents, parameters are sufficient to configure the agent. However, sometimes it is useful to be able to provide an indexed notation for parameters. For example, consider a physical layer that supports a low-rate robust control scheme and a high-rate data scheme for datagrams that it transmits or receives. We might number the control scheme as 0, and the data scheme as 1, and configure each by an indexed notation::
+
+    phy[0].powerLevel = -10     // -10 dB source level for control datagrams
+    phy[1].powerLevel = 0       // 0 dB source level for data datagrams
+
+To support such a notation, the :javadoc:`ParameterReq <ParameterReq.html>` messages provide a ``setIndex()`` method to specify the index of the parameter to get/set. Alternatively the ``get()`` and ``set()`` utility methods of the ``UnetAgent`` base class have versions where the index can be specified. The agents supporting indexed parameters should override the ``getParameterList(index)``, ``getParam()`` and ``setParam()`` methods to provide access to the indexed parameters.
+
+Units
+-----
+
+For improved readability, we support units in Groovy agents and simulation scripts. For example, we can write::
+
+    def distance = 1.km
+    def speed = 2.mps
+    def time = distance/speed
+
+The value of ``time`` will be 500 (seconds). It is important for the developer to understand what happens under the hood to use units correctly. Each type of quantity (length, time, etc) has a reference unit (typically SI unit, but there are a few exceptions) that all other quantities are converted to. For example 1.km becomes 1000, as the reference unit for length is meters. The available quantities, units and reference units are tabulated below:
+
+============== =============== =======================================================================
+Quantity       Reference       Supported units
+============== =============== =======================================================================
+Distance        meters         m, meter, meters, km, mile, miles, nm (*nautical mile*)
+Speed           meters/second  mps, kph, mph, knot, knots
+Pressure        Pa             Pa, kPa, uPa
+Time            seconds        s, second, seconds, ms, millis, milliseconds, min, mins, minute, minutes, hr, hrs, hour, hours
+Frequency       Hz             Hz, kHz
+Temperature     C              C
+Salinity        ppt            ppt, ppm
+Heading         deg            deg, degree, degrees
+Turn rate       deg/second     dps
+Data rate       bits/second    bps, kbps
+Data length     bytes          byte, bytes, kB, kbyte, kbytes
+Source level    dB             dB
+============== =============== =======================================================================
+
+.. caution::
+
+  While units improve readability when properly used, they can confuse the reader when misused. Since the quantities are converted into reference units at the point of definition, no dimensional check can be provided to ensure that quantities in a computation are meaningfully combined.
+
+  Although we use the reference units as much as possible in the API, there are some APIs that use different units. For example, the physical layer timestamps are in microseconds. Another example is that most timeouts including fjåge's ``WakerBehavior`` or ``TickerBehavior`` are in milliseconds, not seconds. So, although ``add new WakerBehavior(500.ms) { ... }`` looks nice, it will result in an *incorrect* behavior that is triggered immediately! The quantity 500.ms will become 0.5, as the reference unit for time is seconds. However, ``WakerBehavior`` takes in an integral number of milliseconds, so the behavior would be set up for 0 milliseconds.
+
+Next steps
+----------
+
+Now that you have learned how to write Unet agents, it's time to learn how to set up simulations using your agents. For this, we recommend reading the chapter on :ref:`simdsl`. Remember that the agents can simply be copied to `UnetStack-compliant modems <modems.html>`_, without the need for porting, for use in experiments and field deployments.
+
+-------------------------------------------------------------------------------------------------
+
+.. [#] GroovyAgentExtensions are always enabled in the simulator. In other cases, you may need to put ``org.arl.unet.GroovyExtensions.enable()`` somewhere in your initialization script to enable the extensions.
+
+.. raw:: html
+
+  <p align="right"><a href="simulation-dsl.html" class="btn btn-info btn-xs">Running Simulations »</a></p>

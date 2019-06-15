@@ -1,0 +1,29 @@
+.. _UnetDevGuide:
+
+UnetStack Developer's Guide
+===========================
+
+.. sidebar:: Background Reading
+
+  If you've just started with UnetStack, a quick read of the :ref:`UnetStack` overview is recommended.
+
+  Since the UnetStack implementation is based on the fjåge agent framework, it will be useful to understand a little about developing agents. If you are not already familiar with it, we recommend browsing through the :fjage:`Fjåge Developer's Guide <doc/html>`. In particular, we recommend reading the following chapters:
+
+  * :fjage:`Introduction <doc/html/introduction.html>`
+  * :fjage:`Agents and Behaviors <doc/html/behaviors.html>`
+  * :fjage:`Messaging <doc/html/messages.html>`
+
+  While the UnetStack agents can be developed in Java or Groovy, we find that the Groovy syntax is simpler and cleaner. Moreover, simulation scripts and shell interaction is in Groovy, and therefore being familiar with Groovy is useful. We will be using the Groovy syntax for code samples throughout the documentation. If you prefer to use pure Java for developing agents, you're of course welcome to do so, but we highly recommend that you be familiar with the `Groovy <http://groovy.codehaus.org/>`_ syntax.
+
+**Table of Contents**
+
+.. toctree::
+   :maxdepth: 2
+
+   quickstart
+   unet-agents
+   simulation-dsl
+   channels
+   default-stack
+   cookbook
+   agent-ref

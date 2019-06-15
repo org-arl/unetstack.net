@@ -1,0 +1,114 @@
+.. rst-class:: jumbotron
+
+.. raw:: html
+
+  <div class="jumbotron-section" id="unet">
+  <table><tr><td>
+    <img src="_static/unet.png" width="100px" />
+  </td><td>&nbsp;&nbsp;&nbsp;</td><td>
+    <h1>Unet</h1>
+    <p><b>The Underwater Networks Project</b></p>
+  </td></tr></table>
+  </div>
+  <p><a href="overview.html" class="btn btn-primary btn-md">Learn more »</a></p>
+  </div>
+  <!--div class="alert alert-dismissable alert-success">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <p>May 26, 2018 – <strong><a href="unet-stack.html">UnetStack</a> and <a href="unet-sim.html">simulator</a> v1.4</strong>, <a href="relnotes-v1.4.html">released</a> and available for <a href="downloads.html">download</a>.</p>
+    <p>
+    <b>v1.4 Highlights:</b><br />
+    <ul>
+      <li><a href="https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-Python-API" target="_blank">Python API</a> and <a href="_static/python-gateway-tutorial.html">Python API tutorial</a>.</li>
+      <li><a href="https://github.com/org-arl/unet-contrib/tree/master/contrib/Unet-C-API" target="_blank">C API</a>.</li>
+      <li><a href="svc-50-scheduler.html">Scheduler service</a> and agent.</li>
+      <li>Open source <a href="https://github.com/org-arl/unet-contrib" target="_blank">user contributions repository</a>.</li>
+    </ul>
+    and <a href="relnotes-v1.4.html">more...</a>
+    </p>
+  </div-->
+
+At the heart of the `Unet project <overview.html>`_, we have :ref:`UnetStack`, an agent-based network stack and `simulator <unet-sim.html>`_ designed to run highly optimized protocols for use in underwater communication networks. Although the default stack provides everything needed to get a basic underwater network working, the real power of the stack lies in its customizability and extensibility. It not only allows you to easily configure a network to meet your needs, but also to automate network management, develop, simulate and test new network protocols, and implement software-defined signaling at the physical layer.
+
+.. raw:: html
+
+  <div class="row">
+
+.. rst-class:: col-sm-4
+
+Explore
+-------
+
+New to underwater networks? Unet is the perfect place to explore and learn about underwater networks. You simply need a computer with a Java VM to get started. Once you are ready to start testing to sea, you can copy your solution to a set of supported underwater modems.
+
+.. raw:: html
+
+  <p><a href="quickstart.html" class="btn btn-info btn-xs">Get started »</a></p>
+
+.. rst-class:: col-sm-4
+
+Develop
+-------
+
+Each underwater network is different. Control which agents are active, and configure them. Use scripts to add complex behaviors. Integrate with underwater sensors, AUVs or control centers using Java, Groovy, Python or C. Develop new agents and protocols, if you have special needs.
+
+.. raw:: html
+
+  <p><a href="docs.html" class="btn btn-info btn-xs">Find out how »</a></p>
+
+.. rst-class:: col-sm-4
+
+Simulate
+--------
+
+Use the simulator to test your solutions and protocols in a simulated underwater network. Interact with your application or agents in real-time, or switch to a discrete-event mode to collect days or weeks of network performance statistics in minutes.
+
+.. raw:: html
+
+  <p><a href="unet-sim.html" class="btn btn-info btn-xs">Network simulator »</a></p>
+  <p>&nbsp;</p>
+
+.. rst-class:: col-sm-4
+
+Signal
+------
+
+Need to transmit an arbitrary signal, or listen to the sound in the water? Use the baseband service to transmit and record acoustic signals, or even live stream acoustic data for real-time diagnostics and processing, on modems that support this service.
+
+.. raw:: html
+
+  <p><a href="svc-12-baseband.html" class="btn btn-info btn-xs">Baseband service »</a></p>
+
+.. rst-class:: col-sm-4
+
+Deploy
+------
+
+Simply copy your agents and scripts to supported underwater modems, and you are ready to test at sea. No need for porting or recompilation! Effortlessly take what you have tested in simulation out for field testing.
+
+.. raw:: html
+
+  <p><a href="modems.html" class="btn btn-info btn-xs">Underwater modems »</a></p>
+
+.. rst-class:: col-sm-4
+
+Contribute
+----------
+
+Developed something cool with UnetStack that you'd like to share? We have an open source user contributions repository where you can share your work. Or send us a link to your repository or web site, and we'll link you in.
+
+.. raw:: html
+
+  <p><a href="https://github.com/org-arl/unet-contrib" class="btn btn-info btn-xs">Contribute »</a></p>
+
+|
+|
+
+.. toctree::
+   :hidden:
+
+   overview
+   unet-stack
+   unet-sim
+   modems
+   docs
+   downloads

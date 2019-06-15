@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Underwater Network Simulator &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Underwater Modems" href="modems.html" />
+    <link rel="prev" title="Scheduler" href="svc-50-scheduler.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="underwater-network-simulator">
+<span id="unetsim"></span><h1>Underwater Network Simulator<a class="headerlink" href="#underwater-network-simulator" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The Unet simulator uses the <a class="reference internal" href="unet-stack.html#unetstack"><span class="std std-ref">UnetStack</span></a> implementation to simulate an underwater network on a single computer. It allows agents and protocols to be simulated in realistic channel conditions, with minimum effort. The simulator was designed with two key goals:</p>
+<ul class="simple">
+<li>To be <strong>easy to learn</strong> and use, and</li>
+<li>To allow agent implementations to be shared between deployment environment and simulation environment (<strong>no porting required</strong>).</li>
+</ul>
+<p>Essentially, once a protocol is developed and tested in simulation, it is ready to be deployed and tested at sea in any UnetStack-compatible modem.</p>
+<a class="reference internal image-reference" href="_images/unetsim.png"><img alt="_images/unetsim.png" class="align-center" src="_images/unetsim.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="how-does-it-work">
+<h2>How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this headline">¶</a></h2>
+<p>An instance of a fjåge container with all the agents in a stack is created for each node in the simulated network. The agent providing the <em>Physical</em> service usually provides access to the modem. This agent is replaced by one providing a simulated <em>Physical</em> service that micis the modem behavior, but in a simulated environment. These simulated physical layer agents communicate with each other through the fjåge framework to provide appropriate propagation delay, packet loss, etc to mimic an underwater environment. This allows the exact same agent that runs in a UnetStack-compliant modem during a field experiment to be tested in the simulation environment. Additionally, a <em>Simulation</em> agent is added to each node to provide stimulus (e.g. generate load) and to monitor activity (e.g. log received data).</p>
+</div>
+<div class="section" id="domain-specific-language">
+<h2>Domain-specific Language<a class="headerlink" href="#domain-specific-language" title="Permalink to this headline">¶</a></h2>
+<p>A domain-specific language (DSL) is developed to allow users to describe a simulation scenario in a natural way. This significantly reduces the barrier to entry for new researchers. A sample simulation DSL script is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="o">.</span><span class="na">soundSpeed</span> <span class="o">=</span> <span class="mi">1500</span><span class="o">.</span><span class="na">mps</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">dataRate</span>     <span class="o">=</span> <span class="o">[</span><span class="mi">800</span><span class="o">.</span><span class="na">bps</span><span class="o">,</span> <span class="mi">2400</span><span class="o">.</span><span class="na">bps</span><span class="o">]</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">frameLength</span>  <span class="o">=</span> <span class="o">[</span><span class="mi">16</span><span class="o">.</span><span class="na">bytes</span><span class="o">,</span> <span class="mi">64</span><span class="o">.</span><span class="na">bytes</span><span class="o">]</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">powerLevel</span>   <span class="o">=</span> <span class="o">[</span><span class="mi">0</span><span class="o">.</span><span class="na">dB</span><span class="o">,</span> <span class="mi">0</span><span class="o">.</span><span class="na">dB</span><span class="o">]</span>
+
+<span class="n">simulate</span> <span class="mi">1</span><span class="o">.</span><span class="na">hour</span><span class="o">,</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">buoy1</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;Buoy-1&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">])</span>
+  <span class="kt">def</span> <span class="n">buoy2</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;Buoy-2&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">])</span>
+  <span class="kt">def</span> <span class="n">auv1</span>  <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s1">&#39;AUV-1&#39;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">100</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">],</span> <span class="nl">mobility:</span> <span class="kc">true</span><span class="o">)</span>
+  <span class="n">auv1</span><span class="o">.</span><span class="na">motionModel</span> <span class="o">=</span> <span class="o">[</span><span class="nl">speed:</span> <span class="mi">1</span><span class="o">.</span><span class="na">mps</span><span class="o">,</span> <span class="nl">turnRate:</span> <span class="mi">1</span><span class="o">.</span><span class="na">dps</span><span class="o">]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The simulator is highly customizable, with the ability to support user-defined modem behavioral models, physics-based channel models, various motion models, customized trace file formats, etc.</p>
+<p>The simulator is available for <a class="reference external" href="downloads.html">download</a>. Detailed documentation on <a class="reference internal" href="simulation-dsl.html#simdsl"><span class="std std-ref">Running Simulations</span></a> is available in the <a class="reference internal" href="docs.html#docs"><span class="std std-ref">UnetStack Documentation</span></a>.</p>
+<p align="right"><a href="docs.html" class="btn btn-info btn-xs">Documentation »</a></p></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

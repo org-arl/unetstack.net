@@ -1,0 +1,52 @@
+UnetStack and simulator v1.3 release notes
+==========================================
+
+March 26, 2016
+
+New features
+------------
+
+* Integrated development environment (IDE), and out-of-the-box support for Windows OS.
+* Shebang (``//! Sim``) to mark simulation scripts, deprecating the need to say ``unet sim`` to run a simulation.
+* `PDU <cookbook.html#encoding-and-decoding-pdus>`_ utility class introduced to simplify encoding/decoding of PDUs.
+* `FSMBuilder <javadoc/org/arl/unet/FSMBuilder.html>`_ utility class introduced to simplify development of FSMs.
+* Simulator now fully supports the Baseband service.
+* Added shell closures for baseband service access.
+* Added baseband utilities for creating and looking for CW pulses.
+* Added sample channel model ``samples/mission2013b`` based on Chitre & Chua (2014).
+* Added support for time-to-live and priority in ``DatagramReq`` and ``ReservationReq``.
+* Improved `MAC service specifications <svc-21-mac.html>`_ to support ``TIMED_RESERVATION`` capability, ``ReservationRsp`` with ``estimatedStartTime`` and new parameters for maximum and recommended reservation size.
+* Added `MAC tutorial <mac.html>`_ to documentation.
+* Web-based shell access.
+
+Changes
+-------
+
+* Improved `documentation <docs.html>`_.
+* Switched to JDK 1.8, Groovy 2.4.4 and fjåge 1.4.
+* Switched to using JSON/TCP remote access from fjåge 1.4, rather than the old RMI remote access.
+* ``unet sh/csh`` now uses port number for connection (instead of container name).
+* ``JsonTypeAdapter`` introduced to manage polymorphism of parameters and capabilities in JSON messages.
+* Added ``name()`` method to ``NamedParameter`` to follow with ``Enum.name()`` method.
+* ``UnetError`` renamed to ``UnetException``, and made to extend RuntimeException rather than an Error, to comply with Java convention.
+* Moved ``VarInputPDU`` and ``VarOutputPDU`` to remote package.
+* ``load`` closure now supports floating point data.
+* ``RemoteFileNtf`` is now sent for ``RemoteFilePutReq``.
+* Router MTU a now a settable parameter.
+* Changed convention to avoid dummy values (such as -1) for primitives when undefined, in favor of using wrapper types with ``null`` as values with undefined.
+* Renamed MAC agent in stack to ``mac`` by default (rather than ``aloha`` or ``maca``).
+* Removed ``rps`` command, as fjåge 1.4's ``ps`` command now shows remote agents too.
+
+Bugfixes
+--------
+
+* Several minor bug fixes.
+* Default data type of ``DatagramReq`` is now ``Physical.DATA``, as it should have been.
+* Tracer now only counts DATA packets for throughput estimation.
+
+References
+----------
+
+* M. Chitre and G. Chua, "Modeling realistic underwater acoustic networks using experimental data," Asilomar Conference on Signals, Systems and Computers, (Pacific Grove, CA, USA), November 2014. (Invited).
+
+|

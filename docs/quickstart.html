@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Getting Started &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developing Agents" href="unet-agents.html" />
+    <link rel="prev" title="UnetStack Developer’s Guide" href="devguide.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="#" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="getting-started">
+<span id="quickstart"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="downloading-and-installing">
+<h2>Downloading and installing<a class="headerlink" href="#downloading-and-installing" title="Permalink to this headline">¶</a></h2>
+<p>Download the appropriate package (tgz or zip) from the <a class="reference external" href="downloads.html">downloads</a> page. Uncompress the package using your favorite decompression tool. That’s it, you’ve the stack, simulator and IDE installed and ready to go!</p>
+<p>You should have a “unetsim-1.4” folder with a structure something like this:</p>
+<pre class="literal-block">
+unetsim-1.4/
+  README.txt
+  LICENSE.txt
+  UnetIDE.app
+  bin/
+  etc/
+  samples/
+  logs/
+</pre>
+<p>On Windows or Linux, there may be a few additional support folders for the IDE, and the IDE application will be called <code class="docutils literal"><span class="pre">UnetIDE.exe</span></code> (on Windows) or simply <code class="docutils literal"><span class="pre">UnetIDE</span></code> (on Linux), instead of the <code class="docutils literal"><span class="pre">UnetIDE.app</span></code> (on OS X) shown above.</p>
+<p>The <code class="docutils literal"><span class="pre">bin</span></code> folder contains shell scripts that provide access to UnetStack and simulator framework. The <code class="docutils literal"><span class="pre">etc</span></code> folder contains stack configuration and initialization scripts. The <code class="docutils literal"><span class="pre">samples</span></code> folder contains some sample simulation scripts and agents to get you started. The <code class="docutils literal"><span class="pre">logs</span></code> folder should be empty now, but will eventually contain logs generated while running the stack or simulator.</p>
+<p>Run the IDE application by double-clicking on it. The IDE should open with the default “unetsim-1.4” folder as root, and you are ready to get started. In case the default folder is different, please set the default folder to “unetsim-1.4” from the “File, Set Root Folder…” menu.</p>
+<div class="align-center figure">
+<a class="reference internal image-reference" href="_images/UnetIDE.png"><img alt="_images/UnetIDE.png" src="_images/UnetIDE.png" style="width: 800px;" /></a>
+</div>
+</div>
+<div class="section" id="running-your-first-simulation">
+<h2>Running your first simulation<a class="headerlink" href="#running-your-first-simulation" title="Permalink to this headline">¶</a></h2>
+<p>The “hello world” of the networking world is the <a class="reference external" href="http://en.wikipedia.org/wiki/ALOHAnet">ALOHA</a> protocol. The protocol is simple, but it’s by no means easy to simulate. We have included an implementation in the <code class="docutils literal"><span class="pre">samples/aloha</span></code> folder to demonstrate how easy it is to simulate protcols with the Unet simulator. Open it in the IDE by double-clicking on <code class="docutils literal"><span class="pre">aloha.groovy</span></code> and run it from the “Simulation, Run” menu (or equivalently pressing the “Run simulation/script” toolbar button).</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If you prefer to use a command line instead of an IDE, open a shell, change directory to the “unetsim-1.4” folder, and run the command <code class="docutils literal"><span class="pre">bin/unet</span> <span class="pre">samples/aloha/aloha.groovy</span></code> (or <code class="docutils literal"><span class="pre">bin\unet</span> <span class="pre">samples\aloha\aloha.groovy</span></code> on Windows) to run the simulation. Essentially everything that can be done from the IDE can also be done using command the <code class="docutils literal"><span class="pre">unet</span></code> command line tool.</p>
+</div>
+<p>If your installation is working correctly, your output should look something like this (the exact numbers may differ slightly):</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Pure Aloha simulation
+=====================
+
+TX Count  RX Count  Loss %    Offered Load  Throughput
+--------  --------  ------    ------------  ----------
+   628       503     20.1       0.100         0.080
+  1218       814     33.2       0.193         0.129
+  1865      1019     45.4       0.296         0.162
+  2476      1095     55.8       0.393         0.174
+  3098      1145     63.0       0.492         0.182
+  3801      1128     70.3       0.603         0.179
+  4448      1065     76.1       0.706         0.169
+  4956      1016     79.5       0.787         0.161
+  5617       952     83.0       0.892         0.151
+  6499       855     86.9       1.032         0.136
+  6860       799     88.4       1.089         0.127
+  7532       702     90.7       1.196         0.111
+  8191       610     92.5       1.300         0.097
+  8746       536     93.9       1.388         0.085
+  9418       455     95.2       1.495         0.072
+
+15 simulations completed in 67.510 seconds
+</pre></div>
+</div>
+<p>In the unfortunate event that your output does not look like this, you may need to debug your installation. Start by checking the prerequisites. If you can’t figure out what’s wrong, you may want to head over to the <a class="reference external" href="http://www.unetstack.net/support">support forum</a> for help.</p>
+<p>It’s nice to see that the simulation has run and has tabulated it’s results. As expected from the ALOHA protocol, the maximum throughput of about 0.18 is reached at an offered load of about 0.5. However, this is much nicer to see graphically. This is easily done by opening the <code class="docutils literal"><span class="pre">plot-results.groovy</span></code> script and running it:</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="align-center figure">
+<img alt="_images/aloha.png" src="_images/aloha.png" />
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>As you can see, the simulation results nicely agree with the theoretical results for pure ALOHA.</p>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>Now that you have a working installation of the Unet simulator, it’s time to learn how to develop your own protocols and simulations. The <a class="reference internal" href="docs.html#docs"><span class="std std-ref">UnetStack Documentation</span></a> is a good place to start. If you’re already familiar with fjåge and Groovy, you can directly move on to <a class="reference internal" href="unet-agents.html#agents"><span class="std std-ref">Developing Agents</span></a>.</p>
+<p align="right"><a href="unet-agents.html" class="btn btn-info btn-xs">Developing Agents »</a></p></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,53 @@
+.. _usecases:
+
+Use cases
+=========
+
+UnetStack software
+------------------
+The following highlight some of the use cases for UnetStack software. Identify your use case and look at the relevant documentation as indicated.
+
+
+Protocol Reseachers
+-------------------
+
+* Developing custom MAC or routing or application protocols
+* Once protocols are tested in simulation, sea-trials can be carried out in a compatible modem such as Unet-2.
+
+* Custom Physical layer signalling schemes can be tried out in simulation and then easily tested via Baseband service of any UnetStack Baseband service enabled modem.
+
+Modem makers
+------------
+
+Modem manufacturers with proprietary hardware can consider migrating to UnetStack for their software.
+UnetStack offers a highly modular and versatile architecture.
+
+* UnetStack has been ported to one version of EvoLogics WiSE modem
+* Unet-2 modems implement UnetStack with a proprietary Physical driver agent.
+* Users wishing to port UnetStack to any other modem hardware need to implement a Physical driver agent
+
+
+Modem users
+------------
+
+* UnetStack with Unet-2 hardware
+
+Some of the following use cases require UnetStack software used together with Unet-2 modems.
+
+* Modem OEM for AUVs or sensor nodes
+
+Makers of AUVs or underwater sensor nodes can incorporate Unet-2 modem hardware and UnetStack software into their system. 
+
+Multiple possibilities exist
+
+* With no related components 
+* With existing transducer and wet-end
+* Link modem with a sensor node externally via a cable
+
+Users may also require integration of Unet-2 modems into Surface Buoys or Gateways to talk to assets underwater. 
+Such gateways may require access via generic Internet protocols.
+
+
+
+.. .........................................................................................................
+.. .........................................................................................................

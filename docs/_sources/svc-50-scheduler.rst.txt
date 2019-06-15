@@ -1,0 +1,58 @@
+.. _svcsched:
+
+Scheduler
+=========
+
+Service
+-------
+
+`SCHEDULER`_ -- Agent state persistence service
+
+Agents offering the *Scheduler* service provide a way to schedule tasks in the future.
+
+Implementations
+---------------
+
+* `SleepScheduler`_ -- provides a way to schedule sleep and wake up of the modem.
+
+Requests and Responses
+----------------------
+
+=========================== ================================ ===============================================
+Request                       Possible Responses               Description
+=========================== ================================ ===============================================
+`AddScheduledSleepReq`_      AGREE, FAILURE                   Request to add a new scheduled sleep
+`RemoveScheduledSleepReq`_   AGREE, FAILURE                   Request to remove a scheduled sleep
+`GetSleepScheduleReq`_       AGREE, FAILURE                   Request to get the sleep schedule
+`ParameterReq`_              `ParameterRsp`_                  Get/set/list parameters
+=========================== ================================ ===============================================
+
+Notifications
+-------------
+
+===================== ============== =================================================
+Notification          Topic          Description
+===================== ============== =================================================
+`WakeFromSleepNtf`_   default        Sent just after waking up from sleep
+===================== ============== =================================================
+
+Parameters
+----------
+
+===================== === ========================================================================
+Parameter             r/w Description
+===================== === ========================================================================
+`rtc`_                rw  Current date/time
+===================== === ========================================================================
+
+.. .........................................................................................................
+.. _SCHEDULER:                  javadoc/org/arl/unet/Services.html#SCHEDULER
+.. _SleepScheduler:             javadoc/org/arl/unet/yoda/SleepScheduler.java
+.. _AddScheduledSleepReq:       javadoc/org/arl/unet/scheduler/AddScheduledSleepReq.java
+.. _RemoveScheduledSleepReq:    javadoc/org/arl/unet/scheduler/RemoveScheduledSleepReq.java
+.. _GetSleepScheduleReq:        javadoc/org/arl/unet/scheduler/GetSleepScheduleReq.java
+.. _ParameterReq:               javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:               javadoc/org/arl/unet/ParameterRsp.html
+.. _WakeFromSleepNtf:           javadoc/org/arl/unet/scheduler/WakeFromSleepNtf.java
+.. _rtc:                        javadoc/org/arl/unet/scheduler/SchedulerParam.java#rtc
+.. .........................................................................................................

@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Medium Access Control &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="samples/mac/MySimpleThrottledMac.groovy" href="my-simple-throttled-mac-src.html" />
+    <link rel="prev" title="Service Reference" href="agent-ref.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="medium-access-control">
+<span id="mac"></span><h1>Medium Access Control<a class="headerlink" href="#medium-access-control" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Medium access control (MAC) is perhaps one of the most actively researched topics in underwater networks. In this tutorial, we explore the MAC service in UnetStack in detail, and develop two simple MAC agents to illustrate what implementations of the service might look like. The MAC agents are intentionally kept simple and not optimized for performance, as we wish to illustrate the key aspects of MAC agent development without getting lost in the details of optimal protocols.</p>
+</div>
+<div class="section" id="basic-functionality">
+<h2>Basic Functionality<a class="headerlink" href="#basic-functionality" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="svc-21-mac.html#macsvc"><span class="std std-ref">Medium Access Control</span></a> service defines the messages, parameters and capabilities supported by MAC agents. MAC agents provide advice to agents wishing to transmit (we shall call them <em>‘clients’</em> ) on when they may transmit, making channel reservations on behalf of clients as necessary. Some MAC protocols such as Aloha and TDMA may not require explicit handshake for reservation, while others such as MACA and FAMA may involve control packet exchanges between peer MAC agents on various nodes. In either case, a typical client with data to transmit starts by asking the prevailing MAC agent for a channel reservation:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">// client wishes to transmit data to &quot;destination&quot; for specified &quot;duration&quot;</span>
+<span class="kt">def</span> <span class="n">mac</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">mac</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// send a channel reservation request</span>
+  <span class="kt">def</span> <span class="n">req</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReservationReq</span><span class="o">(</span><span class="nl">recipient:</span> <span class="n">mac</span><span class="o">,</span> <span class="nl">to:</span> <span class="n">destination</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">duration</span><span class="o">)</span>
+  <span class="kt">def</span> <span class="n">rsp</span> <span class="o">=</span> <span class="n">request</span> <span class="n">req</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">rsp</span> <span class="o">&amp;&amp;</span> <span class="n">rsp</span><span class="o">.</span><span class="na">performative</span> <span class="o">==</span> <span class="n">Performative</span><span class="o">.</span><span class="na">AGREE</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// wait for a channel reservation notification</span>
+    <span class="kt">def</span> <span class="n">ntf</span> <span class="o">=</span> <span class="n">receive</span><span class="o">(</span><span class="n">ReservationStatusNtf</span><span class="o">,</span> <span class="n">timeout</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">ntf</span> <span class="o">&amp;&amp;</span> <span class="n">ntf</span><span class="o">.</span><span class="na">requestID</span> <span class="o">==</span> <span class="n">req</span><span class="o">.</span><span class="na">msgID</span> <span class="o">&amp;&amp;</span> <span class="n">ntf</span><span class="o">.</span><span class="na">status</span> <span class="o">==</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">START</span><span class="o">)</span> <span class="o">{</span>
+      <span class="c1">// transmit data for requested duration</span>
+      <span class="c1">//  :</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>In the above sample code, error handling has been omitted for simplicity. In reality, you would want to have <code class="docutils literal"><span class="pre">else</span></code> clauses to handle reservation failures. The MAC agent not only sends a <code class="docutils literal"><span class="pre">ReservationStatus.START</span></code> notification, but also a <code class="docutils literal"><span class="pre">ReservationStatus.END</span></code> notification at the end of the reservation duration. The sample code above ignores this notification, but has to ensure that the transmission does not exceed the requested duration.</p>
+</div>
+<div class="section" id="simple-mac-without-handshake">
+<h2>Simple MAC without Handshake<a class="headerlink" href="#simple-mac-without-handshake" title="Permalink to this headline">¶</a></h2>
+<p>To illustrate how a MAC agent might work, let us start with a simple MAC agent that accedes to every reservation request as soon as it is made:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.mac.*</span>
+
+<span class="kd">class</span> <span class="nc">MySimplestMac</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">register</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>                             <span class="c1">// advertise that the agent provides a MAC service</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="n">Message</span> <span class="nf">processRequest</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="k">instanceof</span> <span class="n">ReservationReq</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>   <span class="c1">// check requested duration</span>
+      <span class="n">ReservationStatusNtf</span> <span class="n">ntf1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReservationStatusNtf</span><span class="o">(</span>     <span class="c1">// prepare START reservation notification</span>
+        <span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span>
+        <span class="nl">requestID:</span> <span class="n">msg</span><span class="o">.</span><span class="na">msgID</span><span class="o">,</span>
+        <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span>
+        <span class="nl">status:</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">START</span><span class="o">)</span>
+      <span class="n">ReservationStatusNtf</span> <span class="n">ntf2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReservationStatusNtf</span><span class="o">(</span>     <span class="c1">// prepare END reservation notification</span>
+        <span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span>
+        <span class="nl">requestID:</span> <span class="n">msg</span><span class="o">.</span><span class="na">msgID</span><span class="o">,</span>
+        <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span>
+        <span class="nl">status:</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">END</span><span class="o">)</span>
+      <span class="n">send</span> <span class="n">ntf1</span>                                                 <span class="c1">// send START reservation notification</span>
+      <span class="n">add</span> <span class="k">new</span> <span class="nf">WakerBehavior</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">round</span><span class="o">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span><span class="o">),</span> <span class="o">{</span>    <span class="c1">// wait for reservation duration</span>
+        <span class="n">send</span> <span class="n">ntf2</span>                                               <span class="c1">// send END reservation notification</span>
+      <span class="o">})</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nf">ReservationRsp</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>                            <span class="c1">// defaults to an AGREE performative</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">null</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>While the above code implements a fully functional MAC agent, it needs to respond to <code class="docutils literal"><span class="pre">ReservationCancelReq</span></code>, <code class="docutils literal"><span class="pre">ReservationAcceptReq</span></code> and <code class="docutils literal"><span class="pre">TxAckReq</span></code> messages, and provide <code class="docutils literal"><span class="pre">channelBusy</span></code>, <code class="docutils literal"><span class="pre">reservationPayloadSize</span></code>, <code class="docutils literal"><span class="pre">ackPayloadSize</span></code>, <code class="docutils literal"><span class="pre">maxReservationDuration</span></code> and <code class="docutils literal"><span class="pre">recommendedReservationDuration</span></code> parameters in order to comply to the <a class="reference internal" href="svc-21-mac.html#macsvc"><span class="std std-ref">Medium Access Control</span></a> service specification. We add this functionality trivially, by responding to the messages with a <code class="docutils literal"><span class="pre">REFUSE</span></code> performative, and returning default values for all the parameters. The resulting complete source code (also available as <code class="docutils literal"><span class="pre">samples/mac/MySimplestMac.groovy</span></code>) is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.mac.*</span>
+
+<span class="kd">class</span> <span class="nc">MySimplestMac</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">register</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>                             <span class="c1">// advertise that the agent provides a MAC service</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="n">Message</span> <span class="nf">processRequest</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">switch</span> <span class="o">(</span><span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nl">ReservationReq:</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>   <span class="c1">// check requested duration</span>
+        <span class="n">ReservationStatusNtf</span> <span class="n">ntf1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReservationStatusNtf</span><span class="o">(</span>     <span class="c1">// prepare START reservation notification</span>
+          <span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span>
+          <span class="nl">requestID:</span> <span class="n">msg</span><span class="o">.</span><span class="na">msgID</span><span class="o">,</span>
+          <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span>
+          <span class="nl">status:</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">START</span><span class="o">)</span>
+        <span class="n">ReservationStatusNtf</span> <span class="n">ntf2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReservationStatusNtf</span><span class="o">(</span>     <span class="c1">// prepare END reservation notification</span>
+          <span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span>
+          <span class="nl">requestID:</span> <span class="n">msg</span><span class="o">.</span><span class="na">msgID</span><span class="o">,</span>
+          <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span>
+          <span class="nl">status:</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">END</span><span class="o">)</span>
+        <span class="n">send</span> <span class="n">ntf1</span>                                                 <span class="c1">// send START reservation notification</span>
+        <span class="n">add</span> <span class="k">new</span> <span class="nf">WakerBehavior</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">round</span><span class="o">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span><span class="o">),</span> <span class="o">{</span>    <span class="c1">// wait for reservation duration</span>
+          <span class="n">send</span> <span class="n">ntf2</span>                                               <span class="c1">// send END reservation notification</span>
+        <span class="o">})</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ReservationRsp</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>                            <span class="c1">// defaults to an AGREE performative</span>
+      <span class="k">case</span> <span class="nl">ReservationCancelReq:</span>
+      <span class="k">case</span> <span class="nl">ReservationAcceptReq:</span>                                  <span class="c1">// respond to other requests defined</span>
+      <span class="k">case</span> <span class="nl">TxAckReq:</span>                                              <span class="c1">//  by the MAC service trivially with</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>              <span class="c1">//  a REFUSE performative</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">null</span>
+  <span class="o">}</span>
+
+  <span class="c1">// expose parameters defined by the MAC service, with just default values</span>
+
+  <span class="nd">@Override</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Parameter</span><span class="o">&gt;</span> <span class="n">getParameterList</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">allOf</span><span class="o">(</span><span class="n">MacParam</span><span class="o">)</span>                                        <span class="c1">// advertise the list of parameters</span>
+  <span class="o">}</span>
+
+  <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">channelBusy</span> <span class="o">=</span> <span class="kc">false</span>                               <span class="c1">// parameters are marked as &#39;final&#39;</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">reservationPayloadSize</span> <span class="o">=</span> <span class="mi">0</span>                            <span class="c1">//  to ensure that they are read-only</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">ackPayloadSize</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="kd">final</span> <span class="kt">float</span> <span class="n">maxReservationDuration</span> <span class="o">=</span> <span class="n">Float</span><span class="o">.</span><span class="na">POSITIVE_INFINITY</span>
+  <span class="kd">final</span> <span class="n">Float</span> <span class="n">recommendedReservationDuration</span> <span class="o">=</span> <span class="kc">null</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now we have a fully-compliant, but very simple, MAC agent.</p>
+</div>
+<div class="section" id="simulation-and-performance-estimation">
+<h2>Simulation and Performance Estimation<a class="headerlink" href="#simulation-and-performance-estimation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="real-time-simulation">
+<h3>Real-time simulation<a class="headerlink" href="#real-time-simulation" title="Permalink to this headline">¶</a></h3>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Real-time simulations are great for testing your code through manual interaction via the shell.</p>
+</div>
+<p>In order to test our MAC, let us write a real-time simulation (<code class="docutils literal"><span class="pre">samples/mac/mac-test-rt.groovy</span></code>) with random node locations and link performance based on the <a class="reference internal" href="channels.html#channels"><span class="std std-ref">BasicAcousticChannel</span></a> model :</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: 5-node random network with MySimplestMac agent loaded</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.fjage.RealTimePlatform</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.BasicAcousticChannel</span>
+
+<span class="n">platform</span> <span class="o">=</span> <span class="n">RealTimePlatform</span>                 <span class="c1">// use real-time platform for user interaction</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="o">[</span> <span class="nl">model:</span> <span class="n">BasicAcousticChannel</span> <span class="o">]</span>   <span class="c1">// use an acoustic channel model with default parameters</span>
+
+<span class="c1">// simulate until terminated by user, with random node locations (with a user console shell for node 1)</span>
+<span class="n">simulate</span> <span class="o">{</span>
+
+  <span class="c1">// define network stack</span>
+  <span class="kt">def</span> <span class="n">myStack</span> <span class="o">=</span> <span class="o">{</span> <span class="n">container</span> <span class="o">-&gt;</span>
+    <span class="n">container</span><span class="o">.</span><span class="na">add</span> <span class="s1">&#39;mac&#39;</span><span class="o">,</span> <span class="k">new</span> <span class="n">MySimplestMac</span><span class="o">()</span>
+  <span class="o">}</span>
+
+  <span class="c1">// define simulation nodes</span>
+  <span class="n">node</span> <span class="s2">&quot;1&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">)],</span> <span class="nl">stack:</span> <span class="n">myStack</span><span class="o">,</span> <span class="nl">shell:</span> <span class="kc">true</span>
+  <span class="n">node</span> <span class="s2">&quot;2&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">)],</span> <span class="nl">stack:</span> <span class="n">myStack</span>
+  <span class="n">node</span> <span class="s2">&quot;3&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">)],</span> <span class="nl">stack:</span> <span class="n">myStack</span>
+  <span class="n">node</span> <span class="s2">&quot;4&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">)],</span> <span class="nl">stack:</span> <span class="n">myStack</span>
+  <span class="n">node</span> <span class="s2">&quot;5&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">)],</span> <span class="nl">stack:</span> <span class="n">myStack</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now we can run the simulation and interact with it using a console shell:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>&gt; ps
+node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+shell: org.arl.fjage.shell.ShellAgent - IDLE
+simulator: org.arl.unet.sim.SimulationAgent - IDLE
+phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+mac: MySimplestMac - IDLE
+&gt; mac = agentForService Services.MAC
+mac
+---
+ackPayloadSize = 0
+channelBusy = false
+maxReservationDuration = Infinity
+recommendedReservationDuration = null
+reservationPayloadSize = 0
+
+&gt; mac &lt;&lt; new ReservationReq(duration: 1.second, to: 2)
+AGREE: ReservationRsp
+ReservationStatusNtf:INFORM [requestID:ef74da89-99c8-4068-b747-cf3cc7941c1a to:2 status:START payload:(0 bytes)]
+ReservationStatusNtf:INFORM [requestID:ef74da89-99c8-4068-b747-cf3cc7941c1a to:2 status:END payload:(0 bytes)]
+&gt;
+</pre></div>
+</div>
+<p>We thus confirm that the agent behaves as expected, responding correctly to <code class="docutils literal"><span class="pre">ReservationReq</span></code> with a <code class="docutils literal"><span class="pre">ReservationRsp</span></code> response and a pair of <code class="docutils literal"><span class="pre">START</span></code> and <code class="docutils literal"><span class="pre">END</span></code> <code class="docutils literal"><span class="pre">ReservationStatusNtf</span></code> notifications.</p>
+</div>
+<div class="section" id="discrete-event-simulation">
+<h3>Discrete-event simulation<a class="headerlink" href="#discrete-event-simulation" title="Permalink to this headline">¶</a></h3>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Running a large number of simulations to get statistical results is typically much quicker using the discrete-event simulation mode.</p>
+</div>
+<p>In order to estimate statistical performance of the MAC protocol in a network, we need to load the network with controlled traffic. We write a simple <code class="docutils literal"><span class="pre">LoadGenerator</span></code> agent (<code class="docutils literal"><span class="pre">samples/mac/LoadGenerator.groovy</span></code>) to create Poisson-distributed random traffic to randomly selected nodes from a destination node list:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.phy.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.mac.*</span>
+
+<span class="kd">class</span> <span class="nc">LoadGenerator</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">destNodes</span>                     <span class="c1">// list of possible destination nodes</span>
+  <span class="kd">private</span> <span class="kt">float</span> <span class="n">load</span>                                  <span class="c1">// normalized load to generate</span>
+  <span class="kd">private</span> <span class="n">AgentID</span> <span class="n">mac</span><span class="o">,</span> <span class="n">phy</span>
+
+  <span class="n">LoadGenerator</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">destNodes</span><span class="o">,</span> <span class="kt">float</span> <span class="n">load</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">destNodes</span> <span class="o">=</span> <span class="n">destNodes</span>                        
+    <span class="k">this</span><span class="o">.</span><span class="na">load</span> <span class="o">=</span> <span class="n">load</span>                                  
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">PHYSICAL</span>
+    <span class="n">mac</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>
+    <span class="kt">float</span> <span class="n">dataPktDuration</span> <span class="o">=</span> <span class="n">get</span><span class="o">(</span><span class="n">phy</span><span class="o">,</span> <span class="n">Physical</span><span class="o">.</span><span class="na">DATA</span><span class="o">,</span> <span class="n">PhysicalChannelParam</span><span class="o">.</span><span class="na">frameDuration</span><span class="o">)</span>
+    <span class="kt">float</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">load</span><span class="s">/dataPktDuration                 // compute average packet arrival rate</span>
+<span class="s">    add new PoissonBehavior(1000/</span><span class="n">rate</span><span class="o">,</span> <span class="o">{</span>              <span class="c1">// create Poisson arrivals at given rate</span>
+      <span class="n">mac</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ReservationReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">rnditem</span><span class="o">(</span><span class="n">destNodes</span><span class="o">),</span> <span class="nl">duration:</span> <span class="n">dataPktDuration</span><span class="o">)</span>
+    <span class="o">})</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">processMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="k">instanceof</span> <span class="n">ReservationStatusNtf</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="o">.</span><span class="na">status</span> <span class="o">==</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">START</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ClearReq</span><span class="o">()</span>                                   <span class="c1">// stop any ongoing transmission or reception</span>
+      <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">type:</span> <span class="n">Physical</span><span class="o">.</span><span class="na">DATA</span><span class="o">)</span>  <span class="c1">// start a new transmission</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now, we are in a position to write out simulation script (<code class="docutils literal"><span class="pre">samples/mac/mac-test-perf.groovy</span></code>) to measure normalized network throughput as a function of normalized offered load:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: 10-node random network for MySimplestMac performance test</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.BasicAcousticChannel</span>
+
+<span class="n">channel</span> <span class="o">=</span> <span class="o">[</span> <span class="nl">model:</span> <span class="n">BasicAcousticChannel</span> <span class="o">]</span>   <span class="c1">// use an acoustic channel model with default parameters</span>
+<span class="n">trace</span><span class="o">.</span><span class="na">warmup</span> <span class="o">=</span> <span class="mi">10</span><span class="o">.</span><span class="na">minutes</span>                   <span class="c1">// collect statistics after a while</span>
+
+<span class="n">println</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">MySimplestMac simulation</span>
+<span class="s1">========================</span>
+
+<span class="s1">TX Count\tRX Count\tOffered Load\tThroughput</span>
+<span class="s1">--------\t--------\t------------\t----------&#39;&#39;&#39;</span>
+
+<span class="kt">def</span> <span class="n">nodes</span> <span class="o">=</span> <span class="mi">1</span><span class="o">..</span><span class="mi">10</span>                           <span class="c1">// nodes with addresses 1 to 10</span>
+<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="nl">i:</span> <span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kt">float</span> <span class="n">load</span> <span class="o">=</span> <span class="n">i</span><span class="s">/10.0                       // network load from 0.1 to 1.0 in steps of 0.1</span>
+<span class="s">  float loadPerNode = load/</span><span class="n">nodes</span><span class="o">.</span><span class="na">size</span><span class="o">()</span>     <span class="c1">// divide network load across nodes evenly</span>
+  <span class="n">simulate</span> <span class="mi">1</span><span class="o">.</span><span class="na">hour</span><span class="o">,</span> <span class="o">{</span>                        <span class="c1">// run each simulation for 1 hour of simulated time</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="nl">me:</span> <span class="n">nodes</span><span class="o">)</span> <span class="o">{</span>                   <span class="c1">//   with randomly placed nodes</span>
+      <span class="n">node</span> <span class="s2">&quot;$me&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="mi">20</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">0</span><span class="o">)],</span> <span class="nl">stack:</span> <span class="o">{</span> <span class="n">container</span> <span class="o">-&gt;</span>
+        <span class="n">container</span><span class="o">.</span><span class="na">add</span> <span class="s1">&#39;mac&#39;</span><span class="o">,</span> <span class="k">new</span> <span class="n">MySimplestMac</span><span class="o">()</span>
+        <span class="n">container</span><span class="o">.</span><span class="na">add</span> <span class="s1">&#39;load&#39;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoadGenerator</span><span class="o">(</span><span class="n">nodes</span><span class="o">-</span><span class="n">me</span><span class="o">,</span> <span class="n">loadPerNode</span><span class="o">)</span>   <span class="c1">// generate load to all nodes except me</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="n">println</span> <span class="nf">sprintf</span><span class="o">(</span><span class="s1">&#39;%6d\t\t%6d\t\t%7.3f\t\t%7.3f&#39;</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">txCount</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">rxCount</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">offeredLoad</span><span class="o">,</span> <span class="n">trace</span><span class="o">.</span><span class="na">throughput</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Running this, we should get an output that looks something like:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>MySimplestMac simulation
+========================
+
+TX Count  RX Count  Offered Load  Throughput
+--------  --------  ------------  ----------
+   604       466      0.110         0.085
+  1118       671      0.203         0.122
+  1707       746      0.310         0.135
+  2231       803      0.407         0.146
+  2755       779      0.502         0.141
+  3258       777      0.594         0.141
+  3757       732      0.685         0.133
+  4457       648      0.815         0.118
+  4976       575      0.910         0.104
+  5474       561      1.001         0.102
+
+10 simulations completed in 101.009 seconds
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If you wish to plot the results, see <code class="docutils literal"><span class="pre">samples/aloha/plot-results.groovy</span></code> or <a class="reference internal" href="cookbook.html#matlabplot"><span class="std std-ref">Using MATLAB to plot results</span></a> for guidance.</p>
+</div>
+</div>
+</div>
+<div class="section" id="simple-mac-with-throttling">
+<h2>Simple MAC with Throttling<a class="headerlink" href="#simple-mac-with-throttling" title="Permalink to this headline">¶</a></h2>
+<p>While the above simple MAC works well when the traffic offered to it is random, it will perform poorly if the network is fully loaded. All nodes would constantly try to access the channel, collide and the throughput would plummet. To address this concern, one may add an exponentially distributed random backoff (Poisson arrival to match the assumption of Aloha) for every request to introduce randomness. The backoff could be chosen to offer a normalized network load of approximately 0.5, since this generates the highest throughput for Aloha. While we won’t walk though the details of such an implementation, we inlcude it in the <code class="docutils literal"><span class="pre">samples</span></code> folder (<a class="reference internal" href="my-simple-throttled-mac-src.html#mysimplethrottledmac"><span class="std std-ref">samples/mac/MySimpleThrottledMac.groovy</span></a>) for the interested reader.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="simple-mac-with-handshake">
+<h2>Simple MAC with Handshake<a class="headerlink" href="#simple-mac-with-handshake" title="Permalink to this headline">¶</a></h2>
+<p>While the MAC agents we have developed so far are fully functional, they are simple, and do not involve any packet exchange for channel reservation. Many MAC protocols such as MACA and FAMA involve a handshake using request-to-send (RTS) and clear-to-send (CTS) packets (aka ‘protocol data units’ or ‘PDUs’). To illustrate how more complex protocols are developed using UnetStack, we implement a simple RTS-CTS 2-way handshake-based MAC agent (<code class="docutils literal"><span class="pre">MySimpleHandshakeMac.groovy</span></code>) next.</p>
+<p>Many communication protocols are best described using a finite state machine (FSM). We illustrate the FSM for our simple handshake-based MAC agent below:</p>
+<img src="_images/graphviz-6a81896e5a16aad5f6d9ef238e8154597c503533.png" alt="digraph FSM {
+INIT [width=0.2 shape=circle color=black style=filled label=&quot;&quot;];
+INIT -&gt; IDLE;
+IDLE -&gt; RTS [label=&quot;ReservationReq\nqueue not empty&quot; fontsize=10];
+RTS -&gt; TX [label=&quot;rx(CTS)&quot; fontsize=10];
+RTS -&gt; IDLE [label=&quot;after(timout)&quot; fontsize=10];
+TX -&gt; IDLE [label=&quot;after(T)&quot; fontsize=10];
+IDLE -&gt; BACKOFF [label=&quot;snoop(RTS/CTS)&quot; fontsize=10];
+BACKOFF -&gt; IDLE [label=&quot;after(backoff)&quot; fontsize=10];
+BACKOFF -&gt; BACKOFF [label=&quot;snoop(RTS/CTS)&quot; fontsize=10];
+IDLE -&gt; RX [label=&quot;rx(RTS)&quot; fontsize=10];
+RX -&gt; IDLE [label=&quot;after(T+2p)&quot; fontsize=10];
+}" />
+<p>When the channel is free, the agent is in an <code class="docutils literal"><span class="pre">IDLE</span></code> state. If the agent receives a <code class="docutils literal"><span class="pre">ReservationReq</span></code>, it switches to the <code class="docutils literal"><span class="pre">RTS</span></code> state and sends a RTS PDU to the intended destination node. If it receives a CTS PDU back, then it switches to a <code class="docutils literal"><span class="pre">TX</span></code> state and urges the client to transmit data via a <code class="docutils literal"><span class="pre">ReservationStatusNtf</span></code> with a <code class="docutils literal"><span class="pre">START</span></code> status. After the reservation period is over, the agent switches back to the <code class="docutils literal"><span class="pre">IDLE</span></code> state. If no CTS PDU is received in the <code class="docutils literal"><span class="pre">RTS</span></code> state for a while, the agent times out and returns to the <code class="docutils literal"><span class="pre">IDLE</span></code> state while informing the client of a reservation <code class="docutils literal"><span class="pre">FAILURE</span></code>.</p>
+<p>If the agent receives a RTS PDU in the <code class="docutils literal"><span class="pre">IDLE</span></code> state, it switches to the <code class="docutils literal"><span class="pre">RX</span></code> state and responds back with a CTS PDU. The node initiating the handshake may then transmit data for the reservation duration. After the duration (plus some allowance for 2-way propagation delay), the agent switches back to the <code class="docutils literal"><span class="pre">IDLE</span></code> state. If the agent overhears (aka <em>snoops</em>) RTS or CTS PDUs destined for other nodes, it switches to a <code class="docutils literal"><span class="pre">BACKOFF</span></code> state for a while. During the state, it does not initiate or respond to RTS PDUs. After the backoff period, it switches back to the <code class="docutils literal"><span class="pre">IDLE</span></code> state.</p>
+<p>Our RTS and CTS PDUs are identified by a <a class="reference external" href="javadoc/org/arl/unet/Protocol.html">Protocol</a> number. Since we are implementing a MAC protocol, we choose to tag our PDUs using the protocol number reserved for MAC agents:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">PROTOCOL</span> <span class="o">=</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">MAC</span>
+</pre></div>
+</div>
+<p>We also define some timeouts and delays that we will need to use:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">float</span>  <span class="n">RTS_BACKOFF</span>     <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">seconds</span>
+<span class="kt">float</span>  <span class="n">CTS_TIMEOUT</span>     <span class="o">=</span> <span class="mi">5</span><span class="o">.</span><span class="na">seconds</span>
+<span class="kt">float</span>  <span class="n">BACKOFF_RANDOM</span>  <span class="o">=</span> <span class="mi">5</span><span class="o">.</span><span class="na">seconds</span>
+<span class="kt">float</span>  <span class="n">MAX_PROP_DELAY</span>  <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">seconds</span>
+</pre></div>
+</div>
+<p>As we wish to queue reservation requests when the channel is busy, we need a queue to store them:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">ReservationReq</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayDeque</span><span class="o">&lt;</span><span class="n">ReservationReq</span><span class="o">&gt;()</span>
+</pre></div>
+</div>
+<p>Communication protocols often use complicated PDU formats. UnetStack provides a <a class="reference external" href="javadoc/org/arl/unet/PDU.html">PDU</a> class to help encode/decode PDUs. Although the RTS and CTS PDUs have a pretty simple format, the <code class="docutils literal"><span class="pre">PDU</span></code> is still useful in defining the format clearly:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">RTS_PDU</span> <span class="o">=</span> <span class="mh">0x01</span>
+<span class="kt">int</span> <span class="n">CTS_PDU</span> <span class="o">=</span> <span class="mh">0x02</span>
+
+<span class="n">PDU</span> <span class="n">pdu</span> <span class="o">=</span> <span class="n">PDU</span><span class="o">.</span><span class="na">withFormat</span> <span class="o">{</span>
+  <span class="n">uint8</span><span class="o">(</span><span class="s1">&#39;type&#39;</span><span class="o">)</span>         <span class="c1">// RTS_PDU/CTS_PDU</span>
+  <span class="n">uint16</span><span class="o">(</span><span class="s1">&#39;duration&#39;</span><span class="o">)</span>    <span class="c1">// ms</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Here we have defined a PDU with two fields – <code class="docutils literal"><span class="pre">type</span></code> (8 bit) and <code class="docutils literal"><span class="pre">duration</span></code> (16 bit). The <code class="docutils literal"><span class="pre">type</span> <span class="pre">may</span> <span class="pre">be</span> <span class="pre">either</span> <span class="pre">of</span> <span class="pre">``RTS_PDU</span></code> or <code class="docutils literal"><span class="pre">CTS_PDU</span></code>, while the <code class="docutils literal"><span class="pre">duration</span></code> will specify the reservation duration in milliseconds. We will later use this <code class="docutils literal"><span class="pre">pdu</span></code> object to <code class="docutils literal"><span class="pre">encode</span></code> and <code class="docutils literal"><span class="pre">decode</span></code> these PDUs.</p>
+<p>Now comes the heart of our MAC protocol implementation – the FSM shown above. First we define the FSM states and the events that the FSM reacts to:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kd">enum</span> <span class="n">State</span> <span class="o">{</span>
+  <span class="n">IDLE</span><span class="o">,</span> <span class="n">RTS</span><span class="o">,</span> <span class="n">TX</span><span class="o">,</span> <span class="n">RX</span><span class="o">,</span> <span class="n">BACKOFF</span>
+<span class="o">}</span>
+
+<span class="kd">enum</span> <span class="n">Event</span> <span class="o">{</span>
+  <span class="n">RX_RTS</span><span class="o">,</span> <span class="n">RX_CTS</span><span class="o">,</span> <span class="n">SNOOP_RTS</span><span class="o">,</span> <span class="n">SNOOP_CTS</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Next we use the <a class="reference external" href="javadoc/org/arl/unet/FSMBuilder.html">FSMBuilder</a> utility class in UnetStack to construct a <a class="reference external" href="http://org-arl.github.io/fjage/javadoc/org/arl/fjage/FSMBehavior.html">FSMBehavior</a> from a declarative concise representation of the FSM.</p>
+<p>The FSM states are defined using the <code class="docutils literal"><span class="pre">state(...)</span></code> declarations. The actions to take when entering/exiting a state are defined in the <code class="docutils literal"><span class="pre">onEnter</span></code>/<code class="docutils literal"><span class="pre">onExit</span></code> clauses. The behavior of the FSM in response to events are defined using the <code class="docutils literal"><span class="pre">onEvent(...)</span></code> clauses. Timers that operate in a state are defined using the <code class="docutils literal"><span class="pre">after(...)</span></code> clauses. Finally actions to take continuously while in a state are defined using the <code class="docutils literal"><span class="pre">action</span></code> clause.</p>
+<p>It should be easy to see the direct mapping between the FSM diagram and the FSM code below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">MAX_RETRY</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">FSMBehavior</span> <span class="n">fsm</span> <span class="o">=</span> <span class="n">FSMBuilder</span><span class="o">.</span><span class="na">build</span> <span class="o">{</span>
+
+  <span class="kt">int</span> <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="kt">float</span> <span class="n">backoff</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="kt">def</span> <span class="n">rxInfo</span>
+
+  <span class="nf">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">action</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(!</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">after</span><span class="o">(</span><span class="n">rnd</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">BACKOFF_RANDOM</span><span class="o">))</span> <span class="o">{</span>
+          <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RTS</span><span class="o">)</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+      <span class="n">block</span><span class="o">()</span>
+    <span class="o">}</span>
+    <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">RX_RTS</span><span class="o">)</span> <span class="o">{</span> <span class="n">info</span> <span class="o">-&gt;</span>
+      <span class="n">rxInfo</span> <span class="o">=</span> <span class="n">info</span>
+      <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RX</span><span class="o">)</span>
+    <span class="o">}</span>
+    <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_RTS</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">backoff</span> <span class="o">=</span> <span class="n">RTS_BACKOFF</span>
+      <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">BACKOFF</span><span class="o">)</span>
+    <span class="o">}</span>
+    <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_CTS</span><span class="o">)</span> <span class="o">{</span> <span class="n">info</span> <span class="o">-&gt;</span>
+      <span class="n">backoff</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="na">duration</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">MAX_PROP_DELAY</span>
+      <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">BACKOFF</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RTS</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">onEnter</span> <span class="o">{</span>
+      <span class="n">Message</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">peek</span><span class="o">()</span>
+      <span class="kt">def</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="nl">type:</span> <span class="n">RTS_PDU</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">Math</span><span class="o">.</span><span class="na">ceil</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span><span class="o">*</span><span class="mi">1000</span><span class="o">))</span>
+      <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">type:</span> <span class="n">Physical</span><span class="o">.</span><span class="na">CONTROL</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">PROTOCOL</span><span class="o">,</span> <span class="nl">data:</span> <span class="n">bytes</span><span class="o">)</span>
+      <span class="n">after</span><span class="o">(</span><span class="n">CTS_TIMEOUT</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(++</span><span class="n">retryCount</span> <span class="o">&gt;=</span> <span class="n">MAX_RETRY</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">sendReservationStatusNtf</span><span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">(),</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">FAILURE</span><span class="o">)</span>
+          <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="o">}</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">RX_CTS</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">TX</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">TX</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">onEnter</span> <span class="o">{</span>
+      <span class="n">ReservationReq</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">()</span>
+      <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">sendReservationStatusNtf</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">START</span><span class="o">)</span>
+      <span class="n">after</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">sendReservationStatusNtf</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">END</span><span class="o">)</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RX</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">onEnter</span> <span class="o">{</span>
+      <span class="kt">def</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="nl">type:</span> <span class="n">CTS_PDU</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">Math</span><span class="o">.</span><span class="na">round</span><span class="o">(</span><span class="n">rxInfo</span><span class="o">.</span><span class="na">duration</span><span class="o">*</span><span class="mi">1000</span><span class="o">))</span>
+      <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">rxInfo</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="nl">type:</span> <span class="n">Physical</span><span class="o">.</span><span class="na">CONTROL</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">PROTOCOL</span><span class="o">,</span> <span class="nl">data:</span> <span class="n">bytes</span><span class="o">)</span>
+      <span class="n">after</span><span class="o">(</span><span class="n">rxInfo</span><span class="o">.</span><span class="na">duration</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">MAX_PROP_DELAY</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+      <span class="o">}</span>
+      <span class="n">rxInfo</span> <span class="o">=</span> <span class="kc">null</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">BACKOFF</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">onEnter</span> <span class="o">{</span>
+      <span class="n">after</span><span class="o">(</span><span class="n">backoff</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_RTS</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">backoff</span> <span class="o">=</span> <span class="n">RTS_BACKOFF</span>
+      <span class="n">reenterState</span><span class="o">()</span>
+    <span class="o">}</span>
+    <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_CTS</span><span class="o">)</span> <span class="o">{</span> <span class="n">info</span> <span class="o">-&gt;</span>
+      <span class="n">backoff</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="na">duration</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">MAX_PROP_DELAY</span>
+      <span class="n">reenterState</span><span class="o">()</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Do note that the above FSM includes a couple of details that were missing from the FSM diagram. Firstly, we implement a random backoff before switching to the RTS state to minimize contention. Secondly, we implement a <code class="docutils literal"><span class="pre">retryCount</span></code> counter to check the number of times a single <code class="docutils literal"><span class="pre">ReservationReq</span></code> has been tried. If it exceeds <code class="docutils literal"><span class="pre">MAX_RETRY</span></code>, we discard it. Thirdly, we have a <code class="docutils literal"><span class="pre">backoff</span></code> variable that allows different backoff times for different occasions. The variable is set each time, just before the state is changed to <code class="docutils literal"><span class="pre">State.BACKOFF</span></code> or before the backoff state is re-entered.</p>
+<p>The FSM uses a simple utility method to send out <code class="docutils literal"><span class="pre">ReservationStatusNtf</span></code> notifications:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">sendReservationStatusNtf</span><span class="o">(</span><span class="n">ReservationReq</span> <span class="n">msg</span><span class="o">,</span> <span class="n">ReservationStatus</span> <span class="n">status</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">send</span> <span class="k">new</span> <span class="nf">ReservationStatusNtf</span><span class="o">(</span><span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span> <span class="nl">requestID:</span> <span class="n">msg</span><span class="o">.</span><span class="na">msgID</span><span class="o">,</span> <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">from:</span> <span class="n">addr</span><span class="o">,</span> <span class="nl">status:</span> <span class="n">status</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now the hard work is done. We initialize our agent by registering the <code class="docutils literal"><span class="pre">MAC</span></code> service, looking up and subscribing to the <code class="docutils literal"><span class="pre">PHYSICAL</span></code> service (to transmit and receive PDUs), looking up our own address using the <code class="docutils literal"><span class="pre">NODE_INFO</span></code> service, and starting the <code class="docutils literal"><span class="pre">fsm</span></code> behavior:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">AgentID</span> <span class="n">phy</span>
+<span class="kt">int</span> <span class="n">addr</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+  <span class="n">register</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>
+<span class="o">}</span>
+
+<span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+  <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">PHYSICAL</span>
+  <span class="n">subscribe</span><span class="o">(</span><span class="n">phy</span><span class="o">)</span>
+  <span class="n">subscribe</span><span class="o">(</span><span class="n">topic</span><span class="o">(</span><span class="n">phy</span><span class="o">,</span> <span class="n">Physical</span><span class="o">.</span><span class="na">SNOOP</span><span class="o">))</span>
+  <span class="n">add</span> <span class="k">new</span> <span class="nf">OneShotBehavior</span><span class="o">({</span>
+    <span class="kt">def</span> <span class="n">nodeInfo</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">NODE_INFO</span>
+    <span class="n">addr</span> <span class="o">=</span> <span class="n">get</span><span class="o">(</span><span class="n">nodeInfo</span><span class="o">,</span> <span class="n">NodeInfoParam</span><span class="o">.</span><span class="na">address</span><span class="o">)</span>
+  <span class="o">})</span>
+  <span class="n">add</span><span class="o">(</span><span class="n">fsm</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Note that we subscribe to the <code class="docutils literal"><span class="pre">topic(phy,</span> <span class="pre">Physical.SNOOP)</span></code> in addition to <code class="docutils literal"><span class="pre">phy</span></code>. This allows us to <em>snoop</em> RTS/CTS PDUs destined for other nodes. Also note that the address lookup is performed in a <code class="docutils literal"><span class="pre">OneShotBehavior</span></code> to avoid having the agent to block while the node information agent is starting up.</p>
+<p>Just like in the earlier MAC implementation, we have to respond to various requests defined by the <a class="reference internal" href="svc-21-mac.html#macsvc"><span class="std std-ref">Medium Access Control</span></a> service specifications:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">MAX_QUEUE_LEN</span> <span class="o">=</span> <span class="mi">16</span>
+
+<span class="n">Message</span> <span class="nf">processRequest</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">switch</span> <span class="o">(</span><span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="nl">ReservationReq:</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">to</span> <span class="o">==</span> <span class="n">Address</span><span class="o">.</span><span class="na">BROADCAST</span> <span class="o">||</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span> <span class="o">==</span> <span class="n">addr</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">msg</span><span class="o">.</span><span class="na">duration</span> <span class="o">&gt;</span> <span class="n">maxReservationDuration</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">MAX_QUEUE_LEN</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+      <span class="n">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>
+      <span class="n">fsm</span><span class="o">.</span><span class="na">restart</span><span class="o">()</span>      <span class="c1">// tell fsm to check queue, as it may block if the queue is empty</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nf">ReservationRsp</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>
+    <span class="k">case</span> <span class="nl">ReservationCancelReq:</span>
+    <span class="k">case</span> <span class="nl">ReservationAcceptReq:</span>
+    <span class="k">case</span> <span class="nl">TxAckReq:</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nf">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+  <span class="o">}</span>
+  <span class="k">return</span> <span class="kc">null</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>If we get a <code class="docutils literal"><span class="pre">ReservationReq</span></code>, we validate the attributes, add the request to our <code class="docutils literal"><span class="pre">queue</span></code> and return a <code class="docutils literal"><span class="pre">ReservationRsp</span></code>. For other requests that we do not support, we simply <code class="docutils literal"><span class="pre">REFUSE</span></code> them.</p>
+<p>If we receive PDUs from the physical agent, they come as <code class="docutils literal"><span class="pre">RxFrameNtf</span></code> messages via the <code class="docutils literal"><span class="pre">processMessage()</span></code> method. For all PDUs with a protocol number that we use, we decode them. We <code class="docutils literal"><span class="pre">trigger</span></code> appropriate FSM events in response to RTS and CTS PDUs – <code class="docutils literal"><span class="pre">RX_RTS</span></code> and <code class="docutils literal"><span class="pre">RX_CTS</span></code> events for PDUs destined to us, and <code class="docutils literal"><span class="pre">SNOOP_RTS</span></code> and <code class="docutils literal"><span class="pre">SNOOP_CTS</span></code> events for PDUs that we overhear:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">processMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="k">instanceof</span> <span class="n">RxFrameNtf</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="o">.</span><span class="na">protocol</span> <span class="o">==</span> <span class="n">PROTOCOL</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="n">rx</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">data</span><span class="o">)</span>
+    <span class="kt">def</span> <span class="n">info</span> <span class="o">=</span> <span class="o">[</span><span class="nl">from:</span> <span class="n">msg</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">rx</span><span class="o">.</span><span class="na">duration</span><span class="o">/</span><span class="mf">1000.0</span><span class="o">]</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">rx</span><span class="o">.</span><span class="na">type</span> <span class="o">==</span> <span class="n">RTS_PDU</span><span class="o">)</span> <span class="n">fsm</span><span class="o">.</span><span class="na">trigger</span><span class="o">(</span><span class="n">info</span><span class="o">.</span><span class="na">to</span> <span class="o">==</span> <span class="n">addr</span> <span class="o">?</span> <span class="n">Event</span><span class="o">.</span><span class="na">RX_RTS</span> <span class="o">:</span> <span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_RTS</span><span class="o">,</span> <span class="n">info</span><span class="o">)</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">rx</span><span class="o">.</span><span class="na">type</span> <span class="o">==</span> <span class="n">CTS_PDU</span><span class="o">)</span> <span class="n">fsm</span><span class="o">.</span><span class="na">trigger</span><span class="o">(</span><span class="n">info</span><span class="o">.</span><span class="na">to</span> <span class="o">==</span> <span class="n">addr</span> <span class="o">?</span> <span class="n">Event</span><span class="o">.</span><span class="na">RX_CTS</span> <span class="o">:</span> <span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_CTS</span><span class="o">,</span> <span class="n">info</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Finally, we expose the parameters required by the <a class="reference internal" href="svc-21-mac.html#macsvc"><span class="std std-ref">Medium Access Control</span></a> service specification:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">List</span><span class="o">&lt;</span><span class="n">Parameter</span><span class="o">&gt;</span> <span class="n">getParameterList</span><span class="o">()</span> <span class="o">{</span>          <span class="c1">// publish list of all exposed parameters</span>
+  <span class="k">return</span> <span class="nf">allOf</span><span class="o">(</span><span class="n">MacParam</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="kd">final</span> <span class="kt">int</span> <span class="n">reservationPayloadSize</span> <span class="o">=</span> <span class="mi">0</span>          <span class="c1">// read-only</span>
+<span class="kd">final</span> <span class="kt">int</span> <span class="n">ackPayloadSize</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="c1">// read-only</span>
+<span class="kd">final</span> <span class="kt">float</span> <span class="n">maxReservationDuration</span> <span class="o">=</span> <span class="mf">65.535</span>   <span class="c1">// read-only</span>
+
+<span class="kt">boolean</span> <span class="nf">getChannelBusy</span><span class="o">()</span> <span class="o">{</span>                    <span class="c1">// channel is considered busy if fsm is not IDLE</span>
+  <span class="k">return</span> <span class="n">fsm</span><span class="o">.</span><span class="na">currentState</span><span class="o">.</span><span class="na">name</span> <span class="o">!=</span> <span class="n">State</span><span class="o">.</span><span class="na">IDLE</span>
+<span class="o">}</span>
+
+<span class="kt">float</span> <span class="nf">getRecommendedReservationDuration</span><span class="o">()</span> <span class="o">{</span>   <span class="c1">// recommended reservation duration is one DATA packet</span>
+  <span class="k">return</span> <span class="nf">get</span><span class="o">(</span><span class="n">phy</span><span class="o">,</span> <span class="n">Physical</span><span class="o">.</span><span class="na">DATA</span><span class="o">,</span> <span class="n">PhysicalChannelParam</span><span class="o">.</span><span class="na">frameDuration</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>We are done! You can find the full listing of the <code class="docutils literal"><span class="pre">MySimpleHandshakeMac</span></code> agent in the <code class="docutils literal"><span class="pre">samples</span></code> folder (<a class="reference internal" href="my-simple-handshake-mac-src.html#mysimplehandshakemac"><span class="std std-ref">samples/mac/MySimpleHandshakeMac.groovy</span></a>).</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="advanced-functionality">
+<h2>Advanced Functionality<a class="headerlink" href="#advanced-functionality" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="svc-21-mac.html#macsvc"><span class="std std-ref">Medium Access Control</span></a> service specification allows for many advanced use cases. We explore a few of them below.</p>
+<div class="section" id="reservation-duration">
+<h3>Reservation duration<a class="headerlink" href="#reservation-duration" title="Permalink to this headline">¶</a></h3>
+<p>MAC reservations are often sought for single packet transmission. However, this is not efficient for handshake-based protocols in underwater networks where the round-trip time for handshake may be large. Hence the reservation duration may be adjusted by the client to include packet trains or batches. Furthermore, clients may also reserve the channel for activities such as ranging or simply to get the channel to be quiet during a noise measurement.</p>
+<p>The maximum reservation duration supported by a MAC agent is specified using the <code class="docutils literal"><span class="pre">maxReservationDuration</span></code> parameter. If a MAC agent knows the optimal reservation duration for good performance, it may choose to advertise it using the <code class="docutils literal"><span class="pre">recommendedReservationDuration</span></code> parameter.</p>
+</div>
+<div class="section" id="priority-and-ttl">
+<h3>Priority and TTL<a class="headerlink" href="#priority-and-ttl" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">ReservationReq</span></code> requests allow for a <code class="docutils literal"><span class="pre">Priority</span></code> and <code class="docutils literal"><span class="pre">ttl</span></code> (time-to-live) attributes to be specified. If a MAC agent is able to honor these, it should advertise this using the <code class="docutils literal"><span class="pre">MacCapability.Priority</span></code> and <code class="docutils literal"><span class="pre">MacCapability.TTL</span></code> capabilities. If the MAC agent does not advertise these capabilities, it is free to ignore the values of these attributes.</p>
+</div>
+<div class="section" id="timed-reservations">
+<h3>Timed reservations<a class="headerlink" href="#timed-reservations" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">ReservationReq</span></code> requests also allow for a <code class="docutils literal"><span class="pre">startTime</span></code> to be specified. This is meant to enable a client to ask for a reservation starting as a specified time (by the physical agent’s clock). If the MAC agent can support scheduling of reservations in the future, it should advertise this using the <code class="docutils literal"><span class="pre">MacCapability.TIMED_RESERVATION</span></code> capability. If the <code class="docutils literal"><span class="pre">startTime</span></code> is invalid, or the MAC agent is unable to schedule the reservation as requested, it should respond with a <code class="docutils literal"><span class="pre">REFUSE</span></code> performative.</p>
+</div>
+<div class="section" id="cancellation-of-pending-requests">
+<h3>Cancellation of pending requests<a class="headerlink" href="#cancellation-of-pending-requests" title="Permalink to this headline">¶</a></h3>
+<p>If a <code class="docutils literal"><span class="pre">ReservationReq</span></code> has been <code class="docutils literal"><span class="pre">AGREE``d</span> <span class="pre">to,</span> <span class="pre">but</span> <span class="pre">not</span> <span class="pre">yet</span> <span class="pre">granted,</span> <span class="pre">it</span> <span class="pre">may</span> <span class="pre">be</span> <span class="pre">cancelled</span> <span class="pre">using</span> <span class="pre">the</span> <span class="pre">``ReservationCancelReq</span></code> request. The reservation to cancel is identified using the message id of the original <code class="docutils literal"><span class="pre">ReservationReq</span></code> message. If a MAC agent does not support cancellation, or is unable to cancel the request as it is already partly processed, it should respond with a <code class="docutils literal"><span class="pre">REFUSE</span></code> performative.</p>
+</div>
+<div class="section" id="reliability">
+<h3>Reliability<a class="headerlink" href="#reliability" title="Permalink to this headline">¶</a></h3>
+<p>Some MAC protocols may provide reliability, usually through the use of ACK PDUs. MAC agents providing reliability should advertise this using the <code class="docutils literal"><span class="pre">MacCapability.RELIABILITY</span></code> capability. Clients wishing to avail reliability turn on the <code class="docutils literal"><span class="pre">reliabile</span></code> flag of the <code class="docutils literal"><span class="pre">ReservationReq</span></code>. For these reservation requests, the MAC agent should send <code class="docutils literal"><span class="pre">RxAckNtf</span></code> messages on successful delivery of data during the reservation.</p>
+</div>
+<div class="section" id="piggbacking-control-information">
+<h3>Piggbacking control information<a class="headerlink" href="#piggbacking-control-information" title="Permalink to this headline">¶</a></h3>
+<p>MAC protocols that exchange PDUs may provide means to piggyback data on those PDUs. For example, a RTS-CTS exchange may provide a MAC client the ability to also exchange power control information: the RTS may be transmitted at full power; the receiving node may measure the SNR and transmit the CTS with piggybacked recommended power level information that the transmitter may use for subsequent data transmission. Another example for adaptive modulation: the RTS-CTS exchange may include negotiation parameters for modulation or error correction.</p>
+<p>Payload data to be piggybacked with RTS-like PDUs is passed to the MAC agent in the <code class="docutils literal"><span class="pre">ReservationReq</span></code> message’s <code class="docutils literal"><span class="pre">payload</span></code> attribute. Payload data to be piggybacked with CTS-like PDUs is passed to the MAC agent in a <code class="docutils literal"><span class="pre">ReservationAcceptReq</span></code> request (<code class="docutils literal"><span class="pre">payload</span></code> attribute) that a client should immediately send after a <code class="docutils literal"><span class="pre">ReservationStatusNtf</span></code> (with status <code class="docutils literal"><span class="pre">REQUEST</span></code>) notification by the MAC agent. The maximum number of bytes of payload for RTS/CTS-like PDUs is specified in the <code class="docutils literal"><span class="pre">reservationPayloadSize</span></code> parameter exposed by the MAC agent. Finally payload data to be piggybacked with ACK-like PDUs is passed to the MAC agent in a <code class="docutils literal"><span class="pre">TxAckReq</span></code> message’s <code class="docutils literal"><span class="pre">payload</span></code> attribute. This request is also sent after a <code class="docutils literal"><span class="pre">REQUEST</span></code> status notification, but may be presented any time before the expiry of the reservation time. The maximum size of this payload is specified in the <code class="docutils literal"><span class="pre">ackPayloadSize</span></code> parameter.</p>
+<p>A sample sequence diagram showing the potential interactions between client agents and MAC agents on 2 nodes is shown below:</p>
+<div><img height="1191" src="_images/seqdiag-d5c5fcbdda0e2e36b5b66fe2b4122538b8e461e8.png" width="832" /></div></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

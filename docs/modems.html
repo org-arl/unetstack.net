@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Underwater Modems &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UnetStack Documentation" href="docs.html" />
+    <link rel="prev" title="Underwater Network Simulator" href="unet-sim.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="underwater-modems">
+<span id="modems"></span><h1>Underwater Modems<a class="headerlink" href="#underwater-modems" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/modems.jpg" class="align-right" src="_images/modems.jpg" />
+<p>To deploy an underwater network, we require an underwater modem at each network node.</p>
+<p>The Unet-2 software-defined modem <a class="footnote-reference" href="#id2" id="id1">[1]</a> was developed by <a class="reference external" href="http://www.arl.nus.edu.sg/">ARL</a> in 2011 for underwater networking research as part of the Unet project. Its primary design goal was flexibility, allowing various modulation schemes, forward error correction codes, and network protocols to be tested at sea. This modem was superseeded by the 3rd generation Unet modems developed by <a class="reference external" href="http://www.subnero.com/">Subnero</a> in 2017. These modems supports multiple modulation schemes and protocols to be used during a single deployment, and are able to collect detailed logs of all communication activity during a deployment. They provides accurate control over transmission and reception timings, a powerful Java, Groovy, Phython and C API to access low-level functionality and a MATLAB toolbox and Jupyter notebook functionality to interface with the modem for signal analysis. <a class="reference external" href="http://www.subnero.com/technology/">[more…]</a></p>
+<p>Although the 3rd generation Unet modems are an obvious candidate to use for UnetStack-based underwater network deployments, other underwater modems may also be used in networks. A <em>modem driver</em> imlpementing the <a class="reference internal" href="svc-10-phy.html#svcphy"><span class="std std-ref">Physical</span></a> service is required to support the modem.</p>
+<div class="section" id="modem-drivers">
+<h2>Modem Drivers<a class="headerlink" href="#modem-drivers" title="Permalink to this headline">¶</a></h2>
+<p>A list of known modems with UnetStack support is shown below:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="28%" />
+<col width="56%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Manufacturer</td>
+<td>Modem</td>
+<td>Remarks</td>
+</tr>
+<tr class="row-even"><td><img alt="subnero" src="_images/subnero.png" /></td>
+<td>Silver edition</td>
+<td>The 3rd generation Unet modems from Subnero fully
+support UnetStack and all associated services.</td>
+</tr>
+<tr class="row-odd"><td><img alt="subnero" src="_images/subnero.png" /></td>
+<td>Research edition</td>
+<td>The 3rd generation Unet modems from Subnero fully
+support UnetStack and all associated services.</td>
+</tr>
+<tr class="row-even"><td><img alt="arl" src="_images/arl.png" /></td>
+<td>Portaudio interface</td>
+<td>The portaudio interface driver allows a laptop to
+be used as a fully functional acoustic modem.
+This enables testing and development in
+air, or in water (with appropriate amplifiers
+and transducers) with just a laptop sound card.
+This driver fully supports UnetStack and all
+associated services.</td>
+</tr>
+<tr class="row-odd"><td><img alt="subnero" src="_images/subnero.png" /></td>
+<td>Unet-2</td>
+<td>The Unet-2 modem was developed for flexibility
+and extensibility, and fully supports UnetStack,
+including DATA/CONTROL channels, adaptive
+modulation/FEC, arbitrary waveform support
+and the software-defined modem (<a class="reference internal" href="svc-12-baseband.html#svcbb"><span class="std std-ref">Baseband</span></a>)
+service.</td>
+</tr>
+<tr class="row-even"><td><img alt="evologics" src="_images/evologics.png" /></td>
+<td>WiSE-edition</td>
+<td>The WiSE-edition modem for developers supports
+basic UnetStack functionality at the network
+layers. Only CONTROL channel is supported. The
+software-defined modem (<a class="reference internal" href="svc-12-baseband.html#svcbb"><span class="std std-ref">Baseband</span></a>) service
+is not supported.</td>
+</tr>
+</tbody>
+</table>
+<p>Should you require support to integrate UnetStack with an underwater modem of your choice, please contact <a class="reference external" href="http://www.subnero.com/">Subnero</a>.</p>
+</div>
+<div class="section" id="network-gateways">
+<h2>Network Gateways<a class="headerlink" href="#network-gateways" title="Permalink to this headline">¶</a></h2>
+<p>A <em>Seaweb gateway agent</em> was developed to integrate the Unet network with a <a class="reference external" href="http://www.nps.edu/About/News/NPS-Pioneers-Seaweb-Underwater-Sensor-Networks.html">Seaweb network</a> from the Naval Postgraduate School (NPS). The integration was tested and demonstrated during the <a class="reference external" href="http://arl.nus.edu.sg/twiki6/bin/view/ARL/Mission2013">MISSION 2013</a> experiment in Singapore. Should you have an interest in this gateway agent, please contact <a class="reference external" href="http://www.arl.nus.edu.sg/">ARL</a>.</p>
+<hr class="docutils" />
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><ol class="first last upperalpha simple" start="13">
+<li>Chitre, I. Topor, and T.-B. Koay, “The UNET-2 modem - an extensible tool for underwater networking research,” in Proceedings of IEEE OCEANS‘12 Yeosu, May 2012. [<a class="reference external" href="http://arl.nus.edu.sg/twiki/pub/ARL/BibEntries/Chitre2012ys.pdf">pdf</a>]</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

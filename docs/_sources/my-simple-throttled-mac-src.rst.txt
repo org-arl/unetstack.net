@@ -1,0 +1,7 @@
+.. _MySimpleThrottledMac:
+
+``samples/mac/MySimpleThrottledMac.groovy``
+-------------------------------------------
+
+.. literalinclude:: ../../../public/samples/mac/MySimpleThrottledMac.groovy
+   :language: groovy

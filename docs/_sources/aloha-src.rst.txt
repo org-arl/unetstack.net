@@ -1,0 +1,7 @@
+.. _aloha:
+
+``samples/aloha/aloha.groovy``
+------------------------------
+
+.. literalinclude:: ../../../public/samples/aloha/aloha.groovy
+   :language: groovy

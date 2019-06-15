@@ -1,0 +1,80 @@
+.. _svcranging:
+
+Ranging
+=======
+
+Service
+-------
+
+`RANGING`_ -- Ranging service
+
+Agents offering the *Ranging* service provide time synchronization and ranging functionalities between pairs of nodes. They support a set of messages and parameters that are explained below.
+
+Implementations
+---------------
+
+* `Ranging <javadoc/org/arl/unet/phy/Ranging.html>`__ -- provides ranging using any :ref:`svcphy` service with `TIMESTAMPED_TX`_ capability
+
+Requests and Responses
+----------------------
+
+===================== ================================ ==========================================
+Request               Possible Responses               Description
+===================== ================================ ==========================================
+`RangeReq`_           AGREE, FAILURE                   Request range measurement
+`BeaconReq`_          AGREE, FAILURE                   Request beacon transmission
+`ClearSyncReq`_       AGREE, FAILURE                   Clear synchronization information
+`SyncInfoReq`_        `SyncInfoRsp`_, FAILURE          Get synchronization information
+`ParameterReq`_       `ParameterRsp`_                  Get/set/list parameters
+===================== ================================ ==========================================
+
+.. tip::
+
+  An agent providing the ranging service typically responds to a `RangeReq`_ agreeing to make the range measurement. The actual range measurement is sent later as a `RangeNtf`_.
+
+Beacons are used for one-way travel-time (OWTT) ranging to transmit a timing signal that may be used by other modems to compute range from the beacon node. Only nodes that have valid synchronization to the beacon node obtain range information from beacon transmissions. Any range information recevied at a node is sent as an unsolicited `RangeNtf`_.
+
+For OWTT to be used, synchronization information has to be first obtained between nodes. This automatically happens when a successful ranging exchange `RangeReq`_ is made. The `lifetime`_ or validity of the synchronization information depends on the accuracy/drift of the clocks used in the modems.
+
+Notifications
+-------------
+
+===================== ============== ============================================
+Notification          Topic          Description
+===================== ============== ============================================
+`RangeNtf`_           default        Range notification from a peer node
+`BadRangeNtf`_        default        Invalid range notification from a peer node
+`ParamChangeNtf`_     `PARAMCHANGE`_ Notification about the modified parameter
+===================== ============== ============================================
+
+Parameters
+----------
+
+===================== === ===============================================================================================================
+Parameter             r/w Description
+===================== === ===============================================================================================================
+`lifetime`_           rw  Life time or validity for synchronization information (seconds)
+`minRange`_           rw  Minimum possible range (meters)
+`maxRange`_           rw  Maximum possible range (meters)
+`maxBadRangeCnt`_     rw  Maximum number of consecutive bad range estimates before discarding synchronization information for the node
+===================== === ===============================================================================================================
+
+.. .........................................................................................................
+.. _RANGING:          javadoc/org/arl/unet/Services.html#RANGING
+.. _ParameterReq:     javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:     javadoc/org/arl/unet/ParameterRsp.html
+.. _RangeReq:         javadoc/org/arl/unet/phy/RangeReq.html
+.. _BeaconReq:        javadoc/org/arl/unet/phy/BeaconReq.html
+.. _ClearSyncReq:     javadoc/org/arl/unet/phy/ClearSyncReq.html
+.. _SyncInfoReq:      javadoc/org/arl/unet/phy/SyncInfoReq.html
+.. _SyncInfoRsp:      javadoc/org/arl/unet/phy/SyncInfoRsp.html
+.. _RangeNtf:         javadoc/org/arl/unet/phy/RangeNtf.html
+.. _BadRangeNtf:      javadoc/org/arl/unet/phy/BadRangeNtf.html
+.. _lifetime:         javadoc/org/arl/unet/phy/RangeParam.html#lifetime
+.. _minRange:         javadoc/org/arl/unet/phy/RangeParam.html#minRange
+.. _maxRange:         javadoc/org/arl/unet/phy/RangeParam.html#maxRange
+.. _maxBadRangeCnt:   javadoc/org/arl/unet/phy/RangeParam.html#maxBadRangeCnt
+.. _ParamChangeNtf:   javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:      javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _TIMESTAMPED_TX:   javadoc/org/arl/unet/phy/PhysicalCapability.html#TIMESTAMPED_TX
+.. .........................................................................................................

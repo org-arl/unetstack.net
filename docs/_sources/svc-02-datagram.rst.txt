@@ -1,0 +1,90 @@
+.. _svcdatagram:
+
+Datagram
+========
+
+Service
+-------
+
+`Datagram`_ -- Datagram service
+
+Agents offering the *Datagram* service support messages to transmit and receive datagrams. Such agents may offer some optional capabilities:
+
+===================== ===========================================================================
+Capability            Description
+===================== ===========================================================================
+`FRAGMENTATION`_      Capable of fragmentation/reassembly of datagrams
+`RELIABILITY`_        Capable of link-level reliability
+`PROGRESS`_           Capable of reporting progress via `DatagramProgressNtf`_ messages
+`CANCELLATION`_       Capable of cancelling queued datagram transmission
+`PRIORITY`_           Capable of honoring datagram priority
+`TTL`_                Capable of honoring datagram time-to-live settings
+===================== ===========================================================================
+
+Implementations
+---------------
+
+A large number of agents provide the *Datagram* service. Specifically, any agent providing :ref:`svcphy`, :ref:`svclink`, :ref:`svcrouting` or :ref:`svctransport` services support this service.
+
+Requests and Responses
+----------------------
+
+===================== ========================================== ==========================================
+Request               Possible Responses                         Description
+===================== ========================================== ==========================================
+`DatagramReq`_        AGREE, REFUSE, FAILURE                     Transmit a datagram
+`DatagramCancelReq`_  AGREE, REFUSE, NOT_UNDERSTOOD              Cancel a datagram transmission
+`ParameterReq`_       `ParameterRsp`_                            Get/set/list parameters
+`CapabilityReq`_      CONFIRM, DISCONFIRM, `CapabilityListRsp`_  Check/list capabilities
+===================== ========================================== ==========================================
+
+.. tip:: If reliability is supported, a reliable datagram is specified by setting the ``reliability`` property of the `DatagramReq`_. If an agent does not support reliability, it would respond with a ``REFUSE`` performative to such a request.
+
+.. tip:: A NOT_UNDERSTOOD response for the `DatagramCancelReq`_ request indicates that the agent does not support the `CANCELLATION`_ capability.
+
+Notifications
+-------------
+
+====================== ================== ============================================================
+Notification           Topic              Description
+====================== ================== ============================================================
+`DatagramNtf`_         default            Notification of a received datagram
+`DatagramDeliveryNtf`_ requester          Notification of successful delivery of reliable datagram
+`DatagramFailureNtf`_  requester          Notification of unsuccessful delivery of reliable datagram
+`DatagramProgressNtf`_ requester/default  Periodic notifications of datagram transfer progress
+`ParamChangeNtf`_      `PARAMCHANGE`_     Notification about the modified parameter
+====================== ================== ============================================================
+
+.. tip:: The `DatagramProgressNtf`_ message is sent by agents supporting `PROGRESS`_ capability on a periodic basis. On the transmission end, this message is sent to the originator of the `DatagramReq`_ for which the progress is reported. On the reception end, this message is sent to the default notification topic of the agent.
+
+Parameters
+----------
+
+===================== === ========================================================================
+Parameter             r/w Description
+===================== === ========================================================================
+`MTU`_                rw  Maximum datagram size in bytes
+===================== === ========================================================================
+
+.. .........................................................................................................
+.. _Datagram:            javadoc/org/arl/unet/Services.html#DATAGRAM
+.. _ParameterReq:        javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:        javadoc/org/arl/unet/ParameterRsp.html
+.. _CapabilityReq:       javadoc/org/arl/unet/CapabilityReq.html
+.. _CapabilityListRsp:   javadoc/org/arl/unet/CapabilityListRsp.html
+.. _FRAGMENTATION:       javadoc/org/arl/unet/DatagramCapability.html#FRAGMENTATION
+.. _RELIABILITY:         javadoc/org/arl/unet/DatagramCapability.html#RELIABILITY
+.. _CANCELLATION:        javadoc/org/arl/unet/DatagramCapability.html#CANCELLATION
+.. _PROGRESS:            javadoc/org/arl/unet/DatagramCapability.html#PROGRESS
+.. _PRIORITY:            javadoc/org/arl/unet/DatagramCapability.html#PRIORITY
+.. _TTL:                 javadoc/org/arl/unet/DatagramCapability.html#TTL
+.. _DatagramReq:         javadoc/org/arl/unet/DatagramReq.html
+.. _DatagramCancelReq:   javadoc/org/arl/unet/DatagramCancelReq.html
+.. _DatagramNtf:         javadoc/org/arl/unet/DatagramNtf.html
+.. _DatagramDeliveryNtf: javadoc/org/arl/unet/DatagramDeliveryNtf.html
+.. _DatagramFailureNtf:  javadoc/org/arl/unet/DatagramFailureNtf.html
+.. _DatagramProgressNtf: javadoc/org/arl/unet/DatagramProgressNtf.html
+.. _ParamChangeNtf:      javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:         javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _MTU:                 javadoc/org/arl/unet/DatagramParam.html#MTU
+.. .........................................................................................................

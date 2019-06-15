@@ -1,0 +1,7 @@
+.. _MySimpleHandshakeMac:
+
+``samples/mac/MySimpleHandshakeMac.groovy``
+-------------------------------------------
+
+.. literalinclude:: ../../../public/samples/mac/MySimpleHandshakeMac.groovy
+   :language: groovy

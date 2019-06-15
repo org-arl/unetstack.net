@@ -1,0 +1,75 @@
+UnetStack and simulator v1.2 release notes
+==========================================
+
+July 22, 2014
+
+New features
+------------
+
+**Agents and services**
+
+* New MAC protocol (``MACA``) added.
+* `BASEBAND <svc-12-baseband.html>`_ service introduced to support software-defined modems. Sample OFDM codec to demonstrate use of the baseband functionality included in ``samples/baseband`` folder.
+* Added support for broadcast routing in ``Router`` agent.
+* Added support for coordinate system origin in ``NodeInfo`` agent.
+* Added support to turn on/off progress notifications in ``SWTransport`` agent.
+* When invoking remote scripts, calling node address is now passed as the last parameter. This allows remote nodes to know who invoked the script.
+* ``Remote`` agent now supports replying to master node via ``>>`` operator or ``args[args.length-1] as int`` address.
+* Added parameters for PHY/MAC agents in ``ReliableLink``.
+
+**Simulation**
+
+* Several new channel models added -- ``BasicAcousticChannel``, ``Mission2012a``, ``Mission2013a``. Sample code to demonstrate use of new channels included in ``samples/mission2013`` folder.
+* ``HalfDuplexModem`` now has basic support for the ``BASEBAND`` service.
+* Added support for PHY clock offsets in simulation using ``HalfDuplexModem``.
+
+**Shell**
+
+* New unified startup script ``bin/unet`` that is used for to invoke simulation, shell and utilities.
+* Groovy scripts can now be run without a leading ``<``.
+* Removed dependency on PERL and GNUPLOT.
+* Added Windows OS startup batch file.
+* Auto-conversion of ``BigDecimal`` to ``double``, ``int`` to ``float``, and ``float`` to ``double`` added for convenience of parameter setting.
+
+**Utilities**
+
+* ``PhyTickerBehavior`` added to tick according to PHY time (which may be much more accurate than the local computer time if an accurate clock is included in the modem).
+* Added support for native plotting using ``JFreeChart``. Sample plotting scripts included in ``samples`` folder.
+* Math utility methods ``erfc()`` and ``erfcinv()`` added in ``MathUtils`` class.
+* Added ``GpsLocalFrame`` class to help with GPS coordination conversion, and added ``distance()`` utility method to ``MathUtils``.
+* Added Gaussian, Rayleigh and Rician random number generation support to ``AgentLocalRandom`` fjåge class.
+* ``BitBuffer`` utility class added to support baseband development.
+* Added time (``time``) and log management closures (``logs`` and ``clrlogs``). Use ``help`` for additional information.
+* Added support for remote time (``rtime``), remote time sync (``rtimesync``), and remote log management (``rlog``, ``rlogs``, ``rclrlogs``).  Use ``help`` for additional information.
+* Added ``distance()`` utility closure.
+* Added option to disable ACK for ``rnode()`` during creation.
+
+**Performance**
+
+* Precompiled initialization scripts support added for quicker stack bootup. New ``cls://`` URLs allow Groovy scripts to be invoked from precompiled class files.
+
+**Documentation**
+
+* Improved `documentation <docs.html>`_, and `video tutorials <docs.html>`_ added.
+
+Changes
+-------
+
+* Minor changes for Java 8 compatibility.
+* Switched to Groovy 2.3.1 and fjåge 1.3.3.
+* Set ``scripts`` as the standard folder for modem scripts
+* Agent ``range`` renamed to ``ranging``, and closure ``getRange`` renamed to ``range``.
+* Introduced new packages ``org.arl.unet.sim.channels`` and ``org.arl.unet.mac.aloha``, and reorganized relevant classes into these packages.
+* Moved ``ClearReq`` class from ``org.arl.unet.phy`` package to ``org.arl.unet`` package.
+* Added ``refPowerLevel`` as a ``PHYSICAL`` service parameter.
+* Modified ``decodeRx()`` method signature to support BER measurement.
+* Changed selected parameter names for improved readability.
+* Tracer now only counts data frame throughput, and ignores the control frames since they are considered overhead.
+
+Bugfixes
+--------
+
+* Minor bug fixes in several agents.
+* Bug fix for concurrent modification exception during agent startup in fjåge.
+
+|

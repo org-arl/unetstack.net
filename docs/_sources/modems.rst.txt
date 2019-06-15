@@ -1,0 +1,70 @@
+.. _modems:
+
+Underwater Modems
+=================
+
+.. image:: _static/modems.jpg
+   :align: right
+
+To deploy an underwater network, we require an underwater modem at each network node.
+
+The Unet-2 software-defined modem [#]_ was developed by `ARL`_ in 2011 for underwater networking research as part of the Unet project. Its primary design goal was flexibility, allowing various modulation schemes, forward error correction codes, and network protocols to be tested at sea. This modem was superseeded by the 3rd generation Unet modems developed by `Subnero`_ in 2017. These modems supports multiple modulation schemes and protocols to be used during a single deployment, and are able to collect detailed logs of all communication activity during a deployment. They provides accurate control over transmission and reception timings, a powerful Java, Groovy, Phython and C API to access low-level functionality and a MATLAB toolbox and Jupyter notebook functionality to interface with the modem for signal analysis. `[more...] <http://www.subnero.com/technology/>`_
+
+Although the 3rd generation Unet modems are an obvious candidate to use for UnetStack-based underwater network deployments, other underwater modems may also be used in networks. A *modem driver* imlpementing the :ref:`svcphy` service is required to support the modem.
+
+Modem Drivers
+-------------
+
+A list of known modems with UnetStack support is shown below:
+
++--------------+-------------------------+--------------------------------------------------+
+| Manufacturer | Modem                   | Remarks                                          |
++--------------+-------------------------+--------------------------------------------------+
+| |subnero|    | Silver edition          | The 3rd generation Unet modems from Subnero fully|
+|              |                         | support UnetStack and all associated services.   |
++--------------+-------------------------+--------------------------------------------------+
+| |subnero|    | Research edition        | The 3rd generation Unet modems from Subnero fully|
+|              |                         | support UnetStack and all associated services.   |
++--------------+-------------------------+--------------------------------------------------+
+| |arl|        | Portaudio interface     | The portaudio interface driver allows a laptop to|
+|              |                         | be used as a fully functional acoustic modem.    |
+|              |                         | This enables testing and development in          |
+|              |                         | air, or in water (with appropriate amplifiers    |
+|              |                         | and transducers) with just a laptop sound card.  |
+|              |                         | This driver fully supports UnetStack and all     |
+|              |                         | associated services.                             |
++--------------+-------------------------+--------------------------------------------------+
+| |subnero|    | Unet-2                  | The Unet-2 modem was developed for flexibility   |
+|              |                         | and extensibility, and fully supports UnetStack, |
+|              |                         | including DATA/CONTROL channels, adaptive        |
+|              |                         | modulation/FEC, arbitrary waveform support       |
+|              |                         | and the software-defined modem (:ref:`svcbb`)    |
+|              |                         | service.                                         |
++--------------+-------------------------+--------------------------------------------------+
+| |evologics|  | WiSE-edition            | The WiSE-edition modem for developers supports   |
+|              |                         | basic UnetStack functionality at the network     |
+|              |                         | layers. Only CONTROL channel is supported. The   |
+|              |                         | software-defined modem (:ref:`svcbb`) service    |
+|              |                         | is not supported.                                |
++--------------+-------------------------+--------------------------------------------------+
+
+Should you require support to integrate UnetStack with an underwater modem of your choice, please contact `Subnero`_.
+
+Network Gateways
+----------------
+
+A *Seaweb gateway agent* was developed to integrate the Unet network with a `Seaweb network`_ from the Naval Postgraduate School (NPS). The integration was tested and demonstrated during the `MISSION 2013`_ experiment in Singapore. Should you have an interest in this gateway agent, please contact `ARL`_.
+
+------------------------------------------------------------------------------
+
+.. [#] M. Chitre, I. Topor, and T.-B. Koay, "The UNET-2 modem - an extensible tool for underwater networking research," in Proceedings of IEEE OCEANS'12 Yeosu, May 2012. [`pdf <http://arl.nus.edu.sg/twiki/pub/ARL/BibEntries/Chitre2012ys.pdf>`_]
+
+.. .........................................................................................................
+.. _Subnero:                      http://www.subnero.com/
+.. _ARL:                          http://www.arl.nus.edu.sg/
+.. _MISSION 2013:                 http://arl.nus.edu.sg/twiki6/bin/view/ARL/Mission2013
+.. _Seaweb network:               http://www.nps.edu/About/News/NPS-Pioneers-Seaweb-Underwater-Sensor-Networks.html
+.. |arl| image::                  _static/arl.png
+.. |subnero| image::              _static/subnero.png
+.. |evologics| image::            _static/evologics.png
+.. .........................................................................................................

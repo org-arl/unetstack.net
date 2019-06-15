@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>samples/mac/MySimpleHandshakeMac.groovy &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UnetStack and simulator v1.0b1 release notes" href="relnotes-v1.0b1.html" />
+    <link rel="prev" title="samples/mac/MySimpleThrottledMac.groovy" href="my-simple-throttled-mac-src.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="samples-mac-mysimplehandshakemac-groovy">
+<span id="mysimplehandshakemac"></span><h1><code class="docutils literal"><span class="pre">samples/mac/MySimpleHandshakeMac.groovy</span></code><a class="headerlink" href="#samples-mac-mysimplehandshakemac-groovy" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.phy.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.mac.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.nodeinfo.*</span>
+
+<span class="kd">class</span> <span class="nc">MySimpleHandshakeMac</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="c1">////// protocol constants</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">PROTOCOL</span> <span class="o">=</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">MAC</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">float</span>  <span class="n">RTS_BACKOFF</span>     <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">seconds</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">float</span>  <span class="n">CTS_TIMEOUT</span>     <span class="o">=</span> <span class="mi">5</span><span class="o">.</span><span class="na">seconds</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">float</span>  <span class="n">BACKOFF_RANDOM</span>  <span class="o">=</span> <span class="mi">5</span><span class="o">.</span><span class="na">seconds</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">float</span>  <span class="n">MAX_PROP_DELAY</span>  <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">seconds</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span>    <span class="n">MAX_RETRY</span>       <span class="o">=</span> <span class="mi">3</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span>    <span class="n">MAX_QUEUE_LEN</span>   <span class="o">=</span> <span class="mi">16</span>
+
+  <span class="c1">////// reservation request queue</span>
+
+  <span class="kd">private</span> <span class="n">Queue</span><span class="o">&lt;</span><span class="n">ReservationReq</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayDeque</span><span class="o">&lt;</span><span class="n">ReservationReq</span><span class="o">&gt;()</span>
+
+  <span class="c1">////// PDU encoder/decoder</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">RTS_PDU</span> <span class="o">=</span> <span class="mh">0x01</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">CTS_PDU</span> <span class="o">=</span> <span class="mh">0x02</span>
+
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">PDU</span> <span class="n">pdu</span> <span class="o">=</span> <span class="n">PDU</span><span class="o">.</span><span class="na">withFormat</span> <span class="o">{</span>
+    <span class="n">uint8</span><span class="o">(</span><span class="s1">&#39;type&#39;</span><span class="o">)</span>         <span class="c1">// RTS_PDU/CTS_PDU</span>
+    <span class="n">uint16</span><span class="o">(</span><span class="s1">&#39;duration&#39;</span><span class="o">)</span>    <span class="c1">// ms</span>
+  <span class="o">}</span>
+
+  <span class="c1">////// protocol FSM</span>
+
+  <span class="kd">private</span> <span class="kd">enum</span> <span class="n">State</span> <span class="o">{</span>
+    <span class="n">IDLE</span><span class="o">,</span> <span class="n">RTS</span><span class="o">,</span> <span class="n">TX</span><span class="o">,</span> <span class="n">RX</span><span class="o">,</span> <span class="n">BACKOFF</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kd">enum</span> <span class="n">Event</span> <span class="o">{</span>
+    <span class="n">RX_RTS</span><span class="o">,</span> <span class="n">RX_CTS</span><span class="o">,</span> <span class="n">SNOOP_RTS</span><span class="o">,</span> <span class="n">SNOOP_CTS</span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="n">FSMBehavior</span> <span class="n">fsm</span> <span class="o">=</span> <span class="n">FSMBuilder</span><span class="o">.</span><span class="na">build</span> <span class="o">{</span>
+
+    <span class="kt">int</span> <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="kt">float</span> <span class="n">backoff</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="kt">def</span> <span class="n">rxInfo</span>
+
+    <span class="nf">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">action</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+          <span class="n">after</span><span class="o">(</span><span class="n">rnd</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">BACKOFF_RANDOM</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RTS</span><span class="o">)</span>
+          <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="n">block</span><span class="o">()</span>
+      <span class="o">}</span>
+      <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">RX_RTS</span><span class="o">)</span> <span class="o">{</span> <span class="n">info</span> <span class="o">-&gt;</span>
+        <span class="n">rxInfo</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RX</span><span class="o">)</span>
+      <span class="o">}</span>
+      <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_RTS</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">backoff</span> <span class="o">=</span> <span class="n">RTS_BACKOFF</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">BACKOFF</span><span class="o">)</span>
+      <span class="o">}</span>
+      <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_CTS</span><span class="o">)</span> <span class="o">{</span> <span class="n">info</span> <span class="o">-&gt;</span>
+        <span class="n">backoff</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="na">duration</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">MAX_PROP_DELAY</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">BACKOFF</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RTS</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">onEnter</span> <span class="o">{</span>
+        <span class="n">Message</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">peek</span><span class="o">()</span>
+        <span class="kt">def</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="nl">type:</span> <span class="n">RTS_PDU</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">Math</span><span class="o">.</span><span class="na">ceil</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span><span class="o">*</span><span class="mi">1000</span><span class="o">))</span>
+        <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">type:</span> <span class="n">Physical</span><span class="o">.</span><span class="na">CONTROL</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">PROTOCOL</span><span class="o">,</span> <span class="nl">data:</span> <span class="n">bytes</span><span class="o">)</span>
+        <span class="n">after</span><span class="o">(</span><span class="n">CTS_TIMEOUT</span><span class="o">)</span> <span class="o">{</span>
+          <span class="k">if</span> <span class="o">(++</span><span class="n">retryCount</span> <span class="o">&gt;=</span> <span class="n">MAX_RETRY</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sendReservationStatusNtf</span><span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">(),</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">FAILURE</span><span class="o">)</span>
+            <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">0</span>
+          <span class="o">}</span>
+          <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+      <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">RX_CTS</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">TX</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">TX</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">onEnter</span> <span class="o">{</span>
+        <span class="n">ReservationReq</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">()</span>
+        <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">sendReservationStatusNtf</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">START</span><span class="o">)</span>
+        <span class="n">after</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">sendReservationStatusNtf</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">ReservationStatus</span><span class="o">.</span><span class="na">END</span><span class="o">)</span>
+          <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">RX</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">onEnter</span> <span class="o">{</span>
+        <span class="kt">def</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="nl">type:</span> <span class="n">CTS_PDU</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">Math</span><span class="o">.</span><span class="na">round</span><span class="o">(</span><span class="n">rxInfo</span><span class="o">.</span><span class="na">duration</span><span class="o">*</span><span class="mi">1000</span><span class="o">))</span>
+        <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">rxInfo</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="nl">type:</span> <span class="n">Physical</span><span class="o">.</span><span class="na">CONTROL</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">PROTOCOL</span><span class="o">,</span> <span class="nl">data:</span> <span class="n">bytes</span><span class="o">)</span>
+        <span class="n">after</span><span class="o">(</span><span class="n">rxInfo</span><span class="o">.</span><span class="na">duration</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">MAX_PROP_DELAY</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+        <span class="o">}</span>
+        <span class="n">rxInfo</span> <span class="o">=</span> <span class="kc">null</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">state</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">BACKOFF</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">onEnter</span> <span class="o">{</span>
+        <span class="n">after</span><span class="o">(</span><span class="n">backoff</span><span class="o">)</span> <span class="o">{</span>
+          <span class="n">setNextState</span><span class="o">(</span><span class="n">State</span><span class="o">.</span><span class="na">IDLE</span><span class="o">)</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+      <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_RTS</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">backoff</span> <span class="o">=</span> <span class="n">RTS_BACKOFF</span>
+        <span class="n">reenterState</span><span class="o">()</span>
+      <span class="o">}</span>
+      <span class="n">onEvent</span><span class="o">(</span><span class="n">Event</span><span class="o">.</span><span class="na">SNOOP_CTS</span><span class="o">)</span> <span class="o">{</span> <span class="n">info</span> <span class="o">-&gt;</span>
+        <span class="n">backoff</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="na">duration</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">MAX_PROP_DELAY</span>
+        <span class="n">reenterState</span><span class="o">()</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+
+  <span class="o">}</span> <span class="c1">// of FSMBuilder</span>
+
+  <span class="c1">////// agent startup sequence</span>
+
+  <span class="kd">private</span> <span class="n">AgentID</span> <span class="n">phy</span>
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">addr</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">register</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">PHYSICAL</span>
+    <span class="n">subscribe</span><span class="o">(</span><span class="n">phy</span><span class="o">)</span>
+    <span class="n">subscribe</span><span class="o">(</span><span class="n">topic</span><span class="o">(</span><span class="n">phy</span><span class="o">,</span> <span class="n">Physical</span><span class="o">.</span><span class="na">SNOOP</span><span class="o">))</span>
+    <span class="n">add</span> <span class="k">new</span> <span class="nf">OneShotBehavior</span><span class="o">({</span>
+      <span class="kt">def</span> <span class="n">nodeInfo</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">NODE_INFO</span>
+      <span class="n">addr</span> <span class="o">=</span> <span class="n">get</span><span class="o">(</span><span class="n">nodeInfo</span><span class="o">,</span> <span class="n">NodeInfoParam</span><span class="o">.</span><span class="na">address</span><span class="o">)</span>
+    <span class="o">})</span>
+    <span class="n">add</span><span class="o">(</span><span class="n">fsm</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="c1">////// process MAC service requests</span>
+
+  <span class="nd">@Override</span>
+  <span class="n">Message</span> <span class="nf">processRequest</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">switch</span> <span class="o">(</span><span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nl">ReservationReq:</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">to</span> <span class="o">==</span> <span class="n">Address</span><span class="o">.</span><span class="na">BROADCAST</span> <span class="o">||</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span> <span class="o">==</span> <span class="n">addr</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">msg</span><span class="o">.</span><span class="na">duration</span> <span class="o">&gt;</span> <span class="n">maxReservationDuration</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">queue</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;=</span> <span class="n">MAX_QUEUE_LEN</span><span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+        <span class="n">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>
+        <span class="n">fsm</span><span class="o">.</span><span class="na">restart</span><span class="o">()</span>      <span class="c1">// tell fsm to check queue, as it may block if the queue is empty</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ReservationRsp</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span>
+      <span class="k">case</span> <span class="nl">ReservationCancelReq:</span>
+      <span class="k">case</span> <span class="nl">ReservationAcceptReq:</span>
+      <span class="k">case</span> <span class="nl">TxAckReq:</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Message</span><span class="o">(</span><span class="n">msg</span><span class="o">,</span> <span class="n">Performative</span><span class="o">.</span><span class="na">REFUSE</span><span class="o">)</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">null</span>
+  <span class="o">}</span>
+
+  <span class="c1">////// handle incoming MAC packets</span>
+
+  <span class="nd">@Override</span>
+  <span class="kt">void</span> <span class="nf">processMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="k">instanceof</span> <span class="n">RxFrameNtf</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="o">.</span><span class="na">protocol</span> <span class="o">==</span> <span class="n">PROTOCOL</span><span class="o">)</span> <span class="o">{</span>
+      <span class="kt">def</span> <span class="n">rx</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">data</span><span class="o">)</span>
+      <span class="kt">def</span> <span class="n">info</span> <span class="o">=</span> <span class="o">[</span><span class="nl">from:</span> <span class="n">msg</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">duration:</span> <span class="n">rx</span><span class="o">.</span><span class="na">duration</span><span class="s">/1000.0]</span>
+<span class="s">      if (rx.type == RTS_PDU) fsm.trigger(info.to == addr ? Event.RX_RTS : Event.SNOOP_RTS, info)</span>
+<span class="s">      else if (rx.type == CTS_PDU) fsm.trigger(info.to == addr ? Event.RX_CTS : Event.SNOOP_CTS, info)</span>
+<span class="s">    }</span>
+<span class="s">  }</span>
+
+<span class="s">  /</span><span class="c1">///// expose parameters that are expected of a MAC service</span>
+
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">reservationPayloadSize</span> <span class="o">=</span> <span class="mi">0</span>            <span class="c1">// read-only parameters</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">ackPayloadSize</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="kd">final</span> <span class="kt">float</span> <span class="n">maxReservationDuration</span> <span class="o">=</span> <span class="mf">65.535</span>
+
+  <span class="nd">@Override</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Parameter</span><span class="o">&gt;</span> <span class="n">getParameterList</span><span class="o">()</span> <span class="o">{</span>            <span class="c1">// publish list of all exposed parameters</span>
+    <span class="k">return</span> <span class="nf">allOf</span><span class="o">(</span><span class="n">MacParam</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="kt">boolean</span> <span class="nf">getChannelBusy</span><span class="o">()</span> <span class="o">{</span>                      <span class="c1">// channel is considered busy if fsm is not IDLE</span>
+    <span class="k">return</span> <span class="n">fsm</span><span class="o">.</span><span class="na">currentState</span><span class="o">.</span><span class="na">name</span> <span class="o">!=</span> <span class="n">State</span><span class="o">.</span><span class="na">IDLE</span>
+  <span class="o">}</span>
+
+  <span class="kt">float</span> <span class="nf">getRecommendedReservationDuration</span><span class="o">()</span> <span class="o">{</span>     <span class="c1">// recommended reservation duration is one DATA packet</span>
+    <span class="k">return</span> <span class="nf">get</span><span class="o">(</span><span class="n">phy</span><span class="o">,</span> <span class="n">Physical</span><span class="o">.</span><span class="na">DATA</span><span class="o">,</span> <span class="n">PhysicalChannelParam</span><span class="o">.</span><span class="na">frameDuration</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="c1">////// utility methods</span>
+
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">sendReservationStatusNtf</span><span class="o">(</span><span class="n">ReservationReq</span> <span class="n">msg</span><span class="o">,</span> <span class="n">ReservationStatus</span> <span class="n">status</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">send</span> <span class="k">new</span> <span class="nf">ReservationStatusNtf</span><span class="o">(</span><span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span> <span class="nl">requestID:</span> <span class="n">msg</span><span class="o">.</span><span class="na">msgID</span><span class="o">,</span> <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="nl">from:</span> <span class="n">addr</span><span class="o">,</span> <span class="nl">status:</span> <span class="n">status</span><span class="o">)</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,84 @@
+.. _svcbb:
+
+Baseband
+========
+
+Service
+-------
+
+`BASEBAND`_ -- Baseband service
+
+Agents offering the *Baseband* service are most commonly modem drivers (or simulators). They support a set of messages and parameters that are explained below. *Baseband* service providers may optionally support optional capabilities for timed transmissions or recordings.
+
+===================== ===========================================================================
+Capability            Description
+===================== ===========================================================================
+`TIMED_BBTX`_         Transmissions of signal at specified time
+`TIMED_BBREC`_        Recording of signal at specified time
+===================== ===========================================================================
+
+A preamble is usually added to a transmitted baseband signal, so that the receiving modem can identify the incoming signal. The receiving modem captures the signal when it detects the preamble, and then sends a ``RxBasebandSignalNtf``. If a modem supports multiple preambles, the ``TxBasebandSignalReq`` can specify the ``preamble`` to be used. Setting the ``preamble`` to 0 results in a signal transmission without a preamble.  Such a transmission will ordinarily not be received by any modem, unless it is recorded by an explicit ``RecordBasebandSignalReq`` at the appropriate time.
+
+Implementations
+---------------
+
+* `HalfDuplexModem`_ -- simulates a half-duplex modem based on specified parameters
+* ``org.arl.modem.Physical`` -- driver for the `ARL Unet-2 and Subnero modems <modems.html>`_
+
+Requests and Responses
+----------------------
+
+========================== ========================================== ==========================================
+Request                    Possible Responses                         Description
+========================== ========================================== ==========================================
+`TxBasebandSignalReq`_     AGREE, REFUSE, FAILURE                     Transmit a frame with a baseband signal
+`RecordBasebandSignalReq`_ AGREE, REFUSE, FAILURE                     Record a baseband signal
+`ParameterReq`_            `ParameterRsp`_                            Get/set/list parameters
+`CapabilityReq`_           CONFIRM, DISCONFIRM, `CapabilityListRsp`_  Check/list capabilities
+========================== ========================================== ==========================================
+
+Notifications
+-------------
+
+====================== ============== =================================================
+Notification           Topic          Description
+====================== ============== =================================================
+`RxBasebandSignalNtf`_ default        Frame with baseband signal recevied/recorded
+`ParamChangeNtf`_      `PARAMCHANGE`_ Notification about the modified parameter
+====================== ============== =================================================
+
+Parameters
+----------
+
+======================= === =================================================================================
+Parameter               r/w Description
+======================= === =================================================================================
+`carrierFrequency`_     rw  Default carrier frequency for baseband signals (Hz)
+`basebandRate`_         rw  Default sampling rate for baseband signals (Hz)
+`preambleDuration`_     ro  Preamble duration (s)
+`maxSignalLength`_      ro  Maximum baseband signal length (in samples) for transmission/reception/recording
+`maxPreambleID`_        ro  Maximum preamble identifier supported by the agent
+`signalPowerLevel`_     rw  Signal transmission power level in dB
+======================= === =================================================================================
+
+.. .........................................................................................................
+.. _BASEBAND:                 javadoc/org/arl/unet/Services.html#BASEBAND
+.. _ParameterReq:             javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:             javadoc/org/arl/unet/ParameterRsp.html
+.. _CapabilityReq:            javadoc/org/arl/unet/CapabilityReq.html
+.. _CapabilityListRsp:        javadoc/org/arl/unet/CapabilityListRsp.html
+.. _ParamChangeNtf:           javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:              javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _TxBasebandSignalReq:      javadoc/org/arl/unet/bb/TxBasebandSignalReq.html
+.. _RecordBasebandSignalReq:  javadoc/org/arl/unet/bb/RecordBasebandSignalReq.html
+.. _RxBasebandSignalNtf:      javadoc/org/arl/unet/bb/RxBasebandSignalNtf.html
+.. _carrierFrequency:         javadoc/org/arl/unet/bb/BasebandParam.html#carrierFrequency
+.. _basebandRate:             javadoc/org/arl/unet/bb/BasebandParam.html#basebandRate
+.. _preambleDuration:         javadoc/org/arl/unet/bb/BasebandParam.html#preambleDuration
+.. _maxSignalLength:          javadoc/org/arl/unet/bb/BasebandParam.html#maxSignalLength
+.. _maxPreambleID:            javadoc/org/arl/unet/bb/BasebandParam.html#maxPreambleID
+.. _signalPowerLevel:         javadoc/org/arl/unet/bb/BasebandParam.html#signalPowerLevel
+.. _HalfDuplexModem:          javadoc/org/arl/unet/sim/HalfDuplexModem.html
+.. _TIMED_BBTX:               javadoc/org/arl/unet/bb/BasebandCapability.html#TIMED_TX
+.. _TIMED_BBREC:              javadoc/org/arl/unet/bb/BasebandCapability.html#TIMED_REC
+.. .........................................................................................................

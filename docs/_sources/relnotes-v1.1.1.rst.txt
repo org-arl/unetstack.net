@@ -1,0 +1,19 @@
+UnetStack and simulator v1.1.1 release notes
+============================================
+
+October 24, 2013
+
+Enhancements
+------------
+
+* Switched to fjåge v1.3.2 `[release notes] <https://groups.google.com/forum/#!topic/fjage-users/RdAidaBDlNQ>`_
+* Improvements to ``AbnormalTerminationManager`` to support default behaviors, respawn delays, custom closures, etc
+* Increased default router ``MTU`` to 256 bytes
+* Added transport layer datagram progress notification (``DatagramProgressNtf``) and cancellation request (``DatagramCancelReq``)
+* Remote agent now sends notification before execution of task
+* Minor formatting improvements in logging and ``toString()`` methods
+
+Bugfix
+------
+
+* Bugfix in remote parameter registration

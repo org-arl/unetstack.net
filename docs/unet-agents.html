@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Developing Agents &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Running Simulations" href="simulation-dsl.html" />
+    <link rel="prev" title="Getting Started" href="quickstart.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="developing-agents">
+<span id="agents"></span><h1>Developing Agents<a class="headerlink" href="#developing-agents" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="unet-agents">
+<h2>Unet agents<a class="headerlink" href="#unet-agents" title="Permalink to this headline">¶</a></h2>
+<p>Agents are the basic building blocks of the UnetStack. They exchange messages, provide services and implement network protocols. A UnetStack agent is a fjåge agent with some specific requirements. To make it easy to implement such agents, the UnetStack provides a <a class="reference external" href="javadoc/index.html?org/arl/unet/UnetAgent.html">UnetAgent</a> base class to inherit functionality from.</p>
+<p>The structure of a typical Unet agent looks like this:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+
+<span class="kd">class</span> <span class="nc">MyAgent</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// this method is called when the stack is initialized</span>
+    <span class="c1">// register services and capabilities that you provide here</span>
+  <span class="o">}</span>
+
+  <span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// this method is called just after the stack is running</span>
+    <span class="c1">// look up other agents and services here, as needed</span>
+    <span class="c1">// subscribe to topics of interest here, to get notifications</span>
+  <span class="o">}</span>
+
+  <span class="n">Message</span> <span class="nf">processRequest</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// process requests supported by the agent, and return responses</span>
+    <span class="c1">// if request is not processed, return null</span>
+    <span class="k">return</span> <span class="kc">null</span>
+  <span class="o">}</span>
+
+  <span class="kt">void</span> <span class="nf">processMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// process other messages, such as notifications here</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>If you do not need any of these methods, you can skip the definition as the base class provides default implementations. There are a several other methods that you can override to customize your agent, but these are less commonly needed and so we’ll skip them for now. You’ll come across them later.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Readers familiar with the fjåge agent lifecycle may wish to note that the <code class="docutils literal"><span class="pre">setup()</span></code> method is called from the <code class="docutils literal"><span class="pre">init()</span></code> method of the agent. The <code class="docutils literal"><span class="pre">startup()</span></code> method is called from a one-shot behavior scheduled during initialization. The <code class="docutils literal"><span class="pre">processRequest()</span></code> and <code class="docutils literal"><span class="pre">processMessage()</span></code> methods are called from a message behavior added during initialization.</p>
+</div>
+</div>
+<div class="section" id="ping-daemon">
+<h2>Ping daemon<a class="headerlink" href="#ping-daemon" title="Permalink to this headline">¶</a></h2>
+<p>It’s easiest to illustrate with a simple toy example. Let us develop a ping deamon that will respond to incoming physical layer ping datagram with an empty datagram response. We will define a ping datagram as any datagram with protocol USER (12), and a response datagram as an empty datagram with protocol DATA (0).</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+
+<span class="kd">class</span> <span class="nc">PingDaemon</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">PING_PROTOCOL</span> <span class="o">=</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">USER</span>
+
+  <span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">PHYSICAL</span>
+    <span class="n">subscribe</span> <span class="nf">topic</span><span class="o">(</span><span class="n">phy</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="kt">void</span> <span class="nf">processMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="k">instanceof</span> <span class="n">DatagramNtf</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="o">.</span><span class="na">protocol</span> <span class="o">==</span> <span class="n">PING_PROTOCOL</span><span class="o">)</span>
+      <span class="n">send</span> <span class="k">new</span> <span class="nf">DatagramReq</span><span class="o">(</span><span class="nl">recipient:</span> <span class="n">msg</span><span class="o">.</span><span class="na">sender</span><span class="o">,</span> <span class="nl">to:</span> <span class="n">msg</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">DATA</span><span class="o">)</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>For readers who are new to Groovy, we show the equivalent Java code as well:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.fjage.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PingDaemon</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">PING_PROTOCOL</span> <span class="o">=</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">USER</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">AgentID</span> <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span><span class="o">(</span><span class="n">Services</span><span class="o">.</span><span class="na">PHYSICAL</span><span class="o">);</span>
+    <span class="n">subscribe</span><span class="o">(</span><span class="n">topic</span><span class="o">(</span><span class="n">phy</span><span class="o">));</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="k">instanceof</span> <span class="n">DatagramNtf</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="o">.</span><span class="na">getProtocol</span><span class="o">()</span> <span class="o">==</span> <span class="n">PING_PROTOCOL</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">DatagramReq</span> <span class="n">req</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DatagramReq</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">getSender</span><span class="o">());</span>
+      <span class="n">req</span><span class="o">.</span><span class="na">setTo</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">getFrom</span><span class="o">());</span>
+      <span class="n">req</span><span class="o">.</span><span class="na">setProtocol</span><span class="o">(</span><span class="n">Protocol</span><span class="o">.</span><span class="na">DATA</span><span class="o">);</span>
+      <span class="n">send</span><span class="o">(</span><span class="n">req</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Let’s walk through the above code. Our agent does not provide any named services or capabilities, so we we skip the <code class="docutils literal"><span class="pre">setup()</span></code> and <code class="docutils literal"><span class="pre">processRequest()</span></code> methods. The <code class="docutils literal"><span class="pre">startup()</span></code> method looks up the agent providing the physical layer services, and subscribes to any notifications from this agent. These notifications will inlcude a <a class="reference external" href="javadoc/index.html?org/arl/unet/DatagramNtf.html">DatagramNtf</a> when a datagram is received from another node. The <code class="docutils literal"><span class="pre">processMessage()</span></code> method checks for datagram notifications with protocol USER (12), and responds with a <a class="reference external" href="javadoc/index.html?org/arl/unet/DatagramReq.html">DatagramReq</a> to send an empty message of protocol 0 to the peer node. The recipient for this request is the physical layer agent (sender of the notification message). The ‘to’ field of the datagram to be sent is set to the ‘from’ field of the incoming datagram.</p>
+<p>The above code is available in the samples folder (<code class="docutils literal"><span class="pre">samples/ping/PingDaemon.groovy</span></code>). A script to simulate 3 nodes with ping daemons is provided in the same folder. We will take a look at the simulation script in detail in the <a class="reference internal" href="simulation-dsl.html#simdsl"><span class="std std-ref">Running Simulations</span></a> chapter, but let’s simply run the simulation script (<code class="docutils literal"><span class="pre">samples/ping/ping-sim.groovy</span></code>) for now:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>3-node network with ping deamons
+--------------------------------
+
+You can interact with node 1 in the console shell. For example, try:
+&gt; ping 2
+&gt; help ping
+
+When you are done, exit the shell by pressing ^D or entering:
+&gt; shutdown
+
+&gt;
+</pre></div>
+</div>
+<p>Now, you have the simulation running and a console shell open on node 1. Try:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">DatagramReq</span><span class="o">(</span><span class="nl">to:</span> <span class="mi">2</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">USER</span><span class="o">)</span>
+<span class="n">AGREE</span>
+<span class="nl">TxFrameNtf:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">txTime:</span><span class="mi">12782000</span> <span class="nl">type:</span><span class="n">CONTROL</span><span class="o">]</span>
+<span class="nl">RxFrameNtf:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">type:</span><span class="n">CONTROL</span> <span class="nl">from:</span><span class="mi">2</span> <span class="nl">to:</span><span class="mi">1</span> <span class="nl">proto:</span><span class="mi">0</span> <span class="nl">rxTime:</span><span class="mi">14417667</span> <span class="o">(</span><span class="mi">0</span> <span class="n">bytes</span><span class="o">)]</span>
+<span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>We sent a <code class="docutils literal"><span class="pre">DatagramReq</span></code> to the <code class="docutils literal"><span class="pre">phy</span></code> agent to send a datagram with protocol USER (12) to node 2. The <code class="docutils literal"><span class="pre">AGREE</span></code> response confirmed that the <code class="docutils literal"><span class="pre">phy</span></code> agreed to send the datagram. Shortly after, the <code class="docutils literal"><span class="pre">TxFrameNtf</span></code> told us that the datagram was transmitted. Once the datagram reached node 2, our ping daemon on that node responded to it by sending us a datagram with protocol 0 back. Once this arrived at node 1, we got a <code class="docutils literal"><span class="pre">RxFrameNtf</span></code> informing us of the arrival.</p>
+<p>You could look up the timestamps of the transmitted and received datagrams and compute the response time. It’s convenient to define a command to do this for us. We define a <code class="docutils literal"><span class="pre">ping</span></code> command using a closure:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">ping</span> <span class="o">=</span> <span class="o">{</span> <span class="n">addr</span><span class="o">,</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-&gt;</span>
+  <span class="n">println</span> <span class="s2">&quot;PING $addr&quot;</span>
+  <span class="n">count</span><span class="o">.</span><span class="na">times</span> <span class="o">{</span>
+    <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">DatagramReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">addr</span><span class="o">,</span> <span class="nl">protocol:</span> <span class="n">Protocol</span><span class="o">.</span><span class="na">USER</span><span class="o">)</span>
+    <span class="kt">def</span> <span class="n">txNtf</span> <span class="o">=</span> <span class="n">receive</span><span class="o">(</span><span class="n">TxFrameNtf</span><span class="o">,</span> <span class="mi">1000</span><span class="o">)</span>
+    <span class="kt">def</span> <span class="n">rxNtf</span> <span class="o">=</span> <span class="n">receive</span><span class="o">({</span> <span class="n">it</span> <span class="k">instanceof</span> <span class="n">RxFrameNtf</span> <span class="o">&amp;&amp;</span> <span class="n">it</span><span class="o">.</span><span class="na">from</span> <span class="o">==</span> <span class="n">addr</span><span class="o">},</span> <span class="mi">5000</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">txNtf</span> <span class="o">&amp;&amp;</span> <span class="n">rxNtf</span><span class="o">)</span>
+      <span class="n">println</span> <span class="s2">&quot;Response from ${rxNtf.from}: time=${(rxNtf.rxTime-txNtf.txTime)/1000} ms&quot;</span>
+    <span class="k">else</span>
+      <span class="n">println</span> <span class="s1">&#39;Request timeout&#39;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>You could either type this at the fjåge shell prompt in your shell session for node 1, or put it in a file and load the file. We have already included the file in the samples folder (<code class="docutils literal"><span class="pre">samples/ping/fshrc.groovy</span></code>) and setup the simulator to load it at initialization. So you can simply use it in your fjåge shell session:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">ping</span> <span class="mi">2</span>
+<span class="n">PING</span> <span class="mi">2</span>
+<span class="n">Response</span> <span class="n">from</span> <span class="mi">2</span><span class="o">:</span> <span class="n">time</span><span class="o">=</span><span class="mf">1634.667</span> <span class="n">ms</span>
+<span class="n">Response</span> <span class="n">from</span> <span class="mi">2</span><span class="o">:</span> <span class="n">time</span><span class="o">=</span><span class="mf">1629.667</span> <span class="n">ms</span>
+<span class="n">Response</span> <span class="n">from</span> <span class="mi">2</span><span class="o">:</span> <span class="n">time</span><span class="o">=</span><span class="mf">1628.667</span> <span class="n">ms</span>
+<span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Finally, you can issue a <code class="docutils literal"><span class="pre">shutdown</span></code> command to end the simulation:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">shutdown</span>
+</pre></div>
+</div>
+<p>Alternatively you could have pressed ^C or ^D to abort the simulation.</p>
+</div>
+<div class="section" id="services-and-capabilities">
+<h2>Services and capabilities<a class="headerlink" href="#services-and-capabilities" title="Permalink to this headline">¶</a></h2>
+<p>Services are logical contracts wherein agents agree on a set of messages or behaviors for interaction. Agents typically advertise offered services during <code class="docutils literal"><span class="pre">setup()</span></code>, and look up services either during <code class="docutils literal"><span class="pre">startup()</span></code> or just before the services are needed.</p>
+<p>Capabilities are optional components of service contracts that agents providing a service may or may not implement. An agent can be queried to see if it offers a specified capability. Capabilities are usually registered during <code class="docutils literal"><span class="pre">setup()</span></code> and looked up when needed.</p>
+<p>A code extract from a sample agent providing a reliable MAC and requiring a physical layer that can support timed transmissions is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.phy.PhysicalCapability</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.mac.MacCapability</span>
+
+<span class="kd">class</span> <span class="nc">MyWonderfulMac</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="kt">def</span> <span class="n">myAddress</span>         <span class="c1">// my node address</span>
+  <span class="kt">def</span> <span class="n">phy</span>               <span class="c1">// agent ID of the physical layer</span>
+
+  <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// specify that we provide a reliable MAC service</span>
+    <span class="n">register</span> <span class="n">Services</span><span class="o">.</span><span class="na">MAC</span>
+    <span class="n">addCapability</span> <span class="n">MacCapability</span><span class="o">.</span><span class="na">RELIABILITY</span>
+  <span class="o">}</span>
+
+  <span class="kt">void</span> <span class="nf">startup</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// get my node address from an agent providing the NODE_INFO service</span>
+    <span class="kt">def</span> <span class="n">nodeInfo</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">NODE_INFO</span>
+    <span class="n">myAddress</span> <span class="o">=</span> <span class="n">nodeInfo</span><span class="o">.</span><span class="na">address</span>
+    <span class="c1">// find agent providing PHYSICAL service, and check that it is capable of timed transmissions</span>
+    <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">Services</span><span class="o">.</span><span class="na">PHYSICAL</span>
+    <span class="kt">def</span> <span class="n">rsp</span> <span class="o">=</span> <span class="n">request</span> <span class="k">new</span> <span class="n">CapabilityReq</span><span class="o">(</span><span class="n">phy</span><span class="o">,</span> <span class="n">PhysicalCapability</span><span class="o">.</span><span class="na">TIMED_TX</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">rsp</span><span class="o">.</span><span class="na">performative</span> <span class="o">!=</span> <span class="n">Performative</span><span class="o">.</span><span class="na">CONFIRM</span><span class="o">)</span>
+      <span class="n">log</span><span class="o">.</span><span class="na">warning</span> <span class="s1">&#39;Physical layer does not support TIMED_TX&#39;</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>Agents often require parameters that can be set during initialization, or during operation, to control the behavior of the agent. Such parameters are defined as properties of the agent, and can be accessed from other agents (or from the shell) using the <a class="reference external" href="javadoc/index.html?org/arl/unet/ParameterReq.html">ParameterReq</a> message or using the <code class="docutils literal"><span class="pre">get()</span></code> and <code class="docutils literal"><span class="pre">set()</span></code> utility methods in the <code class="docutils literal"><span class="pre">UnetAgent</span></code> base class. With GroovyAgentExtensions enabled (see <a class="footnote-reference" href="#id2" id="id1">[1]</a>), a simpler Groovy syntax is available in the form of ‘<em>agentID.parameter</em>’.</p>
+<p>Let’s look at some examples. We start with a sample simulation (<code class="docutils literal"><span class="pre">samples/rt/3-node-network.groovy</span></code>) which deploys 3 nodes in a network and provides us shell access to each node:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>3-node network
+--------------
+
+Nodes: 1, 2, 3
+
+To connect to node 2 or node 3 via telnet:
+  telnet localhost 5102
+  telnet localhost 5103
+
+To connect to nodes 1, 2 or 3 via unet sh:
+  bin/unet sh localhost 1
+  bin/unet sh localhost 2
+  bin/unet sh localhost 3
+
+Connected to node 1...
+Press ^D to exit
+
+&gt;
+</pre></div>
+</div>
+<p>Now, we are connected using a console shell to node 1. We access an <code class="docutils literal"><span class="pre">rxEnable</span></code> parameter of the physical layer agent (agent ID <code class="docutils literal"><span class="pre">phy</span></code>, already defined in the shell) using both methods described above:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ParameterReq</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">PhysicalParam</span><span class="o">.</span><span class="na">rxEnable</span><span class="o">)</span>
+<span class="nl">ParameterRsp:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">rxEnable:</span><span class="kc">true</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">phy</span><span class="o">.</span><span class="na">rxEnable</span>
+<span class="kc">true</span>
+</pre></div>
+</div>
+<p>We can change the value of parameters using either of the methods:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ParameterReq</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="n">PhysicalParam</span><span class="o">.</span><span class="na">rxEnable</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span>
+<span class="nl">ParameterRsp:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">rxEnable:</span><span class="kc">false</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">phy</span><span class="o">.</span><span class="na">rxEnable</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="kc">false</span>
+</pre></div>
+</div>
+<p>We generally prefer the second method, as it has a much simpler syntax and is easier to understand. However, it is useful to keep in mind that the second method involves the same message exchange as the first method, but simply with a cleaner syntax. In certain cases, the first method can be used explicitly for optimization. For example, if we need to get 2 parameters <code class="docutils literal"><span class="pre">rxEnable</span></code> and <code class="docutils literal"><span class="pre">time</span></code>, the second method would need two sets of message exchanges (one for each parameter). However, the first method allows both parameters to be requested in a single request:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ParameterReq</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">PhysicalParam</span><span class="o">.</span><span class="na">rxEnable</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="n">PhysicalParam</span><span class="o">.</span><span class="na">time</span><span class="o">)</span>
+<span class="nl">ParameterRsp:</span><span class="n">INFORM</span><span class="o">[</span><span class="nl">rxEnable:</span><span class="kc">false</span> <span class="nl">time:</span><span class="mi">33780000</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>In the shell, we can query a list of all parameters available from an agent:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">phy</span>
+<span class="n">phy</span>
+<span class="o">---</span>
+<span class="n">MTU</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">basebandRate</span> <span class="o">=</span> <span class="mi">4096</span>
+<span class="n">busy</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="n">carrierFrequency</span> <span class="o">=</span> <span class="mi">25000</span>
+<span class="n">clockOffset</span> <span class="o">=</span> <span class="mf">2270.4014</span>
+<span class="n">maxPreambleID</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">maxSignalLength</span> <span class="o">=</span> <span class="mi">8192</span>
+<span class="n">preambleDuration</span> <span class="o">=</span> <span class="mf">0.025</span>
+<span class="n">propagationSpeed</span> <span class="o">=</span> <span class="mf">1534.4574</span>
+<span class="n">refPowerLevel</span> <span class="o">=</span> <span class="mi">185</span>
+<span class="n">rxEnable</span> <span class="o">=</span> <span class="kc">true</span>
+<span class="n">time</span> <span class="o">=</span> <span class="mi">2275896321</span>
+<span class="n">timestampedTxDelay</span> <span class="o">=</span> <span class="mf">1.5</span>
+</pre></div>
+</div>
+<p>For an agent to provide such parameters, it defines the parameters as properties. For Java agents, this means implementing getters and setters (no setter for read-only properites) for each property. For Groovy agents, it simply means declaring the properties. Additionally, a list of available parameters should be made available by overriding the <code class="docutils literal"><span class="pre">getParameterList()</span></code> method. The list is usually populated from an enum defining the list of parameters.</p>
+<p>A sample agent exposing parameters is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+
+<span class="kd">class</span> <span class="nc">MyAgent</span> <span class="kd">extends</span> <span class="n">UnetAgent</span> <span class="o">{</span>
+
+  <span class="c1">// parameters</span>
+  <span class="kt">int</span> <span class="n">retryCount</span> <span class="o">=</span> <span class="mi">3</span>
+  <span class="kt">float</span> <span class="n">retryTimeout</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">Parameter</span><span class="o">&gt;</span> <span class="n">getParameterList</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">allOf</span><span class="o">(</span><span class="n">MyAgentParameters</span><span class="o">)</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>where the enum is defined as:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.Parameter</span>
+
+<span class="kd">enum</span> <span class="n">MyAgentParameters</span> <span class="kd">implements</span> <span class="n">Parameter</span> <span class="o">{</span>
+  <span class="n">retryCount</span><span class="o">,</span>
+  <span class="n">retryTimeout</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>We have already included both the above code examples in the <code class="docutils literal"><span class="pre">samples/param</span></code> folder, and you can test them by starting the sample simulation (<code class="docutils literal"><span class="pre">samples/param/param-demo.groovy</span></code>) in that folder:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Agent parameter demo
+--------------------
+
+Agent &quot;myAgent&quot; loaded. You can interact with it in the console shell.
+When you are done, exit the shell by pressing ^D or entering &quot;shutdown&quot;.
+
+&gt; ps
+phy: org.arl.unet.sim.HalfDuplexModem - IDLE
+simulator: SimulationAgent - IDLE
+node: org.arl.unet.nodeinfo.NodeInfo - IDLE
+shell: org.arl.fjage.shell.ShellAgent - IDLE
+myAgent: MyAgent - IDLE
+</pre></div>
+</div>
+<p>We can see that our agent is running with the agent ID <code class="docutils literal"><span class="pre">myAgent</span></code>. To access it, we must define a variable in the shell with the agent ID, and then use the variable to access (list, set or get) the parameters:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">agent</span><span class="o">(</span><span class="s1">&#39;myAgent&#39;</span><span class="o">);</span>
+<span class="o">&gt;</span> <span class="n">a</span>
+<span class="n">myAgent</span>
+<span class="o">-------</span>
+<span class="n">retryCount</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">retryTimeout</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">retryCount</span> <span class="o">=</span> <span class="mi">7</span><span class="o">;</span>
+<span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">retryCount</span>
+<span class="mi">7</span>
+<span class="o">&gt;</span> <span class="n">shutdown</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexed-parameters">
+<h2>Indexed parameters<a class="headerlink" href="#indexed-parameters" title="Permalink to this headline">¶</a></h2>
+<p>In most agents, parameters are sufficient to configure the agent. However, sometimes it is useful to be able to provide an indexed notation for parameters. For example, consider a physical layer that supports a low-rate robust control scheme and a high-rate data scheme for datagrams that it transmits or receives. We might number the control scheme as 0, and the data scheme as 1, and configure each by an indexed notation:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">phy</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">powerLevel</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>     <span class="c1">// -10 dB source level for control datagrams</span>
+<span class="n">phy</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="na">powerLevel</span> <span class="o">=</span> <span class="mi">0</span>       <span class="c1">// 0 dB source level for data datagrams</span>
+</pre></div>
+</div>
+<p>To support such a notation, the <a class="reference external" href="javadoc/index.html?org/arl/unet/ParameterReq.html">ParameterReq</a> messages provide a <code class="docutils literal"><span class="pre">setIndex()</span></code> method to specify the index of the parameter to get/set. Alternatively the <code class="docutils literal"><span class="pre">get()</span></code> and <code class="docutils literal"><span class="pre">set()</span></code> utility methods of the <code class="docutils literal"><span class="pre">UnetAgent</span></code> base class have versions where the index can be specified. The agents supporting indexed parameters should override the <code class="docutils literal"><span class="pre">getParameterList(index)</span></code>, <code class="docutils literal"><span class="pre">getParam()</span></code> and <code class="docutils literal"><span class="pre">setParam()</span></code> methods to provide access to the indexed parameters.</p>
+</div>
+<div class="section" id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p>For improved readability, we support units in Groovy agents and simulation scripts. For example, we can write:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">distance</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="na">km</span>
+<span class="kt">def</span> <span class="n">speed</span> <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">mps</span>
+<span class="kt">def</span> <span class="n">time</span> <span class="o">=</span> <span class="n">distance</span><span class="o">/</span><span class="n">speed</span>
+</pre></div>
+</div>
+<p>The value of <code class="docutils literal"><span class="pre">time</span></code> will be 500 (seconds). It is important for the developer to understand what happens under the hood to use units correctly. Each type of quantity (length, time, etc) has a reference unit (typically SI unit, but there are a few exceptions) that all other quantities are converted to. For example 1.km becomes 1000, as the reference unit for length is meters. The available quantities, units and reference units are tabulated below:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="12%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Quantity</th>
+<th class="head">Reference</th>
+<th class="head">Supported units</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Distance</td>
+<td>meters</td>
+<td>m, meter, meters, km, mile, miles, nm (<em>nautical mile</em>)</td>
+</tr>
+<tr class="row-odd"><td>Speed</td>
+<td>meters/second</td>
+<td>mps, kph, mph, knot, knots</td>
+</tr>
+<tr class="row-even"><td>Pressure</td>
+<td>Pa</td>
+<td>Pa, kPa, uPa</td>
+</tr>
+<tr class="row-odd"><td>Time</td>
+<td>seconds</td>
+<td>s, second, seconds, ms, millis, milliseconds, min, mins, minute, minutes, hr, hrs, hour, hours</td>
+</tr>
+<tr class="row-even"><td>Frequency</td>
+<td>Hz</td>
+<td>Hz, kHz</td>
+</tr>
+<tr class="row-odd"><td>Temperature</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr class="row-even"><td>Salinity</td>
+<td>ppt</td>
+<td>ppt, ppm</td>
+</tr>
+<tr class="row-odd"><td>Heading</td>
+<td>deg</td>
+<td>deg, degree, degrees</td>
+</tr>
+<tr class="row-even"><td>Turn rate</td>
+<td>deg/second</td>
+<td>dps</td>
+</tr>
+<tr class="row-odd"><td>Data rate</td>
+<td>bits/second</td>
+<td>bps, kbps</td>
+</tr>
+<tr class="row-even"><td>Data length</td>
+<td>bytes</td>
+<td>byte, bytes, kB, kbyte, kbytes</td>
+</tr>
+<tr class="row-odd"><td>Source level</td>
+<td>dB</td>
+<td>dB</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition caution">
+<p class="first admonition-title">Caution</p>
+<p>While units improve readability when properly used, they can confuse the reader when misused. Since the quantities are converted into reference units at the point of definition, no dimensional check can be provided to ensure that quantities in a computation are meaningfully combined.</p>
+<p class="last">Although we use the reference units as much as possible in the API, there are some APIs that use different units. For example, the physical layer timestamps are in microseconds. Another example is that most timeouts including fjåge’s <code class="docutils literal"><span class="pre">WakerBehavior</span></code> or <code class="docutils literal"><span class="pre">TickerBehavior</span></code> are in milliseconds, not seconds. So, although <code class="docutils literal"><span class="pre">add</span> <span class="pre">new</span> <span class="pre">WakerBehavior(500.ms)</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> looks nice, it will result in an <em>incorrect</em> behavior that is triggered immediately! The quantity 500.ms will become 0.5, as the reference unit for time is seconds. However, <code class="docutils literal"><span class="pre">WakerBehavior</span></code> takes in an integral number of milliseconds, so the behavior would be set up for 0 milliseconds.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>Now that you have learned how to write Unet agents, it’s time to learn how to set up simulations using your agents. For this, we recommend reading the chapter on <a class="reference internal" href="simulation-dsl.html#simdsl"><span class="std std-ref">Running Simulations</span></a>. Remember that the agents can simply be copied to <a class="reference external" href="modems.html">UnetStack-compliant modems</a>, without the need for porting, for use in experiments and field deployments.</p>
+<hr class="docutils" />
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>GroovyAgentExtensions are always enabled in the simulator. In other cases, you may need to put <code class="docutils literal"><span class="pre">org.arl.unet.GroovyExtensions.enable()</span></code> somewhere in your initialization script to enable the extensions.</td></tr>
+</tbody>
+</table>
+<p align="right"><a href="simulation-dsl.html" class="btn btn-info btn-xs">Running Simulations »</a></p></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

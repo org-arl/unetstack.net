@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Medium Access Control &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Routing" href="svc-30-routing.html" />
+    <link rel="prev" title="Link" href="svc-20-link.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="medium-access-control">
+<span id="macsvc"></span><h1>Medium Access Control<a class="headerlink" href="#medium-access-control" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="service">
+<h2>Service<a class="headerlink" href="#service" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="javadoc/org/arl/unet/Services.html#MAC">MAC</a> – Medium access control service</p>
+<p>Agents offering the <em>MAC</em> service provide some implementation of a medium access control protocol. They support a set of messages and parameters that are explained below. <em>MAC</em> service providers may also provide optional capabilities in the form of reliability through acknowledgement messages.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Capability</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacCapability.html#RELIABILITY">RELIABILITY</a></td>
+<td>Reliability supported (usually via acknowledgement messages)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacCapability.html#PRIORITY">PRIORITY</a></td>
+<td>Honors priority settings in reservation request</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacCapability.html#TTL">TTL</a></td>
+<td>Honors time-to-live settings in reservation request</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacCapability.html#TIMED_RESERVATION">TIMED_RESERVATION</a></td>
+<td>Scheduling of reservations in the future supported</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="implementations">
+<h2>Implementations<a class="headerlink" href="#implementations" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="javadoc/org/arl/unet/mac/aloha/AlohaACS.html">AlohaACS</a> – Aloha with adaptive carrier sensing</li>
+<li><a class="reference external" href="javadoc/org/arl/unet/mac/maca/Maca.html">MACA</a> – MACA with early-ACK and multi-ACK extensions</li>
+</ul>
+</div>
+<div class="section" id="requests-and-responses">
+<h2>Requests and Responses<a class="headerlink" href="#requests-and-responses" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="39%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Request</th>
+<th class="head">Possible Responses</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/ReservationReq.html">ReservationReq</a></td>
+<td><a class="reference external" href="javadoc/org/arl/unet/mac/ReservationRsp.html">ReservationRsp</a>, REFUSE</td>
+<td>Reserve the channel for a specified duration</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/ReservationCancelReq.html">ReservationCancelReq</a></td>
+<td>AGREE, REFUSE</td>
+<td>Cancel a pending reservation request</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/ReservationAcceptReq.html">ReservationAcceptReq</a></td>
+<td>AGREE, REFUSE</td>
+<td>Piggyback payload in a reservation PDU</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/TxAckReq.html">TxAckReq</a></td>
+<td>AGREE, REFUSE</td>
+<td>Transmit acknowledgement payload</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/ParameterReq.html">ParameterReq</a></td>
+<td><a class="reference external" href="javadoc/org/arl/unet/ParameterRsp.html">ParameterRsp</a></td>
+<td>Get/set/list parameters</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/CapabilityReq.html">CapabilityReq</a></td>
+<td>CONFIRM, DISCONFIRM, <a class="reference external" href="javadoc/org/arl/unet/CapabilityListRsp.html">CapabilityListRsp</a></td>
+<td>Check/list capabilities</td>
+</tr>
+</tbody>
+</table>
+<p>MAC protocols that use PDUs for channel reservation may support piggybacking of client data in the PDU. If such support is available, it is advertised using a non-zero <a class="reference external" href="javadoc/org/arl/unet/mac/MacParam.html#reservationPayloadSize">reservationPayloadSize</a> parameter. A <a class="reference external" href="javadoc/org/arl/unet/mac/ReservationReq.html">ReservationReq</a> should provide the payload data to be sent to a peer node (as part of RTS or equivalent PDU) to whom the reservation is made. If that node wishes to send payload data back (as part of CTS or equivalent PDU), it may send a <a class="reference external" href="javadoc/org/arl/unet/mac/ReservationAcceptReq.html">ReservationAcceptReq</a> in response to a <a class="reference external" href="javadoc/org/arl/unet/mac/ReservationStatusNtf.html">ReservationStatusNtf</a> to provide its payload data.</p>
+<p>For MAC implementations that support <a class="reference external" href="javadoc/org/arl/unet/mac/MacCapability.html#RELIABILITY">RELIABILITY</a>, the agent must support the <a class="reference external" href="javadoc/org/arl/unet/mac/TxAckReq.html">TxAckReq</a> request to provide acknowledgement payload to be transmitted to the peer node at the end of the reservation. On reception, this would generate a <a class="reference external" href="javadoc/org/arl/unet/mac/RxAckNtf.html">RxAckNtf</a> on the peer node.</p>
+</div>
+<div class="section" id="notifications">
+<h2>Notifications<a class="headerlink" href="#notifications" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="17%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Notification</th>
+<th class="head">Topic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/ReservationStatusNtf.html">ReservationStatusNtf</a></td>
+<td>default</td>
+<td>Current status of reservation request</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/RxAckNtf.html">RxAckNtf</a></td>
+<td>default</td>
+<td>Acknowledgement payload notification</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/ParamChangeNtf.html">ParamChangeNtf</a></td>
+<td><a class="reference external" href="javadoc/org/arl/unet/Topics.html#PARAMCHANGE">PARAMCHANGE</a></td>
+<td>Notification about the modified parameter</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="3%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">r/w</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacParam.html#channelBusy">channelBusy</a></td>
+<td>ro</td>
+<td>True if channel is busy, false otherwise</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacParam.html#reservationPayloadSize">reservationPayloadSize</a></td>
+<td>ro</td>
+<td>Maximum size of payload (bytes), which can be piggybacked in a reservation PDU</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacParam.html#ackPayloadSize">ackPayloadSize</a></td>
+<td>ro</td>
+<td>Maximum size of acknowledgement (bytes), which can be included in an ACK PDU</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacParam.html#maxReservationDuration">maxReservationDuration</a></td>
+<td>ro</td>
+<td>Maximum duration of reservation in seconds</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="javadoc/org/arl/unet/mac/MacParam.html#recommendedReservationDuration">recommendedReservationDuration</a></td>
+<td>ro</td>
+<td>Recommended duration of reservation in seconds (null, if unspecified)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

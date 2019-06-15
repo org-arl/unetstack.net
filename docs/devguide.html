@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UnetStack Developer’s Guide &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="quickstart.html" />
+    <link rel="prev" title="UnetStack Documentation" href="docs.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="unetstack-developer-s-guide">
+<span id="unetdevguide"></span><h1>UnetStack Developer’s Guide<a class="headerlink" href="#unetstack-developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<div class="sidebar">
+<p class="first sidebar-title">Background Reading</p>
+<p>If you’ve just started with UnetStack, a quick read of the <a class="reference internal" href="unet-stack.html#unetstack"><span class="std std-ref">UnetStack</span></a> overview is recommended.</p>
+<p>Since the UnetStack implementation is based on the fjåge agent framework, it will be useful to understand a little about developing agents. If you are not already familiar with it, we recommend browsing through the <a class="reference external" href="http://org-arl.github.io/fjage/doc/html">Fjåge Developer’s Guide</a>. In particular, we recommend reading the following chapters:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html/introduction.html">Introduction</a></li>
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html/behaviors.html">Agents and Behaviors</a></li>
+<li><a class="reference external" href="http://org-arl.github.io/fjage/doc/html/messages.html">Messaging</a></li>
+</ul>
+<p class="last">While the UnetStack agents can be developed in Java or Groovy, we find that the Groovy syntax is simpler and cleaner. Moreover, simulation scripts and shell interaction is in Groovy, and therefore being familiar with Groovy is useful. We will be using the Groovy syntax for code samples throughout the documentation. If you prefer to use pure Java for developing agents, you’re of course welcome to do so, but we highly recommend that you be familiar with the <a class="reference external" href="http://groovy.codehaus.org/">Groovy</a> syntax.</p>
+</div>
+<p><strong>Table of Contents</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#downloading-and-installing">Downloading and installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#running-your-first-simulation">Running your first simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unet-agents.html">Developing Agents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#unet-agents">Unet agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#ping-daemon">Ping daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#services-and-capabilities">Services and capabilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#indexed-parameters">Indexed parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unet-agents.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation-dsl.html">Running Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#simulation-dsl">Simulation DSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#node-network-simulation">3-node network simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#ping-daemon-simulation">Ping daemon simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#aloha-simulation">ALOHA simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#logs-traces-and-statistics">Logs, traces and statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#modem-and-channel-models">Modem and channel models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#node-mobility">Node mobility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation-dsl.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="channels.html">Channel Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="channels.html#protocol-channel">Protocol channel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html#basic-acoustic-channel">Basic acoustic channel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html#mission-2012a-and-2013a-channels">MISSION 2012a and 2013a channels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html#developing-custom-channel-models">Developing custom channel models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="channels.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="default-stack.html">The Default Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#address-resolution">Address resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#medium-access-control">Medium access control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#reliable-acoustic-link">Reliable acoustic link</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#routing">Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#transport">Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#remote-access">Remote access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default-stack.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#using-agent-names-in-shell">Using agent names in shell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#accessing-current-simulation-count">Accessing current simulation count</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#accessing-platform-time-and-clock-time">Accessing platform time and clock time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#suppressing-simulation-progress">Suppressing simulation progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#calculating-distances-between-nodes">Calculating distances between nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#programmatically-stopping-a-simulation">Programmatically stopping a simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#setting-log-level-of-the-simulation-agent">Setting log level of the simulation agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#specifying-relative-paths-for-files">Specifying relative paths for files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#redefining-closures-in-the-shell">Redefining closures in the shell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#working-with-gps-coordinates">Working with GPS coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#distributing-nodes-randomly">Distributing nodes randomly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#encoding-and-decoding-pdus">Encoding and decoding PDUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#using-matlab-to-plot-results">Using MATLAB to plot results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#using-a-visual-debugger-in-agent-development">Using a visual debugger in agent development</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agent-ref.html">Service Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="svc-00-nodeinfo.html">Node Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-01-addr.html">Address Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-02-datagram.html">Datagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-10-phy.html">Physical</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-11-ranging.html">Ranging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-12-baseband.html">Baseband</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-20-link.html">Link</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-21-mac.html">Medium Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-30-routing.html">Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-31-rdp.html">Route Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-35-transport.html">Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-40-remote.html">Remote Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-45-state.html">State Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svc-50-scheduler.html">Scheduler</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

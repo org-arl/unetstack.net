@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UnetStack and simulator v1.3 release notes &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UnetStack and simulator v1.4 release notes" href="relnotes-v1.4.html" />
+    <link rel="prev" title="UnetStack and simulator v1.2 release notes" href="relnotes-v1.2.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="unetstack-and-simulator-v1-3-release-notes">
+<h1>UnetStack and simulator v1.3 release notes<a class="headerlink" href="#unetstack-and-simulator-v1-3-release-notes" title="Permalink to this headline">¶</a></h1>
+<p>March 26, 2016</p>
+<div class="section" id="new-features">
+<h2>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Integrated development environment (IDE), and out-of-the-box support for Windows OS.</li>
+<li>Shebang (<code class="docutils literal"><span class="pre">//!</span> <span class="pre">Sim</span></code>) to mark simulation scripts, deprecating the need to say <code class="docutils literal"><span class="pre">unet</span> <span class="pre">sim</span></code> to run a simulation.</li>
+<li><a class="reference external" href="cookbook.html#encoding-and-decoding-pdus">PDU</a> utility class introduced to simplify encoding/decoding of PDUs.</li>
+<li><a class="reference external" href="javadoc/org/arl/unet/FSMBuilder.html">FSMBuilder</a> utility class introduced to simplify development of FSMs.</li>
+<li>Simulator now fully supports the Baseband service.</li>
+<li>Added shell closures for baseband service access.</li>
+<li>Added baseband utilities for creating and looking for CW pulses.</li>
+<li>Added sample channel model <code class="docutils literal"><span class="pre">samples/mission2013b</span></code> based on Chitre &amp; Chua (2014).</li>
+<li>Added support for time-to-live and priority in <code class="docutils literal"><span class="pre">DatagramReq</span></code> and <code class="docutils literal"><span class="pre">ReservationReq</span></code>.</li>
+<li>Improved <a class="reference external" href="svc-21-mac.html">MAC service specifications</a> to support <code class="docutils literal"><span class="pre">TIMED_RESERVATION</span></code> capability, <code class="docutils literal"><span class="pre">ReservationRsp</span></code> with <code class="docutils literal"><span class="pre">estimatedStartTime</span></code> and new parameters for maximum and recommended reservation size.</li>
+<li>Added <a class="reference external" href="mac.html">MAC tutorial</a> to documentation.</li>
+<li>Web-based shell access.</li>
+</ul>
+</div>
+<div class="section" id="changes">
+<h2>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Improved <a class="reference external" href="docs.html">documentation</a>.</li>
+<li>Switched to JDK 1.8, Groovy 2.4.4 and fjåge 1.4.</li>
+<li>Switched to using JSON/TCP remote access from fjåge 1.4, rather than the old RMI remote access.</li>
+<li><code class="docutils literal"><span class="pre">unet</span> <span class="pre">sh/csh</span></code> now uses port number for connection (instead of container name).</li>
+<li><code class="docutils literal"><span class="pre">JsonTypeAdapter</span></code> introduced to manage polymorphism of parameters and capabilities in JSON messages.</li>
+<li>Added <code class="docutils literal"><span class="pre">name()</span></code> method to <code class="docutils literal"><span class="pre">NamedParameter</span></code> to follow with <code class="docutils literal"><span class="pre">Enum.name()</span></code> method.</li>
+<li><code class="docutils literal"><span class="pre">UnetError</span></code> renamed to <code class="docutils literal"><span class="pre">UnetException</span></code>, and made to extend RuntimeException rather than an Error, to comply with Java convention.</li>
+<li>Moved <code class="docutils literal"><span class="pre">VarInputPDU</span></code> and <code class="docutils literal"><span class="pre">VarOutputPDU</span></code> to remote package.</li>
+<li><code class="docutils literal"><span class="pre">load</span></code> closure now supports floating point data.</li>
+<li><code class="docutils literal"><span class="pre">RemoteFileNtf</span></code> is now sent for <code class="docutils literal"><span class="pre">RemoteFilePutReq</span></code>.</li>
+<li>Router MTU a now a settable parameter.</li>
+<li>Changed convention to avoid dummy values (such as -1) for primitives when undefined, in favor of using wrapper types with <code class="docutils literal"><span class="pre">null</span></code> as values with undefined.</li>
+<li>Renamed MAC agent in stack to <code class="docutils literal"><span class="pre">mac</span></code> by default (rather than <code class="docutils literal"><span class="pre">aloha</span></code> or <code class="docutils literal"><span class="pre">maca</span></code>).</li>
+<li>Removed <code class="docutils literal"><span class="pre">rps</span></code> command, as fjåge 1.4’s <code class="docutils literal"><span class="pre">ps</span></code> command now shows remote agents too.</li>
+</ul>
+</div>
+<div class="section" id="bugfixes">
+<h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Several minor bug fixes.</li>
+<li>Default data type of <code class="docutils literal"><span class="pre">DatagramReq</span></code> is now <code class="docutils literal"><span class="pre">Physical.DATA</span></code>, as it should have been.</li>
+<li>Tracer now only counts DATA packets for throughput estimation.</li>
+</ul>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><ol class="first upperalpha" start="13">
+<li>Chitre and G. Chua, “Modeling realistic underwater acoustic networks using experimental data,” Asilomar Conference on Signals, Systems and Computers, (Pacific Grove, CA, USA), November 2014. (Invited).</li>
+</ol>
+</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

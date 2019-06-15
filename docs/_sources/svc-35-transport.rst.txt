@@ -1,0 +1,27 @@
+.. _svctransport:
+
+Transport
+=========
+
+Service
+-------
+
+`Transport`_ -- Transport service
+
+Agents offering the *Transport* service provide end-to-end reliability and fragmentation/reassembly for large datagrams. They may also support connection-oriented services for data streaming. Agents providing this service typically use the :ref:`svcrouting` service for multi-hop delivery of data.
+
+All agents supporting this service support the :ref:`svcdatagram` service, along with the `RELIABILITY`_ and `FRAGMENTATION`_ capabilities. It is also recommended that they support the `CANCELLATION`_ and `PROGRESS`_ capabilities, since datagrams at this level are likely to be large.
+
+Implementations
+---------------
+
+* `SWTransport`_ -- provides a batch stop-and-wait ARQ based end-to-end reliable transport service
+
+.. .........................................................................................................
+.. _Transport:         javadoc/org/arl/unet/Services.html#TRANSPORT
+.. _FRAGMENTATION:     javadoc/org/arl/unet/DatagramCapability.html#FRAGMENTATION
+.. _RELIABILITY:       javadoc/org/arl/unet/DatagramCapability.html#RELIABILITY
+.. _CANCELLATION:      javadoc/org/arl/unet/DatagramCapability.html#CANCELLATION
+.. _PROGRESS:          javadoc/org/arl/unet/DatagramCapability.html#PROGRESS
+.. _SWTransport:       javadoc/org/arl/unet/transport/SWTransport.html
+.. .........................................................................................................

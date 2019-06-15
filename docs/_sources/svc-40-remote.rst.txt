@@ -1,0 +1,74 @@
+Remote Access
+=============
+
+Service
+-------
+
+`REMOTE`_ -- Remote access service
+
+Agents offering the *Remote* service provide control over remote nodes. They support a set of messages and parameters that are explained below.
+
+Implementations
+---------------
+
+* `RemoteControl`_
+
+Requests and Responses
+----------------------
+
+===================== ================================ ===============================================
+Request               Possible Responses               Description
+===================== ================================ ===============================================
+`RemoteGetParamReq`_  AGREE, FAILURE                   Request to get parameter(s) from a remote node
+`RemoteSetParamReq`_  AGREE, FAILURE                   Request to set parameter(s) of a remote node
+`RemoteScriptReq`_    AGREE, FAILURE                   Request to execute a script on a remote node
+`RemoteTextReq`_      AGREE, FAILURE                   Request to send text message to remote node
+`RemoteFilePutReq`_   AGREE, FAILURE                   Request to transfer file to remote node
+`RemoteFileGetReq`_   AGREE, FAILURE                   Request to retreive file from remote node
+`ParameterReq`_       `ParameterRsp`_                  Get/set/list local parameters
+===================== ================================ ===============================================
+
+Notifications
+-------------
+
+===================== ============== =============================================================
+Notification          Topic          Description
+===================== ============== =============================================================
+`RemoteParamNtf`_     default        Notification of remote get/set parameter(s)
+`RemoteScriptNtf`_    default        Notification of start of remote script execution
+`RemoteTextNtf`_      default        Notification of text message from remote node
+`RemoteFileNtf`_      default        Notification of completion of file transfer from remote node
+`ParamChangeNtf`_     `PARAMCHANGE`_ Notification about the modified parameter
+===================== ============== =============================================================
+
+Parameters
+----------
+
+===================== === ========================================================================
+Parameter             r/w Description
+===================== === ========================================================================
+`pendingCount`_       rw  Number of pending remote requests
+`reliability`_        rw  Reliability setting of remote datagrams
+===================== === ========================================================================
+
+.. .........................................................................................................
+.. _REMOTE:            javadoc/org/arl/unet/Services.html#REMOTE
+.. _ParameterReq:      javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:      javadoc/org/arl/unet/ParameterRsp.html
+.. _CONTROL:           javadoc/org/arl/unet/phy/Physical.html#CONTROL
+.. _RemoteGetParamReq: javadoc/org/arl/unet/remote/RemoteGetParamReq.html
+.. _RemoteSetParamReq: javadoc/org/arl/unet/remote/RemoteSetParamReq.html
+.. _RemoteScriptReq:   javadoc/org/arl/unet/remote/RemoteScriptReq.html
+.. _RemoteTextReq:     javadoc/org/arl/unet/remote/RemoteTextReq.html
+.. _RemoteFileGetReq:  javadoc/org/arl/unet/remote/RemoteFileGetReq.html
+.. _RemoteFilePutReq:  javadoc/org/arl/unet/remote/RemoteFilePutReq.html
+.. _RemoteParamNtf:    javadoc/org/arl/unet/remote/RemoteParamNtf.html
+.. _RemoteScriptNtf:   javadoc/org/arl/unet/remote/RemoteScriptNtf.html
+.. _RemoteTextNtf:     javadoc/org/arl/unet/remote/RemoteTextNtf.html
+.. _RemoteFileNtf:     javadoc/org/arl/unet/remote/RemoteFileNtf.html
+.. _pendingCount:      javadoc/org/arl/unet/remote/RemoteParam.html#pendingCount
+.. _reliability:       javadoc/org/arl/unet/remote/RemoteParam.html#reliability
+.. _ParamChangeNtf:    javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:       javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _RemoteControl:     javadoc/org/arl/unet/remote/RemoteControl.html
+.. .........................................................................................................

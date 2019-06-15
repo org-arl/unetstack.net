@@ -1,0 +1,42 @@
+.. title:: Overview
+
+.. rst-class:: jumbotron
+
+Unet
+====
+
+**The Underwater Networks Project**
+
+.. raw:: html
+
+  <p><a href="quickstart.html" class="btn btn-primary btn-md">Get started »</a></p>
+  </div>
+
+Overview
+--------
+
+.. sidebar:: Media Coverage
+
+  * Wired Magazine -- `How do submarines get online? <http://www.wired.co.uk/magazine/archive/2014/06/start/undersea-internet>`_, May 2014.
+  * Reuters -- `Internet across oceans and underwater <http://www.businessinsider.com.au/heres-how-the-world-is-trying-to-get-internet-across-oceans-and-underwater-2014-4>`_, April 2014.
+  * The Economist -- `Captain Nemo goes online <http://www.economist.com/news/technology-quarterly/21572920-networking-emerging-undersea-data-networks-are-connecting-submarines-aquatic>`_, March 2013.
+
+Over the past few decades, communication technology has percolated into every aspect of our lives, and we have come to take it for granted. Most of the communication technology we use relies on electromagnetic waves (radio waves, visible light, etc) that get rapidly absorbed by water. Hence the technology is ineffective for underwater communication, except at very short distances or extremely low data rates. Most underwater communication systems today use acoustic waves, which can travel long distances in the right conditions. However, they pose new challenges that need to be overcome, before we can effectively use our communication technology underwater. The **Unet** project strives to develop technologies and promote community collaboration in the area of underwater networks.
+
+The Unet project started at the `Acoustic Research Laboratory`_ (ARL) of the National University of Singapore in 2004. Over the years, theoretical advances, careful engingeering and extensive field testing have allowed us to develop networking technology that now provides robust performance in challenging conditions. A substantial part of the developed technology is freely available for academic and research use. Commercial products and solutions based on this technology are available through `Subnero`_.
+
+:ref:`UnetStack` is an agent-based network stack that lies the heart of the Unet project. It not only runs in underwater communication nodes, but also forms the backbone of an :ref:`UnetSim` that can be used for development and testing of underwater network technology. The simulator was designed with two key goals -- to be easy to learn and use, and to allow agent implementations to be shared between deployment environment and simulation environment. Essentially, once a protocol is developed and tested in simulation, it is ready to be deployed and tested at sea in any UnetStack-compatible modem.
+
+.. image:: _static/network.jpg
+   :alt: Underwater Network
+   :align: center
+
+.. raw:: html
+
+  <p style="text-align:center;font-size:10px;color:#b0b0b0;">(Illustration courtesy of Subnero Pte Ltd)</p>
+  <p align="right"><a href="unet-stack.html" class="btn btn-info btn-xs">UnetStack »</a></p>
+
+.. ..........................................................................................
+.. _Acoustic Research Laboratory: http://www.arl.nus.edu.sg
+.. _Subnero: http://www.subnero.com
+.. ..........................................................................................

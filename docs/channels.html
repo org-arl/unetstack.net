@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Channel Models &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The Default Stack" href="default-stack.html" />
+    <link rel="prev" title="samples/mobility/mobility.groovy" href="mobility-src.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="channel-models">
+<span id="channels"></span><h1>Channel Models<a class="headerlink" href="#channel-models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="protocol-channel">
+<h2>Protocol channel<a class="headerlink" href="#protocol-channel" title="Permalink to this headline">¶</a></h2>
+<p>The <em>protocol channel model</em>  (<a class="reference external" href="javadoc/org/arl/unet/sim/channels/ProtocolChannelModel.html">ProtocolChannelModel</a>) is the simplest of the channel models available in the Unet simulator. Although simple, it captures important first-order effects such as propagation delay, limited communication range, interference range, and collisions. It also captures the probabilistic nature of the channel. It therefore serves as a good first order approximation that is also amenable to mathematical analysis.</p>
+<p>The protocol channel model is parametrized by a sound speed <em>c</em>, communication range <em>Rc</em>, detection range <em>Rd</em>, an interference range <em>Ri</em>, probability of detection <em>pd</em>, and a probability of decoding <em>pc</em>. Successful communication is possible at a range <em>R</em> <img class="math" src="_images/math/671cf21691fd6f03157bda736f8d4910c1261519.png" alt="\le"/> <em>Rc</em> with a probability <em>pd.pc</em>. At a range <em>Rc</em> &lt; <em>R</em> <img class="math" src="_images/math/671cf21691fd6f03157bda736f8d4910c1261519.png" alt="\le"/> <em>Rd</em>, a frame may be detected with probability <em>pd</em>, but not successfully decoded. At any range <em>R</em> <img class="math" src="_images/math/671cf21691fd6f03157bda736f8d4910c1261519.png" alt="\le"/> <em>Ri</em>, a frame interferes with another frame that is being received at the same time, and causes a collision. Both frames are lost (not successfully decoded) during a collision. At a range <em>R</em> &gt; <em>Ri</em>, a frame is not detected and does not interfere with other frames.</p>
+<p>To select the protocol model, the simulation script must explicitly set it as the <code class="docutils literal"><span class="pre">channel.model</span></code>. The parameters of the model can be configured in the simulation script. The configuration of the channel with default parameter values is shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.*</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">model</span> <span class="o">=</span> <span class="n">ProtocolChannelModel</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">soundSpeed</span> <span class="o">=</span> <span class="mi">1500</span><span class="o">.</span><span class="na">mps</span>           <span class="c1">// c</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">communicationRange</span> <span class="o">=</span> <span class="mi">2000</span><span class="o">.</span><span class="na">m</span>     <span class="c1">// Rc</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">detectionRange</span> <span class="o">=</span> <span class="mi">2500</span><span class="o">.</span><span class="na">m</span>         <span class="c1">// Rd</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">interferenceRange</span> <span class="o">=</span> <span class="mi">3000</span><span class="o">.</span><span class="na">m</span>      <span class="c1">// Ri</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">pDetection</span> <span class="o">=</span> <span class="mi">1</span>                  <span class="c1">// pd</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">pDecoding</span> <span class="o">=</span> <span class="mi">1</span>                   <span class="c1">// pc</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="basic-acoustic-channel">
+<h2>Basic acoustic channel<a class="headerlink" href="#basic-acoustic-channel" title="Permalink to this headline">¶</a></h2>
+<p>The <em>basic acoustic channel model</em> (<a class="reference external" href="javadoc/org/arl/unet/sim/channels/BasicAcousticChannel.html">BasicAcousticChannel</a>) is the default channel model in the simulator. It provides a good balance between accuracy, applicability and simulation speed. The model is composed of two parts – an acoustic model (<a class="reference external" href="javadoc/org/arl/unet/sim/channels/UrickAcousticModel.html">UrickAcousticModel</a>) based on average transmission loss, and a communication model (<a class="reference external" href="javadoc/org/arl/unet/sim/channels/BPSKFadingModel.html">BPSKFadingModel</a>) based on LFM/DSSS detection preamble and BPSK communication in a Rician or Rayleigh fading channel.</p>
+<p>Although the basic acoustic channel model is the default, it is a good practice to explicitly set it for readability, and for forward compatibility:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.*</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">model</span> <span class="o">=</span> <span class="n">BasicAcousticChannel</span>
+</pre></div>
+</div>
+<div class="section" id="urick-acoustic-model">
+<h3>Urick acoustic model<a class="headerlink" href="#urick-acoustic-model" title="Permalink to this headline">¶</a></h3>
+<p>The acoustic model is parametrized by carrier frequency <em>f</em>, bandwidth <em>B</em>, spreading loss factor α, water temperature <em>T</em> °C, salinity <em>S</em> ppt, noise power spectral density level <em>N0</em> dB re <img class="math" src="_images/math/d2fed628aae1eee0b35fc2d42f584a477e5c308a.png" alt="\mu\text{Pa}/\sqrt{\text{Hz}}"/> and water depth <em>d</em>. The default values are shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="o">.</span><span class="na">carrierFrequency</span> <span class="o">=</span> <span class="mi">25</span><span class="o">.</span><span class="na">kHz</span>       <span class="c1">// f</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">bandwidth</span> <span class="o">=</span> <span class="mi">4096</span><span class="o">.</span><span class="na">Hz</span>             <span class="c1">// B</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">spreading</span> <span class="o">=</span> <span class="mi">2</span>                   <span class="c1">// α</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">temperature</span> <span class="o">=</span> <span class="mi">25</span><span class="o">.</span><span class="na">C</span>              <span class="c1">// T</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">salinity</span> <span class="o">=</span> <span class="mi">35</span><span class="o">.</span><span class="na">ppt</span>               <span class="c1">// S</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">noiseLevel</span> <span class="o">=</span> <span class="mi">60</span><span class="o">.</span><span class="na">dB</span>              <span class="c1">// N0</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">waterDepth</span> <span class="o">=</span> <span class="mi">20</span><span class="o">.</span><span class="na">m</span>               <span class="c1">// d</span>
+</pre></div>
+</div>
+<p>The acoustic model automatically computes the sound speed <em>c</em> [Mackenzie, JASA, 1981], transmission loss <em>TL</em> [Urick 3rd ed, p105-111] and total noise level <em>NL</em>:</p>
+<div class="math">
+<p><img src="_images/math/67af893d2e6837f297769ebf32bbe523e6df82de.png" alt="c &amp;= 1448.96 + 4.591 T - 0.05304 T^2 + 0.0002374 T^3 + 1.340 S' + 0.0163 d' \\
+  &amp;+ 1.675 \times 10^{-7} d'^2 - 0.01025 T S' - 7.139 \times 10^{-13} T d'^3 \\
+TL &amp;= 10\alpha\log_{10} R + \left( 0.0186 \frac{S f_T f'^2}{f_T^2 + f'^2} + 0.0268 \frac{f'^2}{f_T} \right) \times 1.0936 \times 10^{-3} R \\
+NL &amp;= N_0 + 10 \log_{10}B"/></p>
+</div><p>where <em>R</em> is the distance between the communicating nodes, and:</p>
+<div class="math">
+<p><img src="_images/math/903ef3e97b888345e3f135b3d3349b8085055a0b.png" alt="S' &amp;= S - 35 \\
+d' &amp;= d/2 \\
+f' &amp;= f/1000 \\
+f_T &amp;= 21.9 \times 10^{6 - 1520 / (T + 273)}."/></p>
+</div><p>The total signal-to-noise ratio is then given by <em>SNR = SL - TL - NL</em>, where <em>SL</em> is the source level of the transmission in dB re μPa &#64; 1m.</p>
+</div>
+<div class="section" id="bpsk-fading-model">
+<h3>BPSK fading model<a class="headerlink" href="#bpsk-fading-model" title="Permalink to this headline">¶</a></h3>
+<p>The fading communication model uses the above <em>SNR</em> to simulate detection and successful decoding. The model is parametrized by the Rician fading parameter <em>K</em>, fast/slow fading, acceptable probability <em>pfa</em> of false alarm during detection, and a processing gain <em>G</em>.  The default values are shown below:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="o">.</span><span class="na">ricianK</span> <span class="o">=</span> <span class="mi">10</span>                    <span class="c1">// K</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">fastFading</span> <span class="o">=</span> <span class="kc">true</span>               <span class="c1">// fast/slow fading</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">pfa</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span>                      <span class="c1">// pfa</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">processingGain</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="na">dB</span>           <span class="c1">// G</span>
+</pre></div>
+</div>
+<p>For a detection preamble of duration <em>t</em> seconds and bandwidth <em>B</em>, we have an effective <em>SNR’ = SNR + 10 log(Bt)</em> after pulse compression. We assume Rician fading (or Rayleigh fading if <em>K</em> = 0) and Gaussian noise such that the average SNR is <em>SNR’</em> to simulate detection.</p>
+<p>For the BPSK communication signal with data rate <em>D</em> bits/second, we compute <em>Eb/N0 = SNR + 10 log(B/D) + G</em>. We then simulate bit errors assuiming Rician fading (or Rayleigh fading if <em>K</em> = 0) and Gaussian noise. If fast fading is enabled, each bit generates an independent realization for the Rician fading variate. If fast fading is disabled, the entire frame uses a single realization of the Rician fading variate. If all bits are successful, the frame is successfully decoded. If any bit is in error, the frame is deemed to have failed at decoding.</p>
+</div>
+</div>
+<div class="section" id="mission-2012a-and-2013a-channels">
+<h2>MISSION 2012a and 2013a channels<a class="headerlink" href="#mission-2012a-and-2013a-channels" title="Permalink to this headline">¶</a></h2>
+<p>Although channel modeling can provide useful approximations to an underwater channel, there is no real substitute to experimenting at sea. The MISSION 2012 and MISSION 2013 experiments were conducted over several weeks in October 2012 and November 2013 in Singapore waters. Extensive channel measurements were made between Unet network nodes deployed during the experiment. These measurements allow us to estimate packet detection probabilities and packet error probabilities on various network links. Although these probabilities are generally time-varying, we can estimate instantaneous probabilities from measurements over a short interval during which the environmental conditions are relatively stable. These can be used to generate a <em>protocol channel model</em> that accurately models the channel between the nodes during the experiment. Any protocol simulations using this model then accurately predict what would have happened if the protocol was tested at sea during the experiment. This may be a great way to benchmark protocols in realistic deployment conditions.</p>
+<p>The locations of nodes in the MISSION 2012 5-node network and the MISSION 2013 7-node network can be plotted using sample scripts (<code class="docutils literal"><span class="pre">samples/mission2012/plot-nodes.groovy</span></code> and <code class="docutils literal"><span class="pre">samples/mission2013/plot-nodes.groovy</span></code>) provided, yielding:</p>
+<div class="align-center figure">
+<img alt="_images/mission2012-13.png" src="_images/mission2012-13.png" />
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>To use the MISSION 2012a model for simulation, set the appropriate channel model and node addresses/locations in the simulation script:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: MISSION 2012 network</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.*</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">model</span> <span class="o">=</span> <span class="n">Mission2012a</span>
+
+<span class="n">simulate</span> <span class="o">{</span>
+  <span class="n">Mission2012a</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">each</span> <span class="o">{</span> <span class="n">addr</span> <span class="o">-&gt;</span>
+    <span class="n">node</span> <span class="s2">&quot;P$addr&quot;</span><span class="o">,</span> <span class="nl">address:</span> <span class="n">addr</span><span class="o">,</span> <span class="nl">location:</span> <span class="n">Mission2012a</span><span class="o">.</span><span class="na">nodeLocation</span><span class="o">[</span><span class="n">addr</span><span class="o">]</span>
+      <span class="o">:</span>
+      <span class="o">:</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>To use the MISSION 2013a model, simply replace <code class="docutils literal"><span class="pre">Mission2012a</span></code> in the above code with <code class="docutils literal"><span class="pre">Mission2013a</span></code>. Sample simulation scripts are available in the <code class="docutils literal"><span class="pre">samples/mission2012</span></code> and <code class="docutils literal"><span class="pre">samples/mission2013</span></code> folders. For example, running <code class="docutils literal"><span class="pre">samples/mission2013/mission2013-sim</span></code>, we get:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>MISSION 2013 network
+--------------------
+
+Nodes: 21, 22, 27, 28, 29, 31, 34
+
+To connect to nodes via telnet shell:
+22: telnet localhost 5122
+27: telnet localhost 5127
+28: telnet localhost 5128
+29: telnet localhost 5129
+31: telnet localhost 5131
+34: telnet localhost 5134
+
+Or to connect to nodes via unetsh:
+21: bin/unet sh localhost 21
+22: bin/unet sh localhost 22
+27: bin/unet sh localhost 27
+28: bin/unet sh localhost 28
+29: bin/unet sh localhost 29
+31: bin/unet sh localhost 31
+34: bin/unet sh localhost 34
+
+Connected to 21...
+Press ^D to exit
+
+&gt; node.address
+21
+&gt; range 22
+498.65
+&gt; range 27
+ERROR: no response from remote node
+&gt; range 27
+712.93
+&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="developing-custom-channel-models">
+<h2>Developing custom channel models<a class="headerlink" href="#developing-custom-channel-models" title="Permalink to this headline">¶</a></h2>
+<p>While the above channel models meet the simulation needs for many applications, custom channel models may be developed to meet special research needs. Although developing and testing a model from scratch can be a daunting task, the <a class="reference external" href="javadoc/org/arl/unet/sim/channels/ProtocolChannelModel.html">ProtocolChannelModel</a> and the <a class="reference external" href="javadoc/org/arl/unet/sim/channels/AbstractAcousticChannel.html">AbstractAcousticChannel</a> classes provide excellent starting points to customize the channel models. In this section, we show how each of the classes can be used to create custom channels.</p>
+<div class="section" id="extending-the-protocolchannelmodel">
+<h3>Extending the <code class="docutils literal"><span class="pre">ProtocolChannelModel</span></code><a class="headerlink" href="#extending-the-protocolchannelmodel" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference external" href="javadoc/org/arl/unet/sim/channels/ProtocolChannelModel.html">ProtocolChannelModel</a> can be customized to provide per-link detection and decoding probabilities. The <code class="docutils literal"><span class="pre">Mission2012a</span></code> and <code class="docutils literal"><span class="pre">Mission2013a</span></code> models do exactly this. To illustrate how this is done, we provide sample source code <code class="docutils literal"><span class="pre">samples/mission2012/Mission2012Channel.groovy</span></code>:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.sim.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.ProtocolChannelModel</span>
+
+<span class="kd">class</span> <span class="nc">Mission2012Channel</span> <span class="kd">extends</span> <span class="n">ProtocolChannelModel</span> <span class="o">{</span>
+
+  <span class="kd">static</span> <span class="kd">final</span> <span class="kt">def</span> <span class="n">nodes</span> <span class="o">=</span> <span class="o">[</span><span class="mi">21</span><span class="o">,</span> <span class="mi">22</span><span class="o">,</span> <span class="mi">27</span><span class="o">,</span> <span class="mi">28</span><span class="o">,</span> <span class="mi">29</span><span class="o">]</span>
+  <span class="kd">static</span> <span class="kd">final</span> <span class="kt">def</span> <span class="n">nodeLocation</span> <span class="o">=</span> <span class="o">[</span>
+    <span class="mi">21</span><span class="o">:</span> <span class="o">[</span>   <span class="mi">0</span><span class="o">,</span>    <span class="mi">0</span><span class="o">,</span>  <span class="o">-</span><span class="mi">5</span><span class="o">],</span>
+    <span class="mi">22</span><span class="o">:</span> <span class="o">[</span> <span class="mi">398</span><span class="o">,</span> <span class="o">-</span><span class="mi">105</span><span class="o">,</span> <span class="o">-</span><span class="mi">18</span><span class="o">],</span>
+    <span class="mi">27</span><span class="o">:</span> <span class="o">[-</span><span class="mi">434</span><span class="o">,</span> <span class="o">-</span><span class="mi">499</span><span class="o">,</span> <span class="o">-</span><span class="mi">12</span><span class="o">],</span>
+    <span class="mi">28</span><span class="o">:</span> <span class="o">[</span> <span class="o">-</span><span class="mi">32</span><span class="o">,</span>  <span class="mi">279</span><span class="o">,</span> <span class="o">-</span><span class="mi">20</span><span class="o">],</span>
+    <span class="mi">29</span><span class="o">:</span> <span class="o">[-</span><span class="mi">199</span><span class="o">,</span> <span class="o">-</span><span class="mi">307</span><span class="o">,</span> <span class="o">-</span><span class="mi">12</span><span class="o">]</span>
+  <span class="o">]</span>
+  <span class="kd">static</span> <span class="kt">def</span> <span class="n">pNoDetect</span> <span class="o">=</span> <span class="o">[</span>
+    <span class="o">[</span>    <span class="mi">0</span><span class="o">,</span> <span class="mf">0.047</span><span class="o">,</span> <span class="mf">0.095</span><span class="o">,</span> <span class="mf">0.026</span><span class="o">,</span> <span class="mf">0.056</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.032</span><span class="o">,</span>     <span class="mi">0</span><span class="o">,</span> <span class="mf">0.228</span><span class="o">,</span> <span class="mf">0.139</span><span class="o">,</span> <span class="mf">0.081</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.047</span><span class="o">,</span> <span class="mf">0.174</span><span class="o">,</span>     <span class="mi">0</span><span class="o">,</span> <span class="mf">0.025</span><span class="o">,</span> <span class="mf">0.011</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.019</span><span class="o">,</span> <span class="mf">0.060</span><span class="o">,</span> <span class="mf">0.040</span><span class="o">,</span>     <span class="mi">0</span><span class="o">,</span> <span class="mf">0.420</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.026</span><span class="o">,</span> <span class="mf">0.018</span><span class="o">,</span> <span class="mf">0.009</span><span class="o">,</span> <span class="mf">0.048</span><span class="o">,</span>     <span class="mi">0</span><span class="o">]</span>
+  <span class="o">]</span>
+  <span class="kd">static</span> <span class="kt">def</span> <span class="n">pNoDetectOrDecode</span> <span class="o">=</span> <span class="o">[</span>
+    <span class="o">[</span>    <span class="mi">0</span><span class="o">,</span> <span class="mf">0.157</span><span class="o">,</span> <span class="mf">0.643</span><span class="o">,</span> <span class="mf">0.197</span><span class="o">,</span> <span class="mf">0.239</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.184</span><span class="o">,</span>     <span class="mi">0</span><span class="o">,</span> <span class="mf">0.870</span><span class="o">,</span> <span class="mf">0.639</span><span class="o">,</span> <span class="mf">0.435</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.326</span><span class="o">,</span> <span class="mf">0.826</span><span class="o">,</span>     <span class="mi">0</span><span class="o">,</span> <span class="mf">0.975</span><span class="o">,</span> <span class="mf">0.023</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.038</span><span class="o">,</span> <span class="mf">0.160</span><span class="o">,</span> <span class="mf">0.760</span><span class="o">,</span>     <span class="mi">0</span><span class="o">,</span> <span class="mf">0.900</span><span class="o">],</span>
+    <span class="o">[</span><span class="mf">0.070</span><span class="o">,</span> <span class="mf">0.070</span><span class="o">,</span> <span class="mf">0.018</span><span class="o">,</span> <span class="mf">0.871</span><span class="o">,</span>     <span class="mi">0</span><span class="o">]</span>
+  <span class="o">]</span>
+
+  <span class="kt">float</span> <span class="nf">getProbabilityDetection</span><span class="o">(</span><span class="n">Reception</span> <span class="n">rx</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">from</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">rx</span><span class="o">.</span><span class="na">from</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="n">to</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">rx</span><span class="o">.</span><span class="na">address</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">from</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">to</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="o">-</span><span class="n">pNoDetect</span><span class="o">[</span><span class="n">from</span><span class="o">][</span><span class="n">to</span><span class="o">]</span>
+  <span class="o">}</span>
+
+  <span class="kt">float</span> <span class="nf">getProbabilityDecoding</span><span class="o">(</span><span class="n">Reception</span> <span class="n">rx</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">from</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">rx</span><span class="o">.</span><span class="na">from</span><span class="o">)</span>
+    <span class="kt">int</span> <span class="n">to</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">rx</span><span class="o">.</span><span class="na">address</span><span class="o">)</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">from</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">to</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pNoDetectOrDecode</span><span class="o">[</span><span class="n">from</span><span class="o">][</span><span class="n">to</span><span class="o">])/(</span><span class="mi">1</span><span class="o">-</span><span class="n">pNoDetect</span><span class="o">[</span><span class="n">from</span><span class="o">][</span><span class="n">to</span><span class="o">])</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The nodes during the MISSION 2012 experiment have addresses 21, 22, 27, 28 and 29. The node locations and inter-node detection/decoding probabilities are measured and tabulated in the model. The model uses these measurements to simulate packet loss.</p>
+</div>
+<div class="section" id="extending-the-abstractacousticchannel">
+<h3>Extending the <code class="docutils literal"><span class="pre">AbstractAcousticChannel</span></code><a class="headerlink" href="#extending-the-abstractacousticchannel" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference external" href="javadoc/org/arl/unet/sim/channels/AbstractAcousticChannel.html">AbstractAcousticChannel</a> class provides a framework for acoustic simulation channels, including functionality for collision detection, etc. The <a class="reference external" href="javadoc/org/arl/unet/sim/channels/BasicAcousticChannel.html">BasicAcousticChannel</a> class extends the <a class="reference external" href="javadoc/org/arl/unet/sim/channels/AbstractAcousticChannel.html">AbstractAcousticChannel</a> class and provides implementation for an acoustic model (<a class="reference external" href="javadoc/org/arl/unet/sim/channels/UrickAcousticModel.html">UrickAcousticModel</a>) and a communication model (<a class="reference external" href="javadoc/org/arl/unet/sim/channels/BPSKFadingModel.html">BPSKFadingModel</a>):</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nc">BasicAcousticChannel</span> <span class="kd">extends</span> <span class="n">AbstractAcousticChannel</span> <span class="o">{</span>
+  <span class="nd">@Delegate</span> <span class="n">UrickAcousticModel</span> <span class="n">acoustics</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UrickAcousticModel</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+  <span class="nd">@Delegate</span> <span class="n">BPSKFadingModel</span> <span class="n">comms</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BPSKFadingModel</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>To customize an acoustic channel model, one may extend or replace the acoustic or communication models. For example, if we wished to have a deep sea noise model where the noise power was a function of a new parameter <code class="docutils literal"><span class="pre">seaState</span></code>, we could extend the <a class="reference external" href="javadoc/org/arl/unet/sim/channels/UrickAcousticModel.html">UrickAcousticModel</a>:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.UrickAcousticModel</span>
+
+<span class="kd">class</span> <span class="nc">MyAcousticModel</span> <span class="kd">extends</span> <span class="n">UrickAcousticModel</span> <span class="o">{</span>
+
+  <span class="c1">// map of sea state to noise power (dB re uPa^2/Hz)</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">def</span> <span class="n">noiseLevel</span> <span class="o">=</span> <span class="o">[</span> <span class="mi">0</span><span class="o">:</span> <span class="mi">20</span><span class="o">,</span> <span class="mi">1</span><span class="o">:</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">2</span><span class="o">:</span> <span class="mi">35</span><span class="o">,</span> <span class="mi">3</span><span class="o">:</span> <span class="mi">40</span><span class="o">,</span> <span class="mi">4</span><span class="o">:</span> <span class="mi">42</span><span class="o">,</span> <span class="mi">5</span><span class="o">:</span> <span class="mi">44</span><span class="o">,</span> <span class="mi">6</span><span class="o">:</span> <span class="mi">46</span> <span class="o">]</span>
+
+  <span class="c1">// sea state parameter</span>
+  <span class="kt">float</span> <span class="n">seaState</span> <span class="o">=</span> <span class="mi">2</span>
+
+  <span class="kt">double</span> <span class="nf">getNoisePower</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">Math</span><span class="o">.</span><span class="na">pow</span><span class="o">(</span><span class="mi">10</span><span class="o">,</span> <span class="n">noiseLevel</span><span class="o">[</span><span class="n">seaState</span><span class="o">]/</span><span class="mi">10</span><span class="o">)</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="na">bandwidth</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>and then replace the <code class="docutils literal"><span class="pre">BasicAcousticChannel</span></code> model with out own version:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.*</span>
+
+<span class="kd">class</span> <span class="nc">MyAcousticChannel</span> <span class="kd">extends</span> <span class="n">AbstractAcousticChannel</span> <span class="o">{</span>
+  <span class="nd">@Delegate</span> <span class="n">UrickAcousticModel</span> <span class="n">acoustics</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyAcousticModel</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+  <span class="nd">@Delegate</span> <span class="n">BPSKFadingModel</span> <span class="n">comms</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BPSKFadingModel</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Similarly, the communication model can be extended or replaced too.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>You have now learned all the basic knowledge needed to develop your own Unet agents and simulations. Examples of usage with the default network stack are shown in the <a class="reference internal" href="default-stack.html#defstack"><span class="std std-ref">The Default Stack</span></a> chapter. You can find more documentation on the available agents, services, capabilities, messages and parameters in the <a class="reference internal" href="agent-ref.html#agentref"><span class="std std-ref">Service Reference</span></a> chapter. Recipes for many common tasks are provided in the <a class="reference internal" href="cookbook.html#cookbook"><span class="std std-ref">Cookbook</span></a> chapter. You may also wish to explore the <cite>samples</cite> folder for more examples to give you ideas.</p>
+<p>It’s now time to get down to developing interesting agents and protocols! Good luck, and happy networking!</p>
+<p>We always welcome <a class="reference external" href="contrib.html">contributions</a> back to the Unet community. If you develop agents, protocols, motion models, channel models, code snippets, tutorials, etc that you wish to share with the community, please post them on the <a class="reference external" href="http://www.unetstack.net/support">support forum</a>.</p>
+<p align="right"><a href="default-stack.html" class="btn btn-info btn-xs">The Default Stack »</a></p></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,46 @@
+.. _svcrdp:
+
+Route Maintenance
+=================
+
+Service
+-------
+
+`ROUTE_MAINTENANCE`_ -- Route maintenance service
+
+Agents offering the *Route Maintenance* service generate route discovery/change notifications to allow
+routing agents to maintain routing tables. They support a set of messages that are explained below.
+
+Implementations
+---------------
+
+* `RouteDiscoveryProtocol`_ -- provides route discovery and maintenance service by flooding
+
+Requests and Responses
+----------------------
+
+======================= ================================ ===================================================
+Request                 Possible Responses               Description
+======================= ================================ ===================================================
+`RouteDiscoveryReq`_    AGREE, REFUSE, FAILURE           Request for route discovery to specified node
+`RouteTraceReq`_        AGREE, REFUSE, FAILURE           Request for trace current route to specified node
+======================= ================================ ===================================================
+
+Notifications
+-------------
+
+===================== ============== =================================================
+Notification          Topic          Description
+===================== ============== =================================================
+`RouteDiscoveryNtf`_  default        Notification that a route has been discovered
+`RouteTraceNtf`_      default        Notification with a route trace to a node
+===================== ============== =================================================
+
+.. .........................................................................................................
+.. _ROUTE_MAINTENANCE:      javadoc/org/arl/unet/Services.html#ROUTE_MAINTENANCE
+.. _RouteDiscoveryReq:      javadoc/org/arl/unet/net/RouteDiscoveryReq.html
+.. _RouteTraceReq:          javadoc/org/arl/unet/net/RouteTraceReq.html
+.. _RouteDiscoveryNtf:      javadoc/org/arl/unet/net/RouteDiscoveryNtf.html
+.. _RouteTraceNtf:          javadoc/org/arl/unet/net/RouteTraceNtf.html
+.. _RouteDiscoveryProtocol: javadoc/org/arl/unet/net/RouteDiscoveryProtocol.html
+.. .........................................................................................................

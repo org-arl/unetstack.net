@@ -1,0 +1,14 @@
+.. _agentref:
+
+Service Reference
+=================
+
+The UnetStack currently defines the following services:
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   svc-*
+
+Additional services can be introduced into the stack by developers.

@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UnetStack and simulator v1.1 release notes &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UnetStack and simulator v1.1.1 release notes" href="relnotes-v1.1.1.html" />
+    <link rel="prev" title="UnetStack and simulator v1.0b1 release notes" href="relnotes-v1.0b1.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="unetstack-and-simulator-v1-1-release-notes">
+<h1>UnetStack and simulator v1.1 release notes<a class="headerlink" href="#unetstack-and-simulator-v1-1-release-notes" title="Permalink to this headline">¶</a></h1>
+<p>September 1, 2013</p>
+<div class="section" id="new-features">
+<h2>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">version</span></code> property on each agent, and a <code class="docutils literal"><span class="pre">ver</span></code> shell command</li>
+<li>GUI shell support (as default when running <code class="docutils literal"><span class="pre">unetsh</span></code>)</li>
+<li>Support for data plotting in GUI</li>
+<li>Remote <code class="docutils literal"><span class="pre">ps</span></code> now possible (<code class="docutils literal"><span class="pre">rps</span></code>) when operating with <code class="docutils literal"><span class="pre">unetsh</span></code></li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">DATAGRAM</span></code> service defined, including:</dt>
+<dd><ul class="first last">
+<li>Merging of <code class="docutils literal"><span class="pre">LinkParam.MTU</span></code> and <code class="docutils literal"><span class="pre">PhysicalChannelParam.MTU</span></code> into <code class="docutils literal"><span class="pre">DatagramParam.MTU</span></code></li>
+<li>Renaming of <code class="docutils literal"><span class="pre">LinkCapability</span></code> to <code class="docutils literal"><span class="pre">DatagramCapability</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Added datagram delivery/failure notifications</li>
+<li><code class="docutils literal"><span class="pre">AbnormalTerminationManager</span></code> and <code class="docutils literal"><span class="pre">AbnormalTerminationNtf</span></code> added to manage misbehaving agents</li>
+<li>Remote agent updated to support command execution, text messages, file transfers, and for improved syntax for remote node proxies</li>
+<li>Automatic registration of agent parameters for remote access</li>
+<li>Reliable acoustic link (<code class="docutils literal"><span class="pre">ReliableLink</span></code>) agent implemented</li>
+<li>Implemented <code class="docutils literal"><span class="pre">UdpLink</span></code> agent reliability</li>
+<li>Multi-link routing (<code class="docutils literal"><span class="pre">Router</span></code>) agent implemented along with route management commands in shell</li>
+<li>Stop-and-wait batch transport (<code class="docutils literal"><span class="pre">SWTransport</span></code>) agent implemented</li>
+<li>Added support for changing frame length and link rate for individual simulation nodes using <code class="docutils literal"><span class="pre">HalfDuplexModem</span></code></li>
+</ul>
+</div>
+<div class="section" id="changes">
+<h2>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Subscriptions in shell disabled by default for most agents</li>
+<li>Solicited notifications are now sent to requesting agent, rather than broadcasted on a topic</li>
+<li>Moved to use Groovy 2.1.6</li>
+<li><dl class="first docutils">
+<dt>Moved to fjåge 1.3.1 from 1.2:</dt>
+<dd><ul class="first last">
+<li>Fjåge release notes: <a class="reference external" href="https://groups.google.com/forum/#!topic/fjage-users/2M_FtV2zzRY">[v1.3.1]</a> <a class="reference external" href="https://groups.google.com/forum/#!topic/fjage-users/dibfe8w2Ijk">[v1.3]</a> <a class="reference external" href="https://groups.google.com/forum/#!topic/fjage-users/tw5Zf-7hil4">[v1.2.2]</a></li>
+<li><dl class="first docutils">
+<dt>Changes to take specific note of:</dt>
+<dd><ul class="first last">
+<li>“include” command replaced with “shellImport”</li>
+<li>“delay()” should be used in preference to “sleep()”</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Changed fjåge prompt from <code class="docutils literal"><span class="pre">$</span></code> to <code class="docutils literal"><span class="pre">&gt;</span></code></li>
+<li>Simulation DSL now supports multiple shells per node</li>
+<li><dl class="first docutils">
+<dt>Clean up of messages and field names, including:</dt>
+<dd><ul class="first last">
+<li>Remote parameter messages use <code class="docutils literal"><span class="pre">remoteAgentID</span></code> instead of <code class="docutils literal"><span class="pre">paramAid</span></code></li>
+<li><code class="docutils literal"><span class="pre">requestID</span></code> removed from MAC messages, use <code class="docutils literal"><span class="pre">inReplyTo</span></code> instead</li>
+<li>Added channel type and bad data to <code class="docutils literal"><span class="pre">BadFrameNtf</span></code></li>
+<li>Removed script name from <code class="docutils literal"><span class="pre">RemoteScriptNtf</span></code></li>
+<li>Removed processing time from <code class="docutils literal"><span class="pre">TxFrameNtf</span></code> and <code class="docutils literal"><span class="pre">RxFrameNtf</span></code></li>
+<li>Fixed spelling error in many messages: <code class="docutils literal"><span class="pre">recepient</span></code> changed to <code class="docutils literal"><span class="pre">recipient</span></code></li>
+<li><code class="docutils literal"><span class="pre">peer</span></code> renamed to <code class="docutils literal"><span class="pre">from</span></code> or <code class="docutils literal"><span class="pre">to</span></code> in ranging messages</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Renamed <code class="docutils literal"><span class="pre">RemoteAgent</span></code> to <code class="docutils literal"><span class="pre">RemoteControl</span></code></li>
+<li>Renamed <code class="docutils literal"><span class="pre">AlohaCS</span></code> to <code class="docutils literal"><span class="pre">AlohaACS</span></code>, and implemented adaptive carrier sensing functionality</li>
+<li><dl class="first docutils">
+<dt>Renamed few parameters and added new parameters:</dt>
+<dd><ul class="first last">
+<li>Renamed and moved <code class="docutils literal"><span class="pre">HalfDulplexModem.linkRate</span></code> to <code class="docutils literal"><span class="pre">PhysicalChannelParam.dataRate</span></code></li>
+<li>Renamed <code class="docutils literal"><span class="pre">PhysicalChannelParam.maxFrameDuration</span></code> to <code class="docutils literal"><span class="pre">PhysicalChannelParam.frameDuration</span></code></li>
+<li>Added several new <code class="docutils literal"><span class="pre">PhysicalChannelParam</span></code> (<code class="docutils literal"><span class="pre">frameLength</span></code>, <code class="docutils literal"><span class="pre">maxFrameLength</span></code>, <code class="docutils literal"><span class="pre">fec</span></code>, <code class="docutils literal"><span class="pre">fecList</span></code>)</li>
+<li>Renamed <code class="docutils literal"><span class="pre">remote.link</span></code> to <code class="docutils literal"><span class="pre">remote.transport</span></code></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Allow zero-byte datagrams to be transmitted by all agents</li>
+<li><code class="docutils literal"><span class="pre">UdpLink</span></code> now avoids transmitting to itself (broadcast, or specific unicast to self)</li>
+<li>3-node-network and mission2012 simulations now provide a console shell</li>
+<li>Several documentation updates</li>
+</ul>
+</div>
+<div class="section" id="bugfixes">
+<h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Fix for possible hash clash for remote access</li>
+<li>Fix to provide MAC response without waiting for PHY availability</li>
+<li>Several other minor fixes</li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

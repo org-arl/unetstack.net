@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>samples/aloha/aloha.groovy &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="samples/mobility/mobility.groovy" href="mobility-src.html" />
+    <link rel="prev" title="Running Simulations" href="simulation-dsl.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="samples-aloha-aloha-groovy">
+<span id="aloha"></span><h1><code class="docutils literal"><span class="pre">samples/aloha/aloha.groovy</span></code><a class="headerlink" href="#samples-aloha-aloha-groovy" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Aloha wireless network</span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">///</span>
+<span class="c1">/// To run simulation:</span>
+<span class="c1">///   bin/unet samples/aloha/aloha</span>
+<span class="c1">///</span>
+<span class="c1">/// Output trace file: logs/trace.nam</span>
+<span class="c1">/// Plot results: bin/unet samples/aloha/plot-results</span>
+<span class="c1">///</span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.fjage.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.phy.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.*</span>
+<span class="kn">import</span> <span class="nn">org.arl.unet.sim.channels.*</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">Services</span><span class="o">.*</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">phy</span><span class="o">.</span><span class="na">Physical</span><span class="o">.*</span>
+
+<span class="n">println</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">Pure Aloha simulation</span>
+<span class="s1">=====================</span>
+
+<span class="s1">TX Count\tRX Count\tLoss %\t\tOffered Load\tThroughput</span>
+<span class="s1">--------\t--------\t------\t\t------------\t----------&#39;&#39;&#39;</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">// modem settings for a simple modem with 1 second frame duration</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="na">model</span> <span class="o">=</span> <span class="n">ProtocolChannelModel</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">dataRate</span> <span class="o">=</span> <span class="o">[</span><span class="mi">2400</span><span class="o">,</span> <span class="mi">2400</span><span class="o">].</span><span class="na">bps</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">frameLength</span> <span class="o">=</span> <span class="o">[</span><span class="mi">2400</span><span class="s">/8, 2400/</span><span class="mi">8</span><span class="o">].</span><span class="na">bytes</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">headerLength</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">preambleDuration</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">modem</span><span class="o">.</span><span class="na">txDelay</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">// simulation settings</span>
+
+<span class="kt">def</span> <span class="n">nodes</span> <span class="o">=</span> <span class="mi">1</span><span class="o">..</span><span class="mi">4</span>                      <span class="c1">// list of nodes</span>
+<span class="kt">def</span> <span class="n">loadRange</span> <span class="o">=</span> <span class="o">[</span><span class="mf">0.1</span><span class="o">,</span> <span class="mf">1.5</span><span class="o">,</span> <span class="mf">0.1</span><span class="o">]</span>       <span class="c1">// min, max, step</span>
+<span class="kt">def</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">.</span><span class="na">hours</span>                       <span class="c1">// simulation horizon</span>
+<span class="n">trace</span><span class="o">.</span><span class="na">warmup</span> <span class="o">=</span> <span class="mi">15</span><span class="o">.</span><span class="na">minutes</span>             <span class="c1">// collect statistics after a while</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="c1">// simulation details</span>
+
+<span class="k">for</span> <span class="o">(</span><span class="kt">def</span> <span class="n">load</span> <span class="o">=</span> <span class="n">loadRange</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span> <span class="n">load</span> <span class="o">&lt;=</span> <span class="n">loadRange</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span> <span class="n">load</span> <span class="o">+=</span> <span class="n">loadRange</span><span class="o">[</span><span class="mi">2</span><span class="o">])</span> <span class="o">{</span>
+  <span class="n">simulate</span> <span class="n">T</span><span class="o">,</span> <span class="o">{</span>
+
+    <span class="c1">// setup each node at origin to ensure no propagation delay between nodes</span>
+    <span class="n">nodes</span><span class="o">.</span><span class="na">each</span> <span class="o">{</span> <span class="n">myAddr</span> <span class="o">-&gt;</span>
+      <span class="kt">def</span> <span class="n">myNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">(</span><span class="s2">&quot;${myAddr}&quot;</span><span class="o">,</span> <span class="nl">address:</span> <span class="n">myAddr</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">])</span>
+      <span class="n">myNode</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="kt">def</span> <span class="n">phy</span> <span class="o">=</span> <span class="n">agentForService</span> <span class="n">PHYSICAL</span>
+        <span class="n">add</span> <span class="k">new</span> <span class="nf">PoissonBehavior</span><span class="o">(</span><span class="mi">1000</span><span class="o">*</span><span class="n">nodes</span><span class="o">.</span><span class="na">size</span><span class="o">()</span><span class="s">/load, {</span>
+<span class="s">          // drop any ongoing TX/</span><span class="n">RX</span> <span class="n">and</span> <span class="n">then</span> <span class="n">send</span> <span class="n">frame</span> <span class="n">to</span> <span class="n">random</span> <span class="n">node</span><span class="o">,</span> <span class="n">except</span> <span class="n">myself</span>
+          <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">ClearReq</span><span class="o">()</span>
+          <span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">TxFrameReq</span><span class="o">(</span><span class="nl">to:</span> <span class="n">rnditem</span><span class="o">(</span><span class="n">nodes</span><span class="o">-</span><span class="n">myAddr</span><span class="o">),</span> <span class="nl">type:</span> <span class="n">DATA</span><span class="o">)</span>
+        <span class="o">})</span>
+      <span class="o">}</span>
+
+    <span class="o">}</span>
+
+  <span class="o">}</span>  <span class="c1">// simulate</span>
+
+  <span class="c1">// display statistics</span>
+  <span class="kt">float</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="na">txCount</span> <span class="o">?</span> <span class="mi">100</span><span class="o">*</span><span class="n">trace</span><span class="o">.</span><span class="na">dropCount</span><span class="s">/trace.txCount : 0</span>
+<span class="s">  println sprintf(&#39;%6d\t\t%6d\t\t%5.1f\t\t%7.3f\t\t%7.3f&#39;,</span>
+<span class="s">    [trace.txCount, trace.rxCount, loss, trace.offeredLoad, trace.throughput])</span>
+
+<span class="s">} /</span><span class="o">/</span> <span class="k">for</span>
+</pre></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

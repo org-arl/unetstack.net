@@ -1,0 +1,32 @@
+State Persistence
+=================
+
+Service
+-------
+
+`STATE_MANAGER`_ -- Agent state persistence service
+
+Agents offering the *State Persistence* service provide a way to save the state of specified agents.
+They support the `SaveStateReq`_ and `ClearStateReq`_ messages as explained below.
+
+Implementations
+---------------
+
+* `StateManager`_ -- provides state persistence service by saving state to a Groovy script
+
+Requests and Responses
+----------------------
+
+===================== ================================ ===============================================
+Request               Possible Responses               Description
+===================== ================================ ===============================================
+`SaveStateReq`_       AGREE, FAILURE                   Request to save agent state
+`ClearStateReq`_      AGREE, FAILURE                   Request to clear agent states
+===================== ================================ ===============================================
+
+.. .........................................................................................................
+.. _STATE_MANAGER:     javadoc/org/arl/unet/Services.html#STATE_MANAGER
+.. _SaveStateReq:      javadoc/org/arl/unet/state/SaveStateReq.html
+.. _ClearStateReq:     javadoc/org/arl/unet/state/ClearStateReq.html
+.. _StateManager:      javadoc/org/arl/unet/state/StateManager.html
+.. .........................................................................................................

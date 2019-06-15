@@ -1,0 +1,138 @@
+.. _svcphy:
+
+Physical
+========
+
+Service
+-------
+
+`PHYSICAL`_ -- Physical service
+
+Agents offering the *Physical* service are most commonly modem drivers or simulators. They support a set of messages and parameters that are explained below. *Physical* service providers may also provide optional capabilities to send frames triggered at a specified time, or send timestamped frames where the timestamp is embedded in the transmitted frame.
+
+.. caution:: Agents implementing the ``PHYSICAL`` service typically directly access the channel, bypassing any medium access protocol that may be in use in the network. It is highly recommended that clients wishing to use the ``PHYSICAL`` service consult with the :ref:`macsvc` (MAC) service for advise on when it is safe to access the channel, so as not to adversely affect the network performance.
+
+===================== ===========================================================================
+Capability            Description
+===================== ===========================================================================
+`TIMESTAMPED_TX`_     Transmissions with timestamp encapsulated in frame
+`TIMED_TX`_           Transmissions of frames at specified time
+===================== ===========================================================================
+
+All agents supporting this service also support the :ref:`svcdatagram` service.
+
+Implementations
+---------------
+
+* `HalfDuplexModem`_ -- simulates a half-duplex modem based on specified parameters
+* ``org.arl.modem.Physical`` -- driver for the `ARL/Subnero generation 2 modems <modems.html>`_
+* ``org.arl.yoda.Physical`` -- driver for the `ARL/Subnero generation 3 modems <modems.html>`_
+* ``org.arl.modem.evologics.EvoPhysical`` -- driver for the Evologics S2C modem
+
+Requests and Responses
+----------------------
+
+===================== ========================================== ==========================================
+Request               Possible Responses                         Description
+===================== ========================================== ==========================================
+`DatagramReq`_        AGREE, REFUSE, FAILURE                     Transmit a physical layer frame
+`TxFrameReq`_         AGREE, REFUSE, FAILURE                     Transmit a physical layer frame
+`TxRawFrameReq`_      AGREE, REFUSE, FAILURE                     Transmit a physical layer frame without headers
+`ClearReq`_           AGREE, FAILURE                             Abort all transmissions/receptions
+`ParameterReq`_       `ParameterRsp`_                            Get/set/list parameters
+`CapabilityReq`_      CONFIRM, DISCONFIRM, `CapabilityListRsp`_  Check/list capabilities
+===================== ========================================== ==========================================
+
+Notifications
+-------------
+
+===================== ============== =================================================
+Notification          Topic          Description
+===================== ============== =================================================
+`RxFrameNtf`_         default        Frame addressed to node arrived
+`RxFrameNtf`_         `SNOOP`_       Frame addressed to another node overheard
+`RxFrameStartNtf`_    default        Frame reception has started
+`BadFrameNtf`_        default        Received frame could not be successfully decoded
+`CollisionNtf`_       default        Frame detected during reception of another frame
+`ParamChangeNtf`_     `PARAMCHANGE`_ Notification about the modified parameter
+===================== ============== =================================================
+
+.. tip:: ``TxFrameReq`` extends the more generic ``DatagramReq`` and offers additional physical layer options. Similarly, ``RxFrameNtf`` extends ``DatagramNtf`` and provides additional information for physical layer frames.
+
+Parameters
+----------
+
+===================== === ========================================================================
+Parameter             r/w Description
+===================== === ========================================================================
+`rxEnable`_           rw  True if reception is enabled, false otherwise
+`propagationSpeed`_   rw  Signal propagation speed in m/s
+`timestampedTxDelay`_ rw  Delay in seconds to transmit timestamped frames
+`time`_               ro  Current physical layer clock time in µs
+`busy`_               ro  True if modem is busy transmitting/receiving, false if modem is idle
+`refPowerLevel`_      ro  Reference power level in dB
+`maxPowerLevel`_      ro  Maximum allowable transmission power in dB
+`minPowerLevel`_      ro  Minimum allowable transmission power in dB
+===================== === ========================================================================
+
+.. tip:: All physical layer timestamps are in µs as per the clock provided by the ``time`` parameter. This clock is generally not synchronized with the agent's own clock.
+
+Indexed Parameters
+------------------
+
+Index range: { `CONTROL`_, `DATA`_ }
+
+===================== === ======================================================================================================
+Parameter             r/w Description
+===================== === ======================================================================================================
+`MTU`_                ro  Maximum frame size in bytes
+`frameDuration`_      ro  Frame duration in seconds
+`powerLevel`_         rw  Transmission power level in dB
+`errorDetection`_     rw  Number of bytes used for error detection (CRC/Checksum)
+`frameLength`_        rw  Frame length in bytes (if modem supports variable frame size)
+`maxFrameLength`_     ro  Maximum allowable frame length in bytes
+`fec`_                rw  Foward error correction (FEC) code (0 = none/default, otherwise 1-base index in `fecList`_)
+`fecList`_            ro  List of available FEC codes in increasing order of robustness (can be null if no FEC change supported)
+`dataRate`_           ro  Effective data rate in bits/second
+===================== === ======================================================================================================
+
+.. .........................................................................................................
+.. _PHYSICAL:         javadoc/org/arl/unet/Services.html#PHYSICAL
+.. _DatagramReq:      javadoc/org/arl/unet/DatagramReq.html
+.. _ParameterReq:     javadoc/org/arl/unet/ParameterReq.html
+.. _ParameterRsp:     javadoc/org/arl/unet/ParameterRsp.html
+.. _CapabilityReq:    javadoc/org/arl/unet/CapabilityReq.html
+.. _CapabilityListRsp: javadoc/org/arl/unet/CapabilityListRsp.html
+.. _TIMESTAMPED_TX:   javadoc/org/arl/unet/phy/PhysicalCapability.html#TIMESTAMPED_TX
+.. _TIMED_TX:         javadoc/org/arl/unet/phy/PhysicalCapability.html#TIMED_TX
+.. _TxFrameReq:       javadoc/org/arl/unet/phy/TxFrameReq.html
+.. _TxRawFrameReq:    javadoc/org/arl/unet/phy/TxRawFrameReq.html
+.. _ClearReq:         javadoc/org/arl/unet/ClearReq.html
+.. _RxFrameNtf:       javadoc/org/arl/unet/phy/RxFrameNtf.html
+.. _RxFrameStartNtf:  javadoc/org/arl/unet/phy/RxFrameStartNtf.html
+.. _BadFrameNtf:      javadoc/org/arl/unet/phy/BadFrameNtf.html
+.. _CollisionNtf:     javadoc/org/arl/unet/phy/CollisionNtf.html
+.. _SNOOP:            javadoc/org/arl/unet/phy/Physical.html#SNOOP
+.. _CONTROL:          javadoc/org/arl/unet/phy/Physical.html#CONTROL
+.. _DATA:             javadoc/org/arl/unet/phy/Physical.html#DATA
+.. _rxEnable:         javadoc/org/arl/unet/phy/PhysicalParam.html#rxEnable
+.. _propagationSpeed: javadoc/org/arl/unet/phy/PhysicalParam.html#propagationSpeed
+.. _time:             javadoc/org/arl/unet/phy/PhysicalParam.html#time
+.. _busy:             javadoc/org/arl/unet/phy/PhysicalParam.html#busy
+.. _refPowerLevel:    javadoc/org/arl/unet/phy/PhysicalParam.html#refPowerLevel
+.. _maxPowerLevel:    javadoc/org/arl/unet/phy/PhysicalParam.html#maxPowerLevel
+.. _minPowerLevel:    javadoc/org/arl/unet/phy/PhysicalParam.html#minPowerLevel
+.. _timestampedTxDelay: javadoc/org/arl/unet/phy/PhysicalParam.html#timestampedTxDelay
+.. _MTU:              javadoc/org/arl/unet/DatagramParam.html#MTU
+.. _frameDuration:    javadoc/org/arl/unet/phy/PhysicalChannelParam.html#frameDuration
+.. _powerLevel:       javadoc/org/arl/unet/phy/PhysicalChannelParam.html#powerLevel
+.. _errorDetection:   javadoc/org/arl/unet/phy/PhysicalChannelParam.html#errorDetection
+.. _frameLength:      javadoc/org/arl/unet/phy/PhysicalChannelParam.html#frameLength
+.. _maxFrameLength:   javadoc/org/arl/unet/phy/PhysicalChannelParam.html#maxFrameLength
+.. _fec:              javadoc/org/arl/unet/phy/PhysicalChannelParam.html#fec
+.. _fecList:          javadoc/org/arl/unet/phy/PhysicalChannelParam.html#fecList
+.. _dataRate:         javadoc/org/arl/unet/phy/PhysicalChannelParam.html#dataRate
+.. _ParamChangeNtf:   javadoc/org/arl/unet/ParamChangeNtf.html
+.. _PARAMCHANGE:      javadoc/org/arl/unet/Topics.html#PARAMCHANGE
+.. _HalfDuplexModem:  javadoc/org/arl/unet/sim/HalfDuplexModem.html
+.. .........................................................................................................

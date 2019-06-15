@@ -1,0 +1,407 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cookbook &#8212; The Underwater Networks Project</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Service Reference" href="agent-ref.html" />
+    <link rel="prev" title="The Default Stack" href="default-stack.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          <b>Unet</b>
+          <!--&nbsp;&nbsp;<img src="_static/home.png" height="50%" style="vertical-align: -5%;" />-->
+        </a>
+        <!--span class="navbar-text navbar-version pull-left"><b>1.4</b></span-->
+      </div>
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+                <li><a href="quickstart.html" target="">Getting Started</a></li>
+                <li><a href="docs.html" target="">Documentation</a></li>
+                <li><a href="javadoc/index.html" target="_blank">API</a></li>
+                <li><a href="downloads.html" target="">Downloads</a></li>
+                <li><a href="https://contrib.unetstack.net" target="_blank">Contributions</a></li>
+                <li><a href="https://blog.unetstack.net" target="_blank">Blog</a></li>
+                <li><a href="https://support.unetstack.net" target="_blank">Support</a></li>
+                <li><a href="https://github.com/org-arl/unet-contrib/issues" target="_bank">Issues</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Sitemap <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+          
+            <!-- { % include "navbarsearchbox.html" % } -->
+            <form id="cse-search-box" class="navbar-form navbar-right" action="https://google.com/cse" target="_blank">
+              <div class="form-group">
+                <input type="hidden" name="cx" value="006023374622006758365:jv_zfif4ziq" />
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input class="form-control" type="text" name="q" placeholder="Search Unet" />
+              </div>
+            </form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="cookbook">
+<span id="id1"></span><h1>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h1>
+<p><strong>Table of Recipes</strong></p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#using-agent-names-in-shell" id="id2">Using agent names in shell</a></li>
+<li><a class="reference internal" href="#accessing-current-simulation-count" id="id3">Accessing current simulation count</a></li>
+<li><a class="reference internal" href="#accessing-platform-time-and-clock-time" id="id4">Accessing platform time and clock time</a></li>
+<li><a class="reference internal" href="#suppressing-simulation-progress" id="id5">Suppressing simulation progress</a></li>
+<li><a class="reference internal" href="#calculating-distances-between-nodes" id="id6">Calculating distances between nodes</a></li>
+<li><a class="reference internal" href="#programmatically-stopping-a-simulation" id="id7">Programmatically stopping a simulation</a></li>
+<li><a class="reference internal" href="#setting-log-level-of-the-simulation-agent" id="id8">Setting log level of the simulation agent</a></li>
+<li><a class="reference internal" href="#specifying-relative-paths-for-files" id="id9">Specifying relative paths for files</a></li>
+<li><a class="reference internal" href="#redefining-closures-in-the-shell" id="id10">Redefining closures in the shell</a></li>
+<li><a class="reference internal" href="#working-with-gps-coordinates" id="id11">Working with GPS coordinates</a></li>
+<li><a class="reference internal" href="#distributing-nodes-randomly" id="id12">Distributing nodes randomly</a></li>
+<li><a class="reference internal" href="#encoding-and-decoding-pdus" id="id13">Encoding and decoding PDUs</a></li>
+<li><a class="reference internal" href="#using-matlab-to-plot-results" id="id14">Using MATLAB to plot results</a></li>
+<li><a class="reference internal" href="#using-a-visual-debugger-in-agent-development" id="id15">Using a visual debugger in agent development</a></li>
+</ul>
+</div>
+<div class="section" id="using-agent-names-in-shell">
+<h2><a class="toc-backref" href="#id2">Using agent names in shell</a><a class="headerlink" href="#using-agent-names-in-shell" title="Permalink to this headline">¶</a></h2>
+<p>Throughout the documentation, you find agents referred to as <code class="docutils literal"><span class="pre">phy</span></code>, <code class="docutils literal"><span class="pre">link</span></code>, etc instead of <code class="docutils literal"><span class="pre">agent('phy')</span></code>, <code class="docutils literal"><span class="pre">agent('link')</span></code>, etc. This works simply because the shell initialization scripts assign the later to the former:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">phy</span> <span class="o">=</span> <span class="n">agent</span><span class="o">(</span><span class="s1">&#39;phy&#39;</span><span class="o">);</span>
+<span class="n">link</span> <span class="o">=</span> <span class="n">agent</span><span class="o">(</span><span class="s1">&#39;link&#39;</span><span class="o">);</span>
+  <span class="o">:</span>
+  <span class="o">:</span>
+</pre></div>
+</div>
+<p>This allows for a simpler syntax in the shell, such as:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">phy</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">DatagramReq</span><span class="o">(...)</span>
+<span class="n">phy</span><span class="o">.</span><span class="na">MTU</span>
+  <span class="o">:</span>
+  <span class="o">:</span>
+</pre></div>
+</div>
+<p>rather than:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">agent</span><span class="o">(</span><span class="s1">&#39;phy&#39;</span><span class="o">)</span> <span class="o">&lt;&lt;</span> <span class="k">new</span> <span class="n">DatagramReq</span><span class="o">(...)</span>
+<span class="n">agent</span><span class="o">(</span><span class="s1">&#39;phy&#39;</span><span class="o">).</span><span class="na">MTU</span>
+  <span class="o">:</span>
+  <span class="o">:</span>
+</pre></div>
+</div>
+<p>If you create and add your own agents to the stack, you may wish to add similar variables to the shell by adding the declarations to <code class="docutils literal"><span class="pre">etc/fshrc.groovy</span></code> (and ensuring that this file is added as an initialization script when the shell agent is created).</p>
+</div>
+<div class="section" id="accessing-current-simulation-count">
+<h2><a class="toc-backref" href="#id3">Accessing current simulation count</a><a class="headerlink" href="#accessing-current-simulation-count" title="Permalink to this headline">¶</a></h2>
+<p>The current simulation count can be accessed using the <code class="docutils literal"><span class="pre">count</span></code> variable in a simulation script. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Demo of using simulation count</span>
+
+<span class="o">[...].</span><span class="na">each</span> <span class="o">{</span> <span class="n">p</span> <span class="o">-&gt;</span>
+  <span class="n">simulate</span> <span class="mi">10</span><span class="o">.</span><span class="na">hours</span> <span class="o">{</span>
+    <span class="n">println</span> <span class="s2">&quot;Simulation #${count} for parameter = ${p}&quot;</span>
+      <span class="o">:</span>
+      <span class="o">:</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="accessing-platform-time-and-clock-time">
+<h2><a class="toc-backref" href="#id4">Accessing platform time and clock time</a><a class="headerlink" href="#accessing-platform-time-and-clock-time" title="Permalink to this headline">¶</a></h2>
+<p>The platform time (discrete event or real-time) can be accessed using the <code class="docutils literal"><span class="pre">time()</span></code> closure in a simulation script. The clock time can be accessed using the <code class="docutils literal"><span class="pre">clock()</span></code> closure. Both closures provide time in seconds from some arbitrary origin. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Demo of clock()</span>
+
+<span class="kt">def</span> <span class="n">t0</span> <span class="o">=</span> <span class="n">clock</span><span class="o">()</span>
+<span class="n">simulate</span> <span class="mi">10</span><span class="o">.</span><span class="na">hours</span> <span class="o">{</span>
+    <span class="o">:</span>
+    <span class="o">:</span>
+<span class="o">}</span>
+<span class="n">println</span> <span class="s2">&quot;10 hours worth of simulation completed in ${clock()-t0} seconds&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="suppressing-simulation-progress">
+<h2><a class="toc-backref" href="#id5">Suppressing simulation progress</a><a class="headerlink" href="#suppressing-simulation-progress" title="Permalink to this headline">¶</a></h2>
+<p>By default, the simulation progress is displayed on the terminal for Mac OS X and Linux. For Windows, due to lack of support in Cygwin for ANSI terminal sequences, this is disabled. Should you wish to suppress the display of simulation progress, set the variable <code class="docutils literal"><span class="pre">showProgress</span></code> in your simulation script to be <code class="docutils literal"><span class="pre">false</span></code>:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">showProgress</span> <span class="o">=</span> <span class="kc">false</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calculating-distances-between-nodes">
+<h2><a class="toc-backref" href="#id6">Calculating distances between nodes</a><a class="headerlink" href="#calculating-distances-between-nodes" title="Permalink to this headline">¶</a></h2>
+<p>A closure <code class="docutils literal"><span class="pre">distance()</span></code> is available in the simulation script to compute distance between two locations:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">location1</span> <span class="o">=</span> <span class="o">[</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+<span class="kt">def</span> <span class="n">location2</span> <span class="o">=</span> <span class="o">[</span><span class="mi">300</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">1</span><span class="o">.</span><span class="na">km</span><span class="o">,</span> <span class="mi">0</span><span class="o">]</span>
+<span class="n">println</span> <span class="nf">distance</span><span class="o">(</span><span class="n">location1</span><span class="o">,</span> <span class="n">location2</span><span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="programmatically-stopping-a-simulation">
+<h2><a class="toc-backref" href="#id7">Programmatically stopping a simulation</a><a class="headerlink" href="#programmatically-stopping-a-simulation" title="Permalink to this headline">¶</a></h2>
+<p>You can stop a simulation from your simulation agent by calling the <code class="docutils literal"><span class="pre">stop()</span></code> closure. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Demo of stop()</span>
+
+<span class="kn">import</span> <span class="nn">org.arl.fjage.TickerBehavior</span>
+
+<span class="n">simulate</span> <span class="o">{</span>
+  <span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="n">node</span> <span class="s1">&#39;AUV&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">startup</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="c1">// stop simulation with a probability of 1% at every 10 second boundary</span>
+    <span class="n">add</span> <span class="k">new</span> <span class="nf">TickerBehavior</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">rnd</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">1</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="o">)</span> <span class="n">stop</span><span class="o">()</span>
+    <span class="o">})</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-log-level-of-the-simulation-agent">
+<h2><a class="toc-backref" href="#id8">Setting log level of the simulation agent</a><a class="headerlink" href="#setting-log-level-of-the-simulation-agent" title="Permalink to this headline">¶</a></h2>
+<p>A simple way to change log level of the simulation agent is via the <code class="docutils literal"><span class="pre">logLevel</span></code> variable in the simulation script.  For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">Level</span><span class="o">.</span><span class="na">ALL</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specifying-relative-paths-for-files">
+<h2><a class="toc-backref" href="#id9">Specifying relative paths for files</a><a class="headerlink" href="#specifying-relative-paths-for-files" title="Permalink to this headline">¶</a></h2>
+<p>When a simulation is run, a ‘home’ variable is defined to point to the simulator installation directory. This is useful to refer to common files:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">// set up node 1 with stack loaded from the common setup.groovy file</span>
+<span class="n">node</span> <span class="s1">&#39;1&#39;</span><span class="o">,</span> <span class="nl">address:</span> <span class="mi">1</span><span class="o">,</span> <span class="nl">stack:</span> <span class="s2">&quot;$home/etc/setup.groovy&quot;</span>
+</pre></div>
+</div>
+<p>Another variable ‘script’ is defined to point to the simulation script file being executed. This can be used to find the directory containing the script file, if other files in the same directory need to be referenced:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">// load a settings file from the same directory as the script</span>
+<span class="n">run</span> <span class="s2">&quot;${script.parent}/settings.groovy&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="redefining-closures-in-the-shell">
+<h2><a class="toc-backref" href="#id10">Redefining closures in the shell</a><a class="headerlink" href="#redefining-closures-in-the-shell" title="Permalink to this headline">¶</a></h2>
+<p>To avoid the mistakes from accidentally overwriting closures in the shell, by default, the shell disallows redefining previously defined closures. For example:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">host</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">RuntimeException</span><span class="o">:</span> <span class="n">Closure</span> <span class="n">host</span> <span class="n">is</span> <span class="n">read</span> <span class="n">only</span>
+</pre></div>
+</div>
+<p>since <code class="docutils literal"><span class="pre">host</span></code> is a predefined closure that resolves host names to addresses. If we wanted to redefine the closure, we can do so by setting the <code class="docutils literal"><span class="pre">protection</span></code> variable in the shell to <code class="docutils literal"><span class="pre">false</span></code>:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">protection</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">&gt;</span> <span class="n">host</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="mi">1</span>
+<span class="o">&gt;</span> <span class="n">println</span> <span class="n">host</span>
+<span class="mi">1</span>
+<span class="o">&gt;</span> <span class="n">protection</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="working-with-gps-coordinates">
+<h2><a class="toc-backref" href="#id11">Working with GPS coordinates</a><a class="headerlink" href="#working-with-gps-coordinates" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes it is useful to work with GPS coordinates for node locations, but the simulator uses a local coordinate frame. Here’s how to easily convert from one to another.</p>
+<p>First create a local coordinate system with a specified origin:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">gps</span> <span class="o">=</span> <span class="k">new</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">unet</span><span class="o">.</span><span class="na">utils</span><span class="o">.</span><span class="na">GpsLocalFrame</span><span class="o">(</span><span class="mf">1.289545</span><span class="o">,</span> <span class="mf">103.849972</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>Then convert node GPS coordinates to local frame (coordinates in meters):</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">gps</span><span class="o">.</span><span class="na">toLocal</span><span class="o">(</span><span class="mf">1.29</span><span class="o">,</span> <span class="mf">103.85</span><span class="o">)</span>               <span class="c1">// decimal degrees</span>
+<span class="o">[</span><span class="mf">3.1161606856705233</span><span class="o">,</span> <span class="mf">50.311549937515956</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">gps</span><span class="o">.</span><span class="na">toLocal</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mf">17.4</span><span class="o">,</span> <span class="mi">103</span><span class="o">,</span> <span class="mi">51</span><span class="o">)</span>           <span class="c1">// degrees, decimal minutes</span>
+<span class="o">[</span><span class="mf">3.1161606856705233</span><span class="o">,</span> <span class="mf">50.311549937515956</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>or convert from local frame to GPS coordinates:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">gps</span><span class="o">.</span><span class="na">toGps</span><span class="o">(</span><span class="mi">1000</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">)</span>                <span class="c1">// decimal degrees</span>
+<span class="o">[</span><span class="mf">1.2940668245170857</span><span class="o">,</span> <span class="mf">103.85895741597328</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">gps</span><span class="o">.</span><span class="na">toGpsDM</span><span class="o">(</span><span class="mi">1000</span><span class="o">.</span><span class="na">m</span><span class="o">,</span> <span class="mi">500</span><span class="o">.</span><span class="na">m</span><span class="o">)</span>              <span class="c1">// degrees, decimal minutes</span>
+<span class="o">[</span><span class="mf">1.0</span><span class="o">,</span> <span class="mf">17.64400947102514</span><span class="o">,</span> <span class="mf">103.0</span><span class="o">,</span> <span class="mf">51.53744495839675</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>There are other options for GPS coordinate formats too (e.g. degrees, minutes, seconds).</p>
+</div>
+<div class="section" id="distributing-nodes-randomly">
+<h2><a class="toc-backref" href="#id12">Distributing nodes randomly</a><a class="headerlink" href="#distributing-nodes-randomly" title="Permalink to this headline">¶</a></h2>
+<p>Often, in simulations, we wish to distribute nodes randomly in a given area. Here’s how to do that in a simulation script:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="c1">//! Simulation: Demo of randomly deployed nodes</span>
+
+<span class="n">platform</span> <span class="o">=</span> <span class="n">org</span><span class="o">.</span><span class="na">arl</span><span class="o">.</span><span class="na">fjage</span><span class="o">.</span><span class="na">RealTimePlatform</span>
+
+<span class="kt">def</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>          <span class="c1">// number of nodes</span>
+<span class="kt">def</span> <span class="n">xsize</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="na">km</span>    <span class="c1">// distribute nodes in a 1.km x 1.km box, within a depth of 20.m</span>
+<span class="kt">def</span> <span class="n">ysize</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="na">km</span>
+<span class="kt">def</span> <span class="n">maxdepth</span> <span class="o">=</span> <span class="mi">20</span><span class="o">.</span><span class="na">m</span>
+
+<span class="n">simulate</span> <span class="o">{</span>
+  <span class="n">n</span><span class="o">.</span><span class="na">times</span> <span class="o">{</span>
+    <span class="n">node</span> <span class="s2">&quot;${it+1}&quot;</span><span class="o">,</span> <span class="nl">location:</span> <span class="o">[</span><span class="n">rnd</span><span class="o">(-</span><span class="n">xsize</span><span class="s">/2, xsize/</span><span class="mi">2</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="n">ysize</span><span class="s">/2, ysize/</span><span class="mi">2</span><span class="o">),</span> <span class="n">rnd</span><span class="o">(-</span><span class="n">maxdepth</span><span class="o">,</span> <span class="mi">0</span><span class="o">)]</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="encoding-and-decoding-pdus">
+<h2><a class="toc-backref" href="#id13">Encoding and decoding PDUs</a><a class="headerlink" href="#encoding-and-decoding-pdus" title="Permalink to this headline">¶</a></h2>
+<p>When implementing protocols, we often need to assemble and parse PDUs. To ease this task, we have a PDU utility class to help. We first define a class with our PDU format:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span> <span class="kn">import</span> <span class="nn">java.nio.ByteOrder</span>
+ <span class="kn">import</span> <span class="nn">org.arl.unet.PDU</span>
+
+ <span class="kd">class</span> <span class="nc">MyPDU</span> <span class="kd">extends</span> <span class="n">PDU</span> <span class="o">{</span>
+   <span class="kt">void</span> <span class="nf">format</span><span class="o">()</span> <span class="o">{</span>
+     <span class="n">length</span><span class="o">(</span><span class="mi">16</span><span class="o">)</span>                     <span class="c1">// 16 byte PDU</span>
+     <span class="n">order</span><span class="o">(</span><span class="n">ByteOrder</span><span class="o">.</span><span class="na">BIG_ENDIAN</span><span class="o">)</span>    <span class="c1">// byte ordering is big endian</span>
+     <span class="n">uint8</span><span class="o">(</span><span class="s1">&#39;type&#39;</span><span class="o">)</span>                  <span class="c1">// 1 byte field &#39;type&#39;</span>
+     <span class="n">uint8</span><span class="o">(</span><span class="mh">0x01</span><span class="o">)</span>                    <span class="c1">// literal byte 0x01</span>
+     <span class="n">filler</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>                      <span class="c1">// 2 filler bytes</span>
+     <span class="n">uint16</span><span class="o">(</span><span class="s1">&#39;data&#39;</span><span class="o">)</span>                 <span class="c1">// 2 byte field &#39;data&#39; as unsigned short</span>
+     <span class="n">padding</span><span class="o">(</span><span class="mh">0xff</span><span class="o">)</span>                  <span class="c1">// padded with 0xff to make 16 bytes</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>We can then encode and decode PDUs easily using this class:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pdu</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyPDU</span><span class="o">();</span>
+<span class="o">&gt;</span> <span class="n">bytes</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">encode</span><span class="o">([</span><span class="nl">type:</span> <span class="mi">7</span><span class="o">,</span> <span class="nl">data:</span> <span class="mi">42</span><span class="o">])</span>
+<span class="o">[</span><span class="mi">7</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">42</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">]</span>
+<span class="o">&gt;</span> <span class="n">pdu</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">bytes</span><span class="o">)</span>
+<span class="o">[</span><span class="nl">data:</span><span class="mi">42</span><span class="o">,</span> <span class="nl">type:</span><span class="mi">7</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>In some cases, it is convenient to define a PDU without explicitly defining a new class. In that case, we can create an anonymous class with the standard Java syntax, or using the Groovy extensions syntax shown here:</p>
+<div class="highlight-groovy"><div class="highlight"><pre><span></span><span class="kt">def</span> <span class="n">pdu</span> <span class="o">=</span> <span class="n">PDU</span><span class="o">.</span><span class="na">withFormat</span> <span class="o">{</span>
+  <span class="n">length</span><span class="o">(</span><span class="mi">16</span><span class="o">)</span>                     <span class="c1">// 16 byte PDU</span>
+  <span class="n">order</span><span class="o">(</span><span class="n">ByteOrder</span><span class="o">.</span><span class="na">BIG_ENDIAN</span><span class="o">)</span>    <span class="c1">// byte ordering is big endian</span>
+  <span class="n">uint8</span><span class="o">(</span><span class="s1">&#39;type&#39;</span><span class="o">)</span>                  <span class="c1">// 1 byte field &#39;type&#39;</span>
+  <span class="n">uint8</span><span class="o">(</span><span class="mh">0x01</span><span class="o">)</span>                    <span class="c1">// literal byte 0x01</span>
+  <span class="n">filler</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>                      <span class="c1">// 2 filler bytes</span>
+  <span class="n">uint16</span><span class="o">(</span><span class="s1">&#39;data&#39;</span><span class="o">)</span>                 <span class="c1">// 2 byte field &#39;data&#39; as unsigned short</span>
+  <span class="n">padding</span><span class="o">(</span><span class="mh">0xff</span><span class="o">)</span>                  <span class="c1">// padded with 0xff to make 16 bytes</span>
+<span class="o">}</span>
+<span class="n">bytes</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">encode</span><span class="o">([</span><span class="nl">type:</span> <span class="mi">7</span><span class="o">,</span> <span class="nl">data:</span> <span class="mi">42</span><span class="o">])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pdu</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">bytes</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>For further information, see <a class="reference external" href="javadoc/index.html?org/arl/unet/PDU.html">PDU</a> API documentation.</p>
+</div>
+<div class="section" id="using-matlab-to-plot-results">
+<span id="matlabplot"></span><h2><a class="toc-backref" href="#id14">Using MATLAB to plot results</a><a class="headerlink" href="#using-matlab-to-plot-results" title="Permalink to this headline">¶</a></h2>
+<p>The samples provided with UnetStack show how to plot results (e.g. <code class="docutils literal"><span class="pre">samples/aloha/plot-results.groovy</span></code>) using a Groovy script. Sometimes you may wish to use other tools such as MATLAB to analyze the results. To do this, you’ll need to extract relevant results from the log file and then load them in MATLAB.</p>
+<p>For example, let us assume that you just ran the <code class="docutils literal"><span class="pre">samples/aloha/aloha.groovy</span></code> simulation and have the log files in the <code class="docutils literal"><span class="pre">logs</span></code> directory. You can extract the relevant STATS lines from the log file and reformat into a CSV file that MATLAB can load:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>bash$ grep STATS logs/trace.nam <span class="p">|</span> sed <span class="s1">&#39;s/.=//g&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/^# STATS: //&#39;</span> &gt; logs/results.txt
+</pre></div>
+</div>
+<p>Then open MATLAB and load the data in MATLAB, and plot it:</p>
+<div class="highlight-matlabsession"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt; </span><span class="n">load</span> <span class="n">logs</span><span class="o">/</span><span class="n">results</span><span class="p">.</span><span class="n">txt</span>
+<span class="gp">&gt;&gt; </span><span class="n">x</span> <span class="p">=</span> <span class="mi">0</span><span class="p">:</span><span class="mf">0.05</span><span class="p">:</span><span class="mi">2</span><span class="p">;</span>
+<span class="gp">&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.*</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">&gt;&gt; </span><span class="n">hold</span> <span class="n">all</span>
+<span class="gp">&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">results</span><span class="p">(:,</span><span class="mi">5</span><span class="p">),</span><span class="n">results</span><span class="p">(:,</span><span class="mi">8</span><span class="p">),</span><span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt; </span><span class="n">hold</span> <span class="n">off</span>
+<span class="gp">&gt;&gt; </span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Normalized Throughput&#39;</span><span class="p">);</span>
+<span class="gp">&gt;&gt; </span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Offered Load&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The output should look like this:</p>
+<div class="align-center figure">
+<img alt="_images/aloha-matlab.png" src="_images/aloha-matlab.png" />
+</div>
+</div>
+<div class="section" id="using-a-visual-debugger-in-agent-development">
+<h2><a class="toc-backref" href="#id15">Using a visual debugger in agent development</a><a class="headerlink" href="#using-a-visual-debugger-in-agent-development" title="Permalink to this headline">¶</a></h2>
+<p>While the Unet IDE does not have an integrated debugger, it is possible to use a debugger from another IDE (e.g. <a class="reference external" href="https://www.jetbrains.com/idea/">IntelliJ</a> IDEA or <a class="reference external" href="https://eclipse.org/downloads/">Eclipse</a>) with UnetStack. The basic steps are outlined below, but the exact details depend on the IDE used:</p>
+<ul class="simple">
+<li>Downloaded and install the IDE with Groovy support.</li>
+<li>Create a Groovy project and added all UnetStack jars as external libraries. You should find the jars in the <code class="docutils literal"><span class="pre">UnetIDE.app/Contents/Java</span></code> folder on Mac OS X, or the <code class="docutils literal"><span class="pre">app</span></code> folder on Linux or Windows.</li>
+<li>Create a configuration with main class <code class="docutils literal"><span class="pre">org.arl.fjage.shell.GroovyBoot</span></code> and arguments <code class="docutils literal"><span class="pre">cls://org.arl.unet.sim.initrc</span></code> followed by the simulation script filename.</li>
+<li>Start a debugging session.</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p align="right"><a href="agent-ref.html" class="btn btn-info btn-xs">Service Reference »</a></p></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2013-18, Acoustic Research Laboratory, National University of Singapore, and Subnero Pte Ltd.<br/>
+      Last updated on Jun 15, 2019.<br/>
+    </p>
+  </div>
+</footer>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52885583-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

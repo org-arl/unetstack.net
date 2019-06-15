@@ -1,0 +1,96 @@
+.. _quickstart:
+
+Getting Started
+===============
+
+.. highlight:: bash
+
+Downloading and installing
+--------------------------
+
+Download the appropriate package (tgz or zip) from the `downloads <downloads.html>`_ page. Uncompress the package using your favorite decompression tool. That's it, you've the stack, simulator and IDE installed and ready to go!
+
+You should have a "unetsim-|version|" folder with a structure something like this:
+
+.. parsed-literal::
+
+    unetsim-|version|/
+      README.txt
+      LICENSE.txt
+      UnetIDE.app
+      bin/
+      etc/
+      samples/
+      logs/
+
+On Windows or Linux, there may be a few additional support folders for the IDE, and the IDE application will be called ``UnetIDE.exe`` (on Windows) or simply ``UnetIDE`` (on Linux), instead of the ``UnetIDE.app`` (on OS X) shown above.
+
+The ``bin`` folder contains shell scripts that provide access to UnetStack and simulator framework. The ``etc`` folder contains stack configuration and initialization scripts. The ``samples`` folder contains some sample simulation scripts and agents to get you started. The ``logs`` folder should be empty now, but will eventually contain logs generated while running the stack or simulator.
+
+Run the IDE application by double-clicking on it. The IDE should open with the default "unetsim-|version|" folder as root, and you are ready to get started. In case the default folder is different, please set the default folder to "unetsim-|version|" from the "File, Set Root Folder..." menu.
+
+.. figure:: _static/UnetIDE.png
+   :figclass: align-center
+   :width: 800px
+
+
+Running your first simulation
+-----------------------------
+
+The "hello world" of the networking world is the `ALOHA`_ protocol. The protocol is simple, but it's by no means easy to simulate. We have included an implementation in the ``samples/aloha`` folder to demonstrate how easy it is to simulate protcols with the Unet simulator. Open it in the IDE by double-clicking on ``aloha.groovy`` and run it from the "Simulation, Run" menu (or equivalently pressing the "Run simulation/script" toolbar button).
+
+.. tip:: If you prefer to use a command line instead of an IDE, open a shell, change directory to the "unetsim-|version|" folder, and run the command ``bin/unet samples/aloha/aloha.groovy`` (or ``bin\unet samples\aloha\aloha.groovy`` on Windows) to run the simulation. Essentially everything that can be done from the IDE can also be done using command the ``unet`` command line tool.
+
+If your installation is working correctly, your output should look something like this (the exact numbers may differ slightly):
+
+.. code-block:: text
+
+    Pure Aloha simulation
+    =====================
+
+    TX Count  RX Count  Loss %    Offered Load  Throughput
+    --------  --------  ------    ------------  ----------
+       628       503     20.1       0.100         0.080
+      1218       814     33.2       0.193         0.129
+      1865      1019     45.4       0.296         0.162
+      2476      1095     55.8       0.393         0.174
+      3098      1145     63.0       0.492         0.182
+      3801      1128     70.3       0.603         0.179
+      4448      1065     76.1       0.706         0.169
+      4956      1016     79.5       0.787         0.161
+      5617       952     83.0       0.892         0.151
+      6499       855     86.9       1.032         0.136
+      6860       799     88.4       1.089         0.127
+      7532       702     90.7       1.196         0.111
+      8191       610     92.5       1.300         0.097
+      8746       536     93.9       1.388         0.085
+      9418       455     95.2       1.495         0.072
+
+    15 simulations completed in 67.510 seconds
+
+In the unfortunate event that your output does not look like this, you may need to debug your installation. Start by checking the prerequisites. If you can't figure out what's wrong, you may want to head over to the :unet:`support forum <support>` for help.
+
+It's nice to see that the simulation has run and has tabulated it's results. As expected from the ALOHA protocol, the maximum throughput of about 0.18 is reached at an offered load of about 0.5. However, this is much nicer to see graphically. This is easily done by opening the ``plot-results.groovy`` script and running it:
+
+|
+
+.. figure:: _static/aloha.png
+   :figclass: align-center
+
+|
+
+As you can see, the simulation results nicely agree with the theoretical results for pure ALOHA.
+
+Next steps
+----------
+
+Now that you have a working installation of the Unet simulator, it's time to learn how to develop your own protocols and simulations. The :ref:`docs` is a good place to start. If you're already familiar with fjåge and Groovy, you can directly move on to :ref:`agents`.
+
+.. raw:: html
+
+  <p align="right"><a href="unet-agents.html" class="btn btn-info btn-xs">Developing Agents »</a></p>
+
+.. ..........................................................................................
+.. _Java Development Kit: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+.. _ALOHA: http://en.wikipedia.org/wiki/ALOHAnet
+.. ..........................................................................................
